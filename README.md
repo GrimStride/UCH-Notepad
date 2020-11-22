@@ -1,4 +1,4 @@
-# UCH-Notepad
+# UCH Notepad
 
 A simple Ultimate Chicken Horse ruleset and custom level file editor written in Python.
 
