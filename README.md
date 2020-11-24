@@ -8,7 +8,8 @@ A simple Ultimate Chicken Horse ruleset and custom level file editor written in 
 
 - Optimize code functionality and readability.
 - Implement right-click menu in Text box.
-- Detect file formats with error handlers instead of file extension.
+- Implement Find and Replace functionality.
+- Detect file formats with error handlers instead of file extension (Still considering this one, maybe i will leave it like that).
 - macOS and Linux version.
 - 32 bit version for all OSes.
 
@@ -17,6 +18,12 @@ A simple Ultimate Chicken Horse ruleset and custom level file editor written in 
 - Unzip the downloaded file in any folder.
 - Run uchnotepad.exe inside the extracted folder.
 - Use "Open Level" to edit a custom level file, or "Open ruleset" to edit a custom ruleset file.
+
+## Features
+
+- Automatic XML "beautifier".
+- 25 undos and redos (Might increase it if needed).
+- Level thumbnail displayer.
 
 ## FAQ
 - Q: The program is only giving me the option to save as a **LZMA Encoded File** in the **Save As...** dialog.
