@@ -29,7 +29,7 @@ A simple Ultimate Chicken Horse ruleset and custom level file editor written in 
 - Level thumbnail displayer.
 
 ## FAQ
-- Q: vcruntime140.dll is missing.
+- Q: vcruntime140.dll is missing/The program is not opening.
 
   A: Download Visual C++ Redistributable for Visual Studio 2015 or 2017 here: https://aka.ms/vs/16/release/vc_redist.x64.exe
   
