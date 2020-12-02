@@ -7,6 +7,7 @@ A simple Ultimate Chicken Horse ruleset and custom level file editor written in 
 ## TO-DO list
 
 - Optimize code functionality and readability.
+- Fix buttons not changing when the dark theme is enabled.
 - Implement right-click menu in Text box.
 - Implement Find and Replace functionality.
 - Detect file formats with error handlers instead of file extension (Still considering this one, maybe i will leave it like that).
@@ -27,6 +28,10 @@ A simple Ultimate Chicken Horse ruleset and custom level file editor written in 
 - Level thumbnail displayer.
 
 ## FAQ
+- Q: vcruntime140.dll is missing.
+
+  A: Download Visual C++ Redistributable for Visual Studio 2015 or 2017 here: https://aka.ms/vs/16/release/vc_redist.x64.exe
+  
 - Q: The program is only giving me the option to save as a **LZMA Encoded File** in the **Save As...** dialog.
 
   A: The file header is being recognized as an invalid UCH level/ruleset file format. Your file should start with `<scene` or `<Ruleset`.
