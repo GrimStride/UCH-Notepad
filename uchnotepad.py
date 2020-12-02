@@ -200,10 +200,6 @@ class config():
         w = self.wmw.get()
         h = self.wmh.get()
         a = root.geometry(str(w) + "x" + str(h) + "+" + str(x) + "+" + str(y))
-        try:
-            btn_open["relief"]= self.btbdr.get()
-            txt_edit["relief"]= self.txbdr.get()
-        except AttributeError: pass
         if self.currenttheme.get() == "dark":
             tdark()
             data["theme"]= "dark"
