@@ -1,7 +1,7 @@
 {
-    "wm": "800x400+262+175",
+    "wm": "800x600",
     "state": "normal",
-    "shwtn": false,
+    "shwtn": true,
     "shwlc": true,
     "theme": "light",
     "fnt": "Courier 10",
