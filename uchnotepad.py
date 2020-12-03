@@ -488,8 +488,8 @@ def tdark():
         change["fg"]= "white"
     txt_edit["bg"]="#323232"
     txt_edit["fg"]="#f0f0f0"
-    txt_edit["insertbackground"]="white"
-    btn_conf['activebackground'] = "#d4d4d4"
+    txt_edit["insertbackground"]="#f0f0f0"
+    btn_conf['activebackground'] = "#2a2a2a"
     s.configure("TSeparator", background= "black")
     s.configure("TFrame", background= "#323232")
     s.configure("TLabel", background= "#454545", foreground= "white")
