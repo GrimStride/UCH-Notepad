@@ -5,5 +5,6 @@
     "shwlc": true,
     "theme": "light",
     "fnt": "Courier 10",
-    "ufnt": "{Segoe UI} 9"
+    "ufnt": "{Segoe UI} 9",
+    "sort": false
 }

@@ -12,6 +12,7 @@ check = 0
 chash = "68b329da9893e34099c7d8ad5cb9c940"
 filepath= ""
 unsaved= False
+frmat = None
 def loadJson():
     f = open(os.path.join(sys.path[0], 'config.json'), "r")
     data= json.loads(f.read())
@@ -26,18 +27,23 @@ def saveJson():
     data["wm"] = root.winfo_geometry()
     f.write(json.dumps(data, indent=4))
     f.close()
+def updateJson():
+    try:
+        a= data["sort"]
+    except KeyError:
+        data["sort"]= False
 class config():
     def __init__(self):
         global data
         self.root = tk.Toplevel(root)
         self.root.title("Settings")
-        scy = int(((root.winfo_y() + (root.winfo_height()/2) - 120)**2)**0.5)
+        scy = int(((root.winfo_y() + (root.winfo_height()/2) - 132)**2)**0.5)
         scx = int(root.winfo_x() + (root.winfo_width()/2) - 250)
         self.root.geometry("+" + str(scx) + "+" + str(scy))
         self.root.transient(root)
         self.root.iconbitmap(os.path.join(sys.path[0], 'icon.ico'))
         self.root.rowconfigure(8, weight=1)
-        self.root.minsize(500,240)
+        self.root.minsize(500,263)
         self.root.columnconfigure(3, weight=1)
         root.attributes('-disabled', True)
         self.root.focus_set()
@@ -124,12 +130,16 @@ class config():
         self.foont.grid(row=5, column=1, sticky="w", columnspan=9)
         self.showtn= tk.StringVar()
         self.showlc= tk.StringVar()
+        self.sortx= tk.StringVar()
         self.showtn.set(data["shwtn"])
         self.showlc.set(data["shwlc"])
+        self.sortx.set(data["sort"])
         self.onftn = ttk.Checkbutton(self.cont, variable= self.showtn, text= "Show level thumbnails")
         self.onflc = ttk.Checkbutton(self.cont, variable= self.showlc, text= "Show current line/column position")
+        self.onstr = ttk.Checkbutton(self.cont, variable= self.sortx, text= "Sort XML values alphabetically")
         self.onftn.grid(row=6, column=1, sticky="w", padx=10, columnspan=9)
         self.onflc.grid(row=7, column=1, sticky="w", padx=10, columnspan=9)
+        self.onstr.grid(row=8, column=1, sticky="w", padx=10, columnspan=9)
         self.wmx = tk.Entry(self.cont, width=6)
         self.wmx.insert(10, wmcx)
         self.wmx.grid(row=1,column=2, sticky="nw", padx=2)
@@ -140,7 +150,7 @@ class config():
         self.wmh = tk.Entry(self.cont, width=6, textvariable= wmch)
         self.wmh.grid(row=2,column=3, sticky="nw", padx=6, pady=11)
         self.filler= ttk.Label(self.cont, text= "\n\n")
-        self.filler.grid(row=8, column=1)
+        self.filler.grid(row=9, column=1, ipady=0)
     def change_tab2(self, event):
         for widgets in self.cont.winfo_children():
             widgets.grid_remove()
@@ -159,7 +169,7 @@ class config():
         self.cuxf.grid(row=7, column=3, sticky="ne", pady=5)
         self.foont["text"]="Font╶────────────────────────╸"
         self.foont.grid(row=5, column=1, sticky="w", columnspan=15)
-        self.filler.grid(row=8, column=1)
+        self.filler.grid(row=8, column=1, ipady=10)
     def change_tab3(self, event):
         for widgets in self.cont.winfo_children():
             widgets.grid_remove()
@@ -169,16 +179,16 @@ class config():
         self.gen["bg"]= "gray94"
         self.theme["bg"]= "gray94"
         self.desct["text"]="About UCH Notepad╶─────────────────╸"
-        self.desc["text"]="   Version 1.0\n   Made by Grim Stride using Python 3.9.0 and cx-Freeze\n   This is a heavily modified version of Real Python's Tkinter\n   tutorial\n   Icons taken from The GNOME Project and material.io"
+        self.desc["text"]="   Version 1.1\n   Made by Grim Stride using Python 3.9.0 and cx-Freeze\n   This is a heavily modified version of Real Python's Tkinter\n   tutorial\n   Icons taken from The GNOME Project and material.io"
         self.upt.grid(row=7, column=1, sticky="nw", padx=8, pady=8)
         self.result.grid(row=7, column=2)
-        self.filler.grid(row=8, column=1)
+        self.filler.grid(row=8, column=1, ipady=11)
     def update(self):
         try:
             r = requests.get("https://github.com/GrimStride/UCH-Notepad/releases/latest")
             e = r.url.replace("https:/", "")
             d = os.path.basename(e)
-            if d > str(1.0):
+            if d > str(1.1):
                 self.result["text"]= "Version " + d + " is available"
                 self.dwl.configure(bg= self.root["bg"], activebackground= self.root["bg"])
                 self.dwl.grid(row=7, column=3, pady=3)
@@ -195,6 +205,7 @@ class config():
         root.update()
     def savechges(self):
         global s
+        global frmat
         x = self.wmx.get()
         y = self.wmy.get()
         w = self.wmw.get()
@@ -229,6 +240,12 @@ class config():
             data["shwlc"] = False
             txpos["text"] = ""
         else: data["shwlc"] = True
+        if self.sortx.get() == "0":
+            data["sort"] = False
+            frmat = UnsortedAttributes()
+        else:
+            data["sort"] = True
+            frmat= None
     def ask(self):
         a= messagebox.askyesnocancel(parent= self.root, message='All preferences will be reset to their defaults.\nProceed?', icon='question', title='Settings')
         if a == True:
@@ -260,62 +277,68 @@ class config():
         self.nsuf = font
         self.uxf["font"]= font
         self.uxf["text"]= font.translate(str.maketrans({'{': '', '}': ''}))
+class UnsortedAttributes(bs4.formatter.XMLFormatter):
+    def attributes(self, tag):
+        for k, v in tag.attrs.items():
+            yield k, v
+
 def open_file():
-    """Open a file for editing."""
-    global filepath
-    filepath = askopenfilename(
+    filepath1 = askopenfilename(
         initialdir=str(Path.home()) + "/AppData/LocalLow/Clever Endeavour Games/Ultimate Chicken Horse/snapshots",filetypes=(("UCH Compressed Level", "*.v.snapshot *.c.snapshot"), ("UCH Compressed Party Level", "*.v.snapshot"), ("UCH Compressed Challenge Level", "*.c.snapshot"), ("UCH Uncompressed Party Level", "*.v"), ("UCH Uncompressed Challenge Level", "*.c"), ("All Files", "*.*")))
-    if not filepath:
+    if not filepath1:
         return
     txt_edit.delete("1.0", tk.END)
-    extension = os.path.splitext(filepath)[1]
+    extension = os.path.splitext(filepath1)[1]
     if extension == ".snapshot":
-        with lzma.open(filepath, "r") as input_file:
+        with lzma.open(filepath1, "r") as input_file:
             text = input_file.read()
             text1 = BeautifulSoup(text, "xml")
-            text2 = text1.prettify()
+            text2 = text1.prettify(formatter=frmat)
             text3 = text2.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n", "")
             txt_edit.insert(tk.END, text3)
     else:
-        with open(filepath, "r") as input_file:
+        with open(filepath1, "r") as input_file:
             text = input_file.read()
             text1 = BeautifulSoup(text, "xml")
-            text2 = text1.prettify()
+            text2 = text1.prettify(formatter=frmat)
             text3 = text2.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n", "")
             txt_edit.insert(tk.END, text3)
+    global filepath
+    filepath = filepath1
     TButton()
     bhash= txt_edit.get(1.0, tk.END)
     global chash
     chash = hashlib.md5(bhash.encode('utf-8')).hexdigest()
     txt_edit.mark_set("insert", "1.0")
-    root.title(f"UCH Notepad 1.0 - {filepath}")
+    root.title(f"{filepath} - UCH Notepad 1.1")
 
 def open_rule():
-    global filepath
-    filepath = askopenfilename(
+    filepath1 = askopenfilename(
         initialdir=str(Path.home()) + "/AppData/LocalLow/Clever Endeavour Games/Ultimate Chicken Horse/rules",filetypes=(("UCH Compressed Ruleset", "*.ruleset"), ("All Files", "*.*")))
-    if not filepath:
+    if not filepath1:
         return
     txt_edit.delete("1.0", tk.END)
-    extension = os.path.splitext(filepath)[1]
+    extension = os.path.splitext(filepath1)[1]
     if extension == ".ruleset":
-        with lzma.open(filepath, "r") as input_file:
+        with lzma.open(filepath1, "r") as input_file:
             text = input_file.read()
             text1 = BeautifulSoup(text, "xml")
-            text2 = text1.prettify()
+            text2 = text1.prettify(formatter=frmat)
             text3 = text2.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n", "")
             txt_edit.insert(tk.END, text3)
     else:
-        with open(filepath, "r") as input_file:
+        with open(filepath1, "r") as input_file:
             text = input_file.read()
             text1 = BeautifulSoup(text, "xml")
-            text2 = text1.prettify()
+            text2 = text1.prettify(formatter=frmat)
             text3 = text2.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n", "")
             txt_edit.insert(tk.END, text3)
+    global filepath
+    filepath = filepath1
     bhash= txt_edit.get(1.0, tk.END)
     global chash
     chash = hashlib.md5(bhash.encode('utf-8')).hexdigest()
-    root.title(f"UCH Notepad 1.0 - {filepath}")
+    root.title(f"{filepath} - UCH Notepad 1.1")
     txt_edit.mark_set("insert", "1.0")
     destroyTN()
 
@@ -334,7 +357,7 @@ def nsave():
         bhash= txt_edit.get(1.0, tk.END)
         global chash
         chash = hashlib.md5(bhash.encode('utf-8')).hexdigest()
-        root.title(f"UCH Notepad 1.0 - {filepath}")
+        root.title(f"{filepath} - UCH Notepad 1.1")
     else: save_file()
 
 def save_file():
@@ -385,10 +408,12 @@ def save_file():
             with open(filepaths, "w") as output_file:
                 text = txt_edit.get(1.0, tk.END)
                 output_file.write(text)
+    global filepath
+    filepath = filepaths
     bhash= txt_edit.get(1.0, tk.END)
     global chash
     chash = hashlib.md5(bhash.encode('utf-8')).hexdigest()
-    root.title(f"UCH Notepad 1.0 - {filepaths}")
+    root.title(f"{filepath} - UCH Notepad 1.1")
 
 def TButton():
     destroyTN()
@@ -403,7 +428,7 @@ def TButton():
         check = os.path.isfile(lvlthumb)
         if check == True and data["shwtn"] == True:
             cv.img = Image.open(lvlthumb)
-            cv.res = cv.img.resize((85, 61), Image.ANTIALIAS)
+            cv.res = cv.img.resize((84, 60), Image.ANTIALIAS)
             cv.thumb = ImageTk.PhotoImage(cv.res)
             cv["image"] = cv.thumb
             cv["command"] = opnthb
@@ -514,17 +539,17 @@ def get_line1():
     gethash= hashlib.md5(cwork.encode('utf-8')).hexdigest()
     if gethash != chash:
         if chash != "68b329da9893e34099c7d8ad5cb9c940":
-            root.title(f"*UCH Notepad 1.0 - {filepath}")
+            root.title(f"*{filepath} - UCH Notepad 1.1")
             unsaved= True
         else:
-            root.title(f"*UCH Notepad 1.0")
+            root.title(f"*UCH Notepad 1.1")
             unsaved= True
     else:
         if chash != "68b329da9893e34099c7d8ad5cb9c940":
-            root.title(f"UCH Notepad 1.0 - {filepath}")
+            root.title(f"{filepath} - UCH Notepad 1.1")
             unsaved= False
         else:
-            root.title(f"UCH Notepad 1.0")
+            root.title(f"UCH Notepad 1.1")
             unsaved= False
     root.after(33, get_line1)
 
@@ -552,9 +577,13 @@ def winquit():
         else: return
     saveJson()
     root.destroy()
+
 data = loadJson()
+updateJson()
+if data["sort"] == False: frmat = UnsortedAttributes()
+else: frmat = None
 root = tk.Tk()
-root.title("UCH Notepad 1.0")
+root.title("UCH Notepad 1.1")
 root.geometry(data["wm"])
 root.minsize(200,270)
 root.state(data["state"])
