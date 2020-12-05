@@ -42,13 +42,14 @@ class config():
         self.root.geometry("+" + str(scx) + "+" + str(scy))
         self.root.transient(root)
         self.root.iconbitmap(os.path.join(sys.path[0], 'icon.ico'))
+        self.root.rowconfigure(6, weight=30)
         self.root.rowconfigure(8, weight=1)
         self.root.minsize(500,263)
         self.root.columnconfigure(3, weight=1)
         root.attributes('-disabled', True)
         self.root.focus_set()
         panel = ttk.Frame(self.root, relief="groove", borderwidth=2)
-        panel.grid(row=0, column=0, sticky="ns", padx=8, pady=8, rowspan=5)
+        panel.grid(row=0, column=0, sticky="ns", padx=8, pady=8, rowspan=8)
         self.sel = tk.Frame(panel, bg= "#0078D7", width= 130, height=28)
         self.sel.grid(padx=2, pady=2)
         panel.genshw = tk.PhotoImage(data="R0lGODlhEgASANUAAP////7+/vv7+/r6+vn5+fj4+Pb29vX19e7u7urq6ufn597e3tra2tnZ2djY2NfX19PT08zMzLy8vKurq6qqqqmpqZ+fn52dnZycnJubm5aWlpGRkYKCgoGBgXV1dW5ubmxsbGVlZV5eXlxcXFhYWFRUVFNTU09PT01NTUdHR0FBQTg4ODExMSwsLCcnJyUlJSMjIxoaGhQUFBMTExISEgQEBAEBAQAAAP///wAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAADgALAAAAAASABIAAAaqQBwOQBwSaCyTJwIQOocDIuBxq94ozScg4boADhzrDZIVAgSqKoomvnmlxE973gEsLADDat62vaoMAAUhYiQSEy1zG0QOVidSCDJtKQABGVYVTUQjYjEgIDFiGnApVhgBAKViMApEEjVWDUQbczIiJbBWIQUADFUvNnxiKwYAFgsAHcJWH3BEF20zKFUqAmVDEGIcxRcuCddDFGIPUlFPZhEeJiw0BJpFOEEAOw==")
@@ -149,8 +150,8 @@ class config():
         self.wmw.grid(row=2,column=2, sticky="nw", padx=2, pady=11)
         self.wmh = tk.Entry(self.cont, width=6, textvariable= wmch)
         self.wmh.grid(row=2,column=3, sticky="nw", padx=6, pady=11)
-        self.filler= ttk.Label(self.cont, text= "\n\n")
-        self.filler.grid(row=9, column=1, ipady=0)
+        #self.filler= ttk.Label(self.cont, text= "\n\n")
+        #self.filler.grid(row=9, column=1, ipady=0)
     def change_tab2(self, event):
         for widgets in self.cont.winfo_children():
             widgets.grid_remove()
@@ -169,7 +170,7 @@ class config():
         self.cuxf.grid(row=7, column=3, sticky="ne", pady=5)
         self.foont["text"]="Font╶────────────────────────╸"
         self.foont.grid(row=5, column=1, sticky="w", columnspan=15)
-        self.filler.grid(row=8, column=1, ipady=10)
+        #self.filler.grid(row=8, column=1, ipady=10)
     def change_tab3(self, event):
         for widgets in self.cont.winfo_children():
             widgets.grid_remove()
@@ -182,7 +183,7 @@ class config():
         self.desc["text"]="   Version 1.1\n   Made by Grim Stride using Python 3.9.0 and cx-Freeze\n   This is a heavily modified version of Real Python's Tkinter\n   tutorial\n   Icons taken from The GNOME Project and material.io"
         self.upt.grid(row=7, column=1, sticky="nw", padx=8, pady=8)
         self.result.grid(row=7, column=2)
-        self.filler.grid(row=8, column=1, ipady=11)
+        #self.filler.grid(row=8, column=1, ipady=11)
     def update(self):
         try:
             r = requests.get("https://github.com/GrimStride/UCH-Notepad/releases/latest")
@@ -558,6 +559,9 @@ def x_scroll(*args):
     shldiscr = 1
     global txt_edit
     txt_edit.xview(*args)
+    #print(txt_edit.xview())
+    #txt_edit.xview_moveto(1.20)
+    #txt_edit.xview_scroll(0, "units")
     txt_edit.config(state="disabled")
 def y_scroll(*args):
     global shldiscr
