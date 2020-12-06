@@ -42,14 +42,16 @@ class config():
         self.root.geometry("+" + str(scx) + "+" + str(scy))
         self.root.transient(root)
         self.root.iconbitmap(os.path.join(sys.path[0], 'icon.ico'))
-        self.root.rowconfigure(6, weight=30)
-        self.root.rowconfigure(8, weight=1)
+        self.root.rowconfigure(6, weight=1)
+        self.root.rowconfigure(8, weight=0)
         self.root.minsize(500,263)
+        #self.root.columnconfigure(3, weight=1)
         self.root.columnconfigure(3, weight=1)
+        #self.root.columnconfigure(9, weight=1)
         root.attributes('-disabled', True)
         self.root.focus_set()
         panel = ttk.Frame(self.root, relief="groove", borderwidth=2)
-        panel.grid(row=0, column=0, sticky="ns", padx=8, pady=8, rowspan=8)
+        panel.grid(row=0, column=0, sticky="nsw", padx=8, pady=8, rowspan=8)
         self.sel = tk.Frame(panel, bg= "#0078D7", width= 130, height=28)
         self.sel.grid(padx=2, pady=2)
         panel.genshw = tk.PhotoImage(data="R0lGODlhEgASANUAAP////7+/vv7+/r6+vn5+fj4+Pb29vX19e7u7urq6ufn597e3tra2tnZ2djY2NfX19PT08zMzLy8vKurq6qqqqmpqZ+fn52dnZycnJubm5aWlpGRkYKCgoGBgXV1dW5ubmxsbGVlZV5eXlxcXFhYWFRUVFNTU09PT01NTUdHR0FBQTg4ODExMSwsLCcnJyUlJSMjIxoaGhQUFBMTExISEgQEBAEBAQAAAP///wAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAADgALAAAAAASABIAAAaqQBwOQBwSaCyTJwIQOocDIuBxq94ozScg4boADhzrDZIVAgSqKoomvnmlxE973gEsLADDat62vaoMAAUhYiQSEy1zG0QOVidSCDJtKQABGVYVTUQjYjEgIDFiGnApVhgBAKViMApEEjVWDUQbczIiJbBWIQUADFUvNnxiKwYAFgsAHcJWH3BEF20zKFUqAmVDEGIcxRcuCddDFGIPUlFPZhEeJiw0BJpFOEEAOw==")
@@ -61,17 +63,24 @@ class config():
         self.theme.grid(row=2, column=0, sticky="ew", padx=3, pady=3)
         self.info = tk.Label(panel, text="  About", relief="flat", width=114, anchor="w", image=panel.info, compound="left", pady=2)
         self.info.grid(row=3, column=0, sticky="ew", padx=3, pady=3)
-        self.desct = tk.Label(self.root, pady=6, justify="left")
         self.cont = tk.Frame(self.root)
+        self.desct = ttk.Labelframe(self.root)
         if data["theme"] == "dark":
             self.root["bg"]= "#454545"
-            self.cont["bg"]= "#454545"
-            self.desct.configure(bg="#454545", fg= "white")
-        self.desc = ttk.Label(self.cont, justify="left")
-        self.desct.grid(row=0, column=1, sticky="nw", columnspan=9)
-        self.foont = ttk.Label(self.cont)
-        self.cont.grid(row=1, column=1, sticky="nw", columnspan=9, rowspan=4)
+            self.cont["bg"]= "#45457c"
+            #self.desct.configure(bg="#454545", fg= "white")
+        #self.cont.columnconfigure(1, weight=1)
+        #self.cont.rowconfigure(8, weight=1)
+        self.desc = ttk.Label(self.desct, justify="left")
+        self.desct.grid(row=0, column=1, sticky="nsew", columnspan=5, pady=2)
+        #self.desct.columnconfigure(4, weight=1)
+        self.foont = ttk.Labelframe(self.root)
+        self.desc1 = ttk.Label(self.foont, justify="left")
+        #self.cont.grid(row=1, column=1, sticky="nsew", columnspan=9, rowspan=6, padx=8)
         self.desc.grid(row=1, column=1, sticky="nw", rowspan=3)
+        self.desc1.grid(row=5, column=1, sticky="nsew", rowspan=3)
+        #self.filler= tk.Label(self.desct, text="A")
+        #self.filler.grid(row=0, column=1, sticky="nsew")
         self.change_tab1(None)
         self.gen.bind("<Button-1>", self.change_tab1)
         self.theme.bind("<Button-1>", self.change_tab2)
@@ -81,9 +90,9 @@ class config():
         self.bcl = ttk.Button(self.root, text= "Cancel", width=10, command= self.ext)
         self.bap = ttk.Button(self.root, text= "Apply", width=10, command= self.applyb)
         self.rdf.grid(row=8, column=0, sticky="sw", padx=8, pady=8)
-        self.bok.grid(row=8, column=6, sticky="se", padx=8, pady=8)
-        self.bcl.grid(row=8, column=7, sticky="se", pady=8)
-        self.bap.grid(row=8, column=8, sticky="se", padx=8, pady=8)
+        self.bok.grid(row=8, column=3, sticky="se", pady=8)
+        self.bcl.grid(row=8, column=4, sticky="se", pady=8, padx=8)
+        self.bap.grid(row=8, column=5, sticky="se", pady=8)
         self.crtf = tk.StringVar()
         self.cruf = tk.StringVar()
         self.crtf.set(data["fnt"])
@@ -91,16 +100,16 @@ class config():
         self.nsf= data["fnt"]
         self.nsuf= data["ufnt"]
         self.currenttheme= tk.StringVar()
-        self.themeli= ttk.Radiobutton(self.cont, text="Light Theme", variable=self.currenttheme, value= "light")
-        self.themedk= ttk.Radiobutton(self.cont, text="Dark Theme", variable=self.currenttheme, value= "dark")
+        self.themeli= ttk.Radiobutton(self.desct, text="Light Theme", variable=self.currenttheme, value= "light")
+        self.themedk= ttk.Radiobutton(self.desct, text="Dark Theme", variable=self.currenttheme, value= "dark")
         self.currenttheme.set(data["theme"])
-        self.txf= ttk.Label(self.cont, anchor= tk.W, text= data["fnt"].translate(str.maketrans({'{': '', '}': ''})), font= data["fnt"])
-        self.ctxf= ttk.Button(self.cont, text="Change...", command= self.cht)
-        self.uxf= ttk.Label(self.cont, anchor= tk.W, text= data["ufnt"].translate(str.maketrans({'{': '', '}': ''})), font= data["ufnt"])
-        self.cuxf= ttk.Button(self.cont, text="Change...", command= self.chu)
-        self.upt= ttk.Button(self.cont, text= "Check for updates", command= self.update)
-        self.result= ttk.Label(self.cont, text= "...", justify="left")
-        self.dwl= tk.Button(self.cont, relief="flat", activeforeground= "#0094FF", fg= "#0094FF", text="(Download)", command= self.browupt)
+        self.txf= ttk.Label(self.foont, anchor= tk.W, text= data["fnt"].translate(str.maketrans({'{': '', '}': ''})), font= data["fnt"])
+        self.ctxf= ttk.Button(self.foont, text="Change...", command= self.cht)
+        self.uxf= ttk.Label(self.foont, anchor= tk.W, text= data["ufnt"].translate(str.maketrans({'{': '', '}': ''})), font= data["ufnt"])
+        self.cuxf= ttk.Button(self.foont, text="Change...", command= self.chu)
+        self.upt= ttk.Button(self.desct, text= "Check for updates", command= self.update)
+        self.result= ttk.Label(self.desct, text= "...", justify="left")
+        self.dwl= tk.Button(self.desct, relief="flat", activeforeground= "#0094FF", fg= "#0094FF", text="(Download)", command= self.browupt)
         root.bind("<FocusIn>", self.focuz)
         self.root.protocol("WM_DELETE_WINDOW", self.ext)
     def ext(self):
@@ -111,8 +120,13 @@ class config():
         self.root.focus_force()
         self.root.bell()
     def change_tab1(self, event):
-        for widgets in self.cont.winfo_children():
-            widgets.grid_remove()
+        for widgts in self.desct.winfo_children():
+            widgts.grid_remove()
+        for widgetts in self.foont.winfo_children():
+            widgetts.grid_remove()
+        #for widgets in self.cont.winfo_children():
+            #widgets.grid_remove()
+        self.foont.grid(row=6, column=1, sticky="nsew", columnspan=5)
         self.desc.grid(row=1, column=1, sticky="nw", rowspan=4, columnspan=1)
         self.sel.grid(row= 1)
         self.gen["bg"]= "#BFDDF5"
@@ -125,61 +139,79 @@ class config():
         wmcw.set(root.winfo_width())
         wmch = tk.StringVar()
         wmch.set(root.winfo_height())
-        self.desct["text"]="Window╶──────────────────────╸"
+        self.desct["text"]=" Window "
         self.desc["text"]="   Window position (X,Y):\n\n   Window size (W, H):"
-        self.foont["text"]="Options╶──────────────────────╸"
-        self.foont.grid(row=5, column=1, sticky="w", columnspan=9)
+        self.foont["text"]=" Options "
+        #self.foont.grid(row=5, column=1, sticky="w", columnspan=9)
         self.showtn= tk.StringVar()
         self.showlc= tk.StringVar()
         self.sortx= tk.StringVar()
         self.showtn.set(data["shwtn"])
         self.showlc.set(data["shwlc"])
         self.sortx.set(data["sort"])
-        self.onftn = ttk.Checkbutton(self.cont, variable= self.showtn, text= "Show level thumbnails")
-        self.onflc = ttk.Checkbutton(self.cont, variable= self.showlc, text= "Show current line/column position")
-        self.onstr = ttk.Checkbutton(self.cont, variable= self.sortx, text= "Sort XML values alphabetically")
-        self.onftn.grid(row=6, column=1, sticky="w", padx=10, columnspan=9)
-        self.onflc.grid(row=7, column=1, sticky="w", padx=10, columnspan=9)
-        self.onstr.grid(row=8, column=1, sticky="w", padx=10, columnspan=9)
-        self.wmx = tk.Entry(self.cont, width=6)
+        self.onftn = ttk.Checkbutton(self.foont, variable= self.showtn, text= "Show level thumbnails")
+        self.onflc = ttk.Checkbutton(self.foont, variable= self.showlc, text= "Show current line/column position")
+        self.onstr = ttk.Checkbutton(self.foont, variable= self.sortx, text= "Sort XML values alphabetically")
+        self.onftn.grid(row=6, column=1, sticky="w", padx=10)
+        self.onflc.grid(row=7, column=1, sticky="w", padx=10)
+        self.onstr.grid(row=8, column=1, sticky="w", padx=10)
+        self.wmx = tk.Entry(self.desct, width=6)
         self.wmx.insert(10, wmcx)
         self.wmx.grid(row=1,column=2, sticky="nw", padx=2)
-        self.wmy = tk.Entry(self.cont, width=6, textvariable= wmcy)
+        self.wmy = tk.Entry(self.desct, width=6, textvariable= wmcy)
         self.wmy.grid(row=1,column=3, sticky="nw", padx=6)
-        self.wmw = tk.Entry(self.cont, width=6, textvariable= wmcw)
+        self.wmw = tk.Entry(self.desct, width=6, textvariable= wmcw)
         self.wmw.grid(row=2,column=2, sticky="nw", padx=2, pady=11)
-        self.wmh = tk.Entry(self.cont, width=6, textvariable= wmch)
+        self.wmh = tk.Entry(self.desct, width=6, textvariable= wmch)
         self.wmh.grid(row=2,column=3, sticky="nw", padx=6, pady=11)
-        #self.filler= ttk.Label(self.cont, text= "\n\n")
-        #self.filler.grid(row=9, column=1, ipady=0)
+        #self.filler= ttk.Label(self.desct, text="                  ")
+        #self.filler.grid(row=1, column=8)
+        self.desct.rowconfigure(1, weight=1)
+        self.desct.columnconfigure(3, weight=30)
+        self.filler= ttk.Label(self.root, text=" ")
+        self.filler.grid(row=0, column=6, sticky="ns", rowspan=4)
     def change_tab2(self, event):
-        for widgets in self.cont.winfo_children():
-            widgets.grid_remove()
+        for widgts in self.desct.winfo_children():
+            widgts.grid_remove()
+        for widgetts in self.foont.winfo_children():
+            widgetts.grid_forget()
+        #for widgets in self.cont.winfo_children():
+            #3widgets.grid_remove()
+        self.foont.grid(row=6, column=1, sticky="nsew", columnspan=5)
         self.sel.grid(row= 2)
+        #self.desc.grid_remove()
         self.theme["bg"]= "#BFDDF5"
         self.gen["bg"]= "gray94"
         self.info["bg"]= "gray94"
-        self.desct["text"]="Theme╶───────────────────────╸"
-        self.desc["text"]="   Text font:\n\n   UI font:"
+        self.desct["text"]=" Theme "
+        self.desc1["text"]="   Text font:\n\n   UI font:"
         self.themeli.grid(row=1,column=1, sticky="nw", padx=10, columnspan=3)
         self.themedk.grid(row=2,column=1, sticky="nw", padx=10, columnspan=3)
-        self.desc.grid(row=6, column=1, sticky="nw", rowspan=3, columnspan=1)
+        self.desc1.grid(row=6, column=1, sticky="nw", rowspan=3, columnspan=1)
         self.txf.grid(row=6, column=2, sticky="nw")
         self.ctxf.grid(row=6, column=3, sticky="ne")
         self.uxf.grid(row=7, column=2, sticky="nw", pady=5)
         self.cuxf.grid(row=7, column=3, sticky="ne", pady=5)
-        self.foont["text"]="Font╶────────────────────────╸"
-        self.foont.grid(row=5, column=1, sticky="w", columnspan=15)
+        self.foont["text"]=" Font "
+        #self.foont.grid(row=5, column=1, sticky="w", columnspan=15)
         #self.filler.grid(row=8, column=1, ipady=10)
     def change_tab3(self, event):
-        for widgets in self.cont.winfo_children():
-            widgets.grid_remove()
+        for widgts in self.desct.winfo_children():
+            widgts.grid_remove()
+        for widgetts in self.foont.winfo_children():
+            widgetts.grid_remove()
+        #for widgets in self.cont.winfo_children():
+            #widgets.grid_remove()
+        #self.foont.grid_remove()
+        self.foont.grid_forget()
+        self.desct.grid(sticky="nsew", rowspan=5)
         self.desc.grid(row=3, column=1, sticky="nw", rowspan=4, columnspan=9)
+        #self.foont.grid_forget()
         self.sel.grid(row= 3)
         self.info["bg"]= "#BFDDF5"
         self.gen["bg"]= "gray94"
         self.theme["bg"]= "gray94"
-        self.desct["text"]="About UCH Notepad╶─────────────────╸"
+        self.desct["text"]=" About UCH Notepad "
         self.desc["text"]="   Version 1.1\n   Made by Grim Stride using Python 3.9.0 and cx-Freeze\n   This is a heavily modified version of Real Python's Tkinter\n   tutorial\n   Icons taken from The GNOME Project and material.io"
         self.upt.grid(row=7, column=1, sticky="nw", padx=8, pady=8)
         self.result.grid(row=7, column=2)
@@ -217,13 +249,13 @@ class config():
             data["theme"]= "dark"
             self.root["bg"]= "#454545"
             self.cont["bg"]= "#454545"
-            self.desct.configure(bg="#454545", fg= "white")
+            #self.desct.configure(bg="#454545", fg= "white")
         else:
             tlight()
             data["theme"]= "light"
             self.root["bg"]= "#f0f0f0"
             self.cont["bg"]= "#f0f0f0"
-            self.desct.configure(bg="#f0f0f0", fg= "black")
+            #self.desct.configure(bg="#f0f0f0", fg= "black")
         if self.nsf != data["fnt"]:
             txt_edit["font"] = self.nsf
             data["fnt"] = self.nsf 
@@ -505,22 +537,26 @@ def tlight():
     s.configure("TSeparator", background= "#f0f0f0")
     s.configure("TFrame", background= "white")
     s.configure("TLabel", background= "#f0f0f0", foreground= "black")
+    s.configure("TLabelframe", background= "#f0f0f0", foreground= "black")
+    s.configure("TLabelframe.Label", background= "#f0f0f0", foreground= "black")
     s.configure("TCheckbutton", background= "#f0f0f0", foreground= "black")
     s.configure("TRadiobutton", background= "#f0f0f0", foreground= "black")
 def tdark():
     for change in wmcol:
         change["bg"]= "#2a2a2a"
     for change in uif:
-        change["fg"]= "white"
+        change["fg"]= "#e2e2e2"
     txt_edit["bg"]="#323232"
-    txt_edit["fg"]="#f0f0f0"
+    txt_edit["fg"]="#e2e2e2"
     txt_edit["insertbackground"]="#f0f0f0"
     btn_conf['activebackground'] = "#2a2a2a"
     s.configure("TSeparator", background= "black")
     s.configure("TFrame", background= "#323232")
-    s.configure("TLabel", background= "#454545", foreground= "white")
-    s.configure("TCheckbutton", background= "#454545", foreground= "white")
-    s.configure("TRadiobutton", background= "#454545", foreground= "white")
+    s.configure("TLabel", background= "#454545", foreground= "#e2e2e2")
+    s.configure("TLabelframe", background= "#454545", foreground= "#e2e2e2")
+    s.configure("TLabelframe.Label", background= "#454545", foreground= "#e2e2e2")
+    s.configure("TCheckbutton", background= "#454545", foreground= "#e2e2e2")
+    s.configure("TRadiobutton", background= "#454545", foreground= "#e2e2e2")
 
 def get_line1():
     ln, col = txt_edit.index("insert").split(".")
