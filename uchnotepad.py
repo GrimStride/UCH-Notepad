@@ -329,6 +329,9 @@ def open_file():
             text2 = text1.prettify(formatter=frmat)
             text3 = text2.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n", "")
             txt_edit.insert(tk.END, text3)
+            checksyntax(None)
+            #txt_edit.tag_add('<scene', "1.0", "1.0 lineend")
+            #txt_edit.tag_configure('<scene', foreground='#7f00ab')
     else:
         with open(filepath1, "r") as input_file:
             text = input_file.read()
@@ -374,7 +377,34 @@ def open_rule():
     root.title(f"{filepath} - UCH Notepad 1.1")
     txt_edit.mark_set("insert", "1.0")
     destroyTN()
+def syntax(pattern, tag, start="1.0", end="end",regexp=False):
+    #print(txt_edit.tag_names())
+    #print("happened")
+    try:
+        txt_edit.tag_remove(tag, start, end)
+    except NameError: pass
+    start = txt_edit.index(start)
+    end = txt_edit.index(end)
+    txt_edit.mark_set("matchStart", start)
+    txt_edit.mark_set("matchEnd", start)
+    txt_edit.mark_set("searchLimit", end)
 
+    count = tk.IntVar()
+    while True:
+        index = txt_edit.search(pattern, "matchEnd","searchLimit", count=count, regexp=regexp)
+        if index == "": break
+        if count.get() == 0: break # degenerate pattern which matches zero-length strings
+        txt_edit.mark_set("matchStart", index)
+        txt_edit.mark_set("matchEnd", "%s+%sc" % (index, count.get()))
+        '''try:
+            for tag in text.tag_names():
+                txt_edit.tag_remove(tag)
+        except NameError: pass'''
+        txt_edit.tag_add(tag, "matchStart", "matchEnd")
+        txt_edit.tag_configure(tag, foreground='#0000ff')
+def checksyntax(event):
+    #print("helooo")
+    syntax("<scene", "header")
 def nsave():
     global filepath
     if filepath != "":
@@ -546,9 +576,10 @@ def tdark():
         change["bg"]= "#2a2a2a"
     for change in uif:
         change["fg"]= "#e2e2e2"
-    txt_edit["bg"]="#323232"
-    txt_edit["fg"]="#e2e2e2"
-    txt_edit["insertbackground"]="#f0f0f0"
+    #txt_edit["bg"]="#323232"
+    #txt_edit["fg"]="#e2e2e2"
+    #txt_edit["insertbackground"]="#f0f0f0"
+    txt_edit.configure(bg="#323232", fg="#e2e2e2", insertbackground="#f0f0f0", selectbackground= "#93b8e7", selectforeground= "black")
     btn_conf['activebackground'] = "#2a2a2a"
     s.configure("TSeparator", background= "black")
     s.configure("TFrame", background= "#323232")
@@ -577,6 +608,7 @@ def get_line1():
     if gethash != chash:
         if chash != "68b329da9893e34099c7d8ad5cb9c940":
             root.title(f"*{filepath} - UCH Notepad 1.1")
+            #syntax("<scene", "header")
             unsaved= True
         else:
             root.title(f"*UCH Notepad 1.1")
@@ -639,6 +671,8 @@ s.configure("TButton", font= data["ufnt"])
 scroll = ttk.Scrollbar(root, orient="vertical")
 xascroll = ttk.Scrollbar(root, orient="horizontal")
 txt_edit = tk.Text(root, padx=4, undo=True, autoseparators=True, maxundo=25, font= data["fnt"], wrap="none", xscrollcommand= xascroll.set, yscrollcommand=scroll.set)
+#txt_edit.tag_add('<scene', 1.0, tk.END)
+#txt_edit.tag_configure('<scene', background='#7f00ab')
 scroll.config(command=y_scroll)
 xascroll.config(command=x_scroll)
 
@@ -679,6 +713,7 @@ txpos.grid(row=6, column=1, sticky="e")
 scroll.bind("<ButtonRelease-1>", scrllstop)
 xascroll.bind("<ButtonRelease-1>", scrllstop)
 txt_edit.bind("<ButtonRelease-1>", scrllstop)
+txt_edit.bind("<KeyRelease>", checksyntax)
 
 wmcol = (root, fr_buttons, sepfr, txpos, statusbar, btn_conf)
 uif = (txpos, statusbar)
