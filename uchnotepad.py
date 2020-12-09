@@ -51,7 +51,7 @@ class config():
         root.attributes('-disabled', True)
         self.root.focus_set()
         panel = ttk.Frame(self.root, relief="groove", borderwidth=2)
-        panel.grid(row=0, column=0, sticky="nsw", padx=8, pady=8, rowspan=8)
+        panel.grid(row=1, column=0, sticky="nsw", padx=8, rowspan=7)
         self.sel = tk.Frame(panel, bg= "#0078D7", width= 130, height=28)
         self.sel.grid(padx=2, pady=2)
         panel.genshw = tk.PhotoImage(data="R0lGODlhEgASANUAAP////7+/vv7+/r6+vn5+fj4+Pb29vX19e7u7urq6ufn597e3tra2tnZ2djY2NfX19PT08zMzLy8vKurq6qqqqmpqZ+fn52dnZycnJubm5aWlpGRkYKCgoGBgXV1dW5ubmxsbGVlZV5eXlxcXFhYWFRUVFNTU09PT01NTUdHR0FBQTg4ODExMSwsLCcnJyUlJSMjIxoaGhQUFBMTExISEgQEBAEBAQAAAP///wAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAADgALAAAAAASABIAAAaqQBwOQBwSaCyTJwIQOocDIuBxq94ozScg4boADhzrDZIVAgSqKoomvnmlxE973gEsLADDat62vaoMAAUhYiQSEy1zG0QOVidSCDJtKQABGVYVTUQjYjEgIDFiGnApVhgBAKViMApEEjVWDUQbczIiJbBWIQUADFUvNnxiKwYAFgsAHcJWH3BEF20zKFUqAmVDEGIcxRcuCddDFGIPUlFPZhEeJiw0BJpFOEEAOw==")
@@ -72,7 +72,7 @@ class config():
         #self.cont.columnconfigure(1, weight=1)
         #self.cont.rowconfigure(8, weight=1)
         self.desc = ttk.Label(self.desct, justify="left")
-        self.desct.grid(row=0, column=1, sticky="nsew", columnspan=5, pady=2)
+        self.desct.grid(row=1, column=1, sticky="nsew", columnspan=5)
         #self.desct.columnconfigure(4, weight=1)
         self.foont = ttk.Labelframe(self.root)
         self.desc1 = ttk.Label(self.foont, justify="left")
@@ -146,15 +146,24 @@ class config():
         self.showtn= tk.StringVar()
         self.showlc= tk.StringVar()
         self.sortx= tk.StringVar()
+        self.sythl= tk.StringVar()
         self.showtn.set(data["shwtn"])
         self.showlc.set(data["shwlc"])
         self.sortx.set(data["sort"])
         self.onftn = ttk.Checkbutton(self.foont, variable= self.showtn, text= "Show level thumbnails")
         self.onflc = ttk.Checkbutton(self.foont, variable= self.showlc, text= "Show current line/column position")
         self.onstr = ttk.Checkbutton(self.foont, variable= self.sortx, text= "Sort XML values alphabetically")
+        self.supp = ttk.Frame(self.foont)
+        self.onsyt = ttk.Checkbutton(self.supp, variable= self.sythl, text= "Syntax highlighting:")
         self.onftn.grid(row=6, column=1, sticky="w", padx=10)
         self.onflc.grid(row=7, column=1, sticky="w", padx=10)
         self.onstr.grid(row=8, column=1, sticky="w", padx=10)
+        self.supp.grid(row=9, column=1, sticky="w", padx=10)
+        self.onsyt.grid(row=9, column=1, sticky="w")
+        self.combo1 = ttk.Combobox(self.supp, width=17, values=('Current line', 'Current line + tags', 'All'))
+        #self.combo2 = ttk.Radiobutton(self.foont, text="Current line + tags")
+        self.combo1.grid(row=9, column=2, sticky="w")
+        #self.combo2.grid(row=10, column=1, sticky="w", padx=70)
         self.wmx = tk.Entry(self.desct, width=6)
         self.wmx.insert(10, wmcx)
         self.wmx.grid(row=1,column=2, sticky="nw", padx=2)
@@ -170,6 +179,8 @@ class config():
         self.desct.columnconfigure(3, weight=30)
         self.filler= ttk.Label(self.root, text=" ")
         self.filler.grid(row=0, column=6, sticky="ns", rowspan=4)
+        self.filler1= ttk.Label(self.root, text=" ", font= "Courier 1")
+        self.filler1.grid(row=0, column=0, sticky="new")
     def change_tab2(self, event):
         for widgts in self.desct.winfo_children():
             widgts.grid_remove()
@@ -212,7 +223,7 @@ class config():
         self.gen["bg"]= "gray94"
         self.theme["bg"]= "gray94"
         self.desct["text"]=" About UCH Notepad "
-        self.desc["text"]="   Version 1.1\n   Made by Grim Stride using Python 3.9.0 and cx-Freeze\n   This is a heavily modified version of Real Python's Tkinter\n   tutorial\n   Icons taken from The GNOME Project and material.io"
+        self.desc["text"]="   Version 1.2\n   Made by Grim Stride using Python 3.9.0 and cx-Freeze\n   This is a heavily modified version of Real Python's Tkinter\n   tutorial\n   Text editor functionality based on Notepad++\n   Icons taken from The GNOME Project and material.io"
         self.upt.grid(row=7, column=1, sticky="nw", padx=8, pady=8)
         self.result.grid(row=7, column=2)
         #self.filler.grid(row=8, column=1, ipady=11)
@@ -221,7 +232,7 @@ class config():
             r = requests.get("https://github.com/GrimStride/UCH-Notepad/releases/latest")
             e = r.url.replace("https:/", "")
             d = os.path.basename(e)
-            if d > str(1.1):
+            if d > str(1.2):
                 self.result["text"]= "Version " + d + " is available"
                 self.dwl.configure(bg= self.root["bg"], activebackground= self.root["bg"])
                 self.dwl.grid(row=7, column=3, pady=3)
@@ -346,7 +357,7 @@ def open_file():
     global chash
     chash = hashlib.md5(bhash.encode('utf-8')).hexdigest()
     txt_edit.mark_set("insert", "1.0")
-    root.title(f"{filepath} - UCH Notepad 1.1")
+    root.title(f"{filepath} - UCH Notepad 1.2")
 
 def open_rule():
     filepath1 = askopenfilename(
@@ -374,7 +385,7 @@ def open_rule():
     bhash= txt_edit.get(1.0, tk.END)
     global chash
     chash = hashlib.md5(bhash.encode('utf-8')).hexdigest()
-    root.title(f"{filepath} - UCH Notepad 1.1")
+    root.title(f"{filepath} - UCH Notepad 1.2")
     txt_edit.mark_set("insert", "1.0")
     destroyTN()
 def syntax(pattern, tag, color, fchar, long, start, end,regexp=False):
@@ -382,7 +393,7 @@ def syntax(pattern, tag, color, fchar, long, start, end,regexp=False):
     #print("happened")
     try:
         txt_edit.tag_remove(tag, start, end)
-        txt_edit.tag_remove(tag + "end", start, end)
+        #txt_edit.tag_remove(tag + "end", start, end)
     except NameError: pass
     start = txt_edit.index(start)
     end = txt_edit.index(end)
@@ -401,7 +412,7 @@ def syntax(pattern, tag, color, fchar, long, start, end,regexp=False):
             for tag in text.tag_names():
                 txt_edit.tag_remove(tag)
         except NameError: pass'''
-        txt_edit.tag_add(tag, "matchStart", "matchEnd")
+        txt_edit.tag_add(tag, "matchStart+1c", "matchEnd")
         #txt_edit.tag_add(tag + "end", "matchStart lineend-2c", "matchEnd lineend")
         txt_edit.tag_configure(tag, foreground=color)
         #if txt_edit.get("matchStart lineend-" + long + "c", "matchEnd lineend") == fchar and fchar != None:
@@ -414,8 +425,8 @@ def syntax1(pattern, tag, color, start, end,regexp=False):
     #print(txt_edit.tag_names())
     #print("happened")
     try:
-        txt_edit.tag_delete(tag, start, end)
-        txt_edit.tag_delete(tag + "end", start, end)
+        txt_edit.tag_remove(tag, start, end)
+        txt_edit.tag_remove(tag + "end", start, end)
     except NameError: pass
     start = txt_edit.index(start)
     end = txt_edit.index(end)
@@ -440,12 +451,14 @@ def syntax1(pattern, tag, color, start, end,regexp=False):
 def checksyntax(event):
     #print("helooo")
     syntax("<scene ", "header", "#008000", ">", "1", "1.0", "end")
+    syntax("</scene", "footer", "#008000", ">", "1", "1.0", "end")
     syntax("<mods ", "mod", "#881280", "/>", "2", "1.0", "end")
     #syntax("block ", "blocks", "#d0450f")
     syntax("<block ", "blocks", "#BC4B00", "/>", "2", "1.0", "end")
     #syntax("moved ", "moveds", "#7f0000")
-    syntax("<moved ", "moveds", "#0068b2", "/>", "2", "1.0", "end")
-    syntax(" sceneID=", "scids", "#000080", None, "2", "1.0", "end")
+    syntax("<moved ", "moveds", "#9B933B", "/>", "2", "1.0", "end")
+    syntax("<destroyed ", "destroys", "#880000", "/>", "2", "1.0", "end")
+    '''syntax(" sceneID=", "scids", "#000080", None, "2", "1.0", "end")
     syntax(" blockID=", "bids", "#000080", None, "2", "1.0", "end")
     syntax(" pX=", "pxids", "#000080", None, "2", "1.0", "end")
     syntax(" pY=", "pyids", "#000080", None, "2", "1.0", "end")
@@ -461,19 +474,22 @@ def checksyntax(event):
     syntax(" parentID=", "parids", "#000080", None, "2", "1.0", "end")
     syntax(" mainID=", "mids", "#000080", None, "2", "1.0", "end")
     syntax(" subElementName=", "subids", "#000080", None, "2", "1.0", "end")
-    syntax(" placeableID=", "plaids", "#000080", None, "2", "1.0", "end")
-    #syntax1("=", "sids", "#000080", "1.0", "end")
+    syntax(" placeableID=", "plaids", "#000080", None, "2", "1.0", "end")'''
+    syntax1("=", "sids", "#000080", "1.0", "end")
     #syntax(" blockID=", "bids", "#000080", None, "1")
 def checksx(event):
     #print("helooo")
     syntax("<scene ", "header", "#008000", ">", "1", "insert linestart", "insert lineend")
-    syntax("<mods ", "mod", "#881280", "/>", "2", "insert linestart", "insert lineend")
+    syntax("</scene", "footer", "#008000", ">", "1", "insert linestart", "insert lineend")
+    syntax("<mods ", "mod", "#0068b2", "/>", "2", "insert linestart", "insert lineend")
     #syntax("block ", "blocks", "#d0450f")
     syntax("<block ", "blocks", "#BC4B00", "/>", "2", "insert linestart", "insert lineend")
     #syntax("moved ", "moveds", "#7f0000")
-    syntax("<moved ", "moveds", "#7f3300", "/>", "insert linestart", "insert lineend")
+    syntax("<moved ", "moveds", "#7f3300", "/>", "2", "insert linestart", "insert lineend")
+    syntax("<destroyed ", "destroys", "#880000", "/>", "2", "insert linestart", "insert lineend")
     #syntax1("=", "sids", "#000080", "insert linestart", "insert lineend")
     #syntax(" blockID=", "bids", "#000080", None, "1")
+    syntax1("=", "sids", "#000080", "insert linestart", "insert lineend")
 def nsave():
     global filepath
     if filepath != "":
@@ -489,7 +505,7 @@ def nsave():
         bhash= txt_edit.get(1.0, tk.END)
         global chash
         chash = hashlib.md5(bhash.encode('utf-8')).hexdigest()
-        root.title(f"{filepath} - UCH Notepad 1.1")
+        root.title(f"{filepath} - UCH Notepad 1.2")
     else: save_file()
 
 def save_file():
@@ -545,7 +561,7 @@ def save_file():
     bhash= txt_edit.get(1.0, tk.END)
     global chash
     chash = hashlib.md5(bhash.encode('utf-8')).hexdigest()
-    root.title(f"{filepath} - UCH Notepad 1.1")
+    root.title(f"{filepath} - UCH Notepad 1.2")
 
 def TButton():
     destroyTN()
@@ -677,20 +693,28 @@ def get_line1():
     gethash= hashlib.md5(cwork.encode('utf-8')).hexdigest()
     if gethash != chash:
         if chash != "68b329da9893e34099c7d8ad5cb9c940":
-            root.title(f"*{filepath} - UCH Notepad 1.1")
+            root.title(f"*{filepath} - UCH Notepad 1.2")
             #syntax("<scene", "header")
             unsaved= True
         else:
-            root.title(f"*UCH Notepad 1.1")
+            root.title(f"*UCH Notepad 1.2")
             unsaved= True
     else:
         if chash != "68b329da9893e34099c7d8ad5cb9c940":
-            root.title(f"{filepath} - UCH Notepad 1.1")
+            root.title(f"{filepath} - UCH Notepad 1.2")
             unsaved= False
         else:
-            root.title(f"UCH Notepad 1.1")
+            root.title(f"UCH Notepad 1.2")
             unsaved= False
-    root.after(33, get_line1)
+    try:
+        txt_edit.tag_delete("curr1", "1.0", "end")
+        txt_edit.tag_delete("curr2", "1.0", "end")
+    except NameError: pass
+    txt_edit.tag_add("curr1", "insert linestart", "insert")
+    txt_edit.tag_add("curr2", "insert", "insert lineend")
+    txt_edit.tag_configure("curr1", selectbackground= "#c0c0c0", background="#e8e8ff")
+    txt_edit.tag_configure("curr2", selectbackground= "#c0c0c0", background="#e8e8ff")
+    root.after(15, get_line1)
 
 def x_scroll(*args):
     global shldiscr
@@ -710,6 +734,14 @@ def y_scroll(*args):
 def scrllstop(event):
     shldiscr = 0
     txt_edit.config(state="normal")
+    '''try:
+        txt_edit.tag_delete("curr1", "1.0", "end")
+        txt_edit.tag_delete("curr2", "1.0", "end")
+    except NameError: pass
+    txt_edit.tag_add("curr1", "insert-1c linestart", "insert-1c")
+    txt_edit.tag_add("curr2", "insert+1c", "insert+1c lineend")
+    txt_edit.tag_configure("curr1", background="#e8e8ff")
+    txt_edit.tag_configure("curr2", background="#e8e8ff")'''
 def winquit():
     if unsaved == True:
         a= messagebox.askyesnocancel(parent= root, message='Want to save your changes?', icon='warning', title='Unsaved Changes')
@@ -725,7 +757,7 @@ updateJson()
 if data["sort"] == False: frmat = UnsortedAttributes()
 else: frmat = None
 root = tk.Tk()
-root.title("UCH Notepad 1.1")
+root.title("UCH Notepad 1.2")
 root.geometry(data["wm"])
 root.minsize(200,270)
 root.state(data["state"])
