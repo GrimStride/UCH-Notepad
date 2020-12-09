@@ -13,6 +13,7 @@ chash = "68b329da9893e34099c7d8ad5cb9c940"
 filepath= ""
 unsaved= False
 frmat = None
+linec = "1.0"
 def loadJson():
     f = open(os.path.join(sys.path[0], 'config.json'), "r")
     data= json.loads(f.read())
@@ -391,6 +392,7 @@ def open_rule():
 def syntax(pattern, tag, color, fchar, long, start, end,regexp=False):
     #print(txt_edit.tag_names())
     #print("happened")
+    print(pattern[1:2])
     try:
         txt_edit.tag_remove(tag, start, end)
         #txt_edit.tag_remove(tag + "end", start, end)
@@ -676,13 +678,15 @@ def tdark():
     s.configure("TRadiobutton", background= "#454545", foreground= "#e2e2e2")
 
 def get_line1():
-    ln, col = txt_edit.index("insert").split(".")
-    coll= int(float(col) + 1)
+    #ln, col = txt_edit.index("insert").split(".")
+    #coll= int(float(col) + 1)
     global txpos
     global chash
     global filepath
     global unsaved
     if data["shwlc"] == True:
+        ln, col = txt_edit.index("insert").split(".")
+        coll= int(float(col) + 1)
         txpos["text"]= "Ln: " + ln + "   Col: " + str(coll)
     else: pass
     if shldiscr == 0:
