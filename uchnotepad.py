@@ -31,8 +31,10 @@ def saveJson():
 def updateJson():
     try:
         a= data["sort"]
+        b= data["syntax"]
     except KeyError:
         data["sort"]= False
+        data["syntax"]= 1
 class config():
     def __init__(self):
         global data
@@ -156,11 +158,13 @@ class config():
         self.onstr = ttk.Checkbutton(self.foont, variable= self.sortx, text= "Sort XML values alphabetically")
         self.supp = ttk.Frame(self.foont)
         self.onsyt = ttk.Checkbutton(self.supp, variable= self.sythl, text= "Syntax highlighting:")
+        self.warn = ttk.Label(self.foont, text= "Warning: \"All\" will increase lag if used with small font size")
         self.onftn.grid(row=6, column=1, sticky="w", padx=10)
         self.onflc.grid(row=7, column=1, sticky="w", padx=10)
         self.onstr.grid(row=8, column=1, sticky="w", padx=10)
         self.supp.grid(row=9, column=1, sticky="w", padx=10)
         self.onsyt.grid(row=9, column=1, sticky="w")
+        self.warn.grid(row=10, column=1, sticky="w", padx=10)
         self.combo1 = ttk.Combobox(self.supp, width=17, values=('Current line', 'Current line + tags', 'All'))
         #self.combo2 = ttk.Radiobutton(self.foont, text="Current line + tags")
         self.combo1.grid(row=9, column=2, sticky="w")
@@ -389,10 +393,10 @@ def open_rule():
     root.title(f"{filepath} - UCH Notepad 1.2")
     txt_edit.mark_set("insert", "1.0")
     destroyTN()
-def syntax(pattern, tag, color, fchar, long, start, end,regexp=False):
+def syntax(pattern, tag, color, start, end,regexp=False):
     #print(txt_edit.tag_names())
     #print("happened")
-    print(pattern[1:2])
+    #print(pattern[-3:])
     try:
         txt_edit.tag_remove(tag, start, end)
         #txt_edit.tag_remove(tag + "end", start, end)
@@ -414,84 +418,39 @@ def syntax(pattern, tag, color, fchar, long, start, end,regexp=False):
             for tag in text.tag_names():
                 txt_edit.tag_remove(tag)
         except NameError: pass'''
-        txt_edit.tag_add(tag, "matchStart+1c", "matchEnd")
-        #txt_edit.tag_add(tag + "end", "matchStart lineend-2c", "matchEnd lineend")
-        txt_edit.tag_configure(tag, foreground=color)
+        if pattern[-1] == " ":
+            txt_edit.tag_add(tag, "matchStart+1c", "matchEnd")
+            #txt_edit.tag_add(tag + "end", "matchStart lineend-2c", "matchEnd lineend")
+            txt_edit.tag_configure(tag, foreground=color)
+        elif pattern[-1] == ">":
+            txt_edit.tag_add(tag, "matchStart+1c", "matchEnd-1c")
+            txt_edit.tag_configure(tag, foreground=color)
+        else:
+            txt_edit.tag_add(tag, "matchStart-1c wordstart", "matchEnd")
+            txt_edit.tag_configure(tag, foreground=color)
         #if txt_edit.get("matchStart lineend-" + long + "c", "matchEnd lineend") == fchar and fchar != None:
             #txt_edit.tag_add(tag + "end", "matchStart lineend-" + long + "c", "matchEnd lineend")
             #txt_edit.tag_configure(tag + "end", foreground=color)
         #elif fchar == None:
             #txt_edit.tag_add(tag + "end", "matchStart wordstart", "matchEnd")
             #txt_edit.tag_configure(tag + "end", foreground=color)
-def syntax1(pattern, tag, color, start, end,regexp=False):
-    #print(txt_edit.tag_names())
-    #print("happened")
-    try:
-        txt_edit.tag_remove(tag, start, end)
-        txt_edit.tag_remove(tag + "end", start, end)
-    except NameError: pass
-    start = txt_edit.index(start)
-    end = txt_edit.index(end)
-    txt_edit.mark_set("matchStart", start)
-    txt_edit.mark_set("matchEnd", start)
-    txt_edit.mark_set("searchLimit", end)
 
-    count = tk.IntVar()
-    while True:
-        index = txt_edit.search(pattern, "matchEnd","searchLimit", count=count, regexp=regexp)
-        if index == "": break
-        if count.get() == 0: break # degenerate pattern which matches zero-length strings
-        txt_edit.mark_set("matchStart", index)
-        txt_edit.mark_set("matchEnd", "%s+%sc" % (index, count.get()))
-        '''try:
-            for tag in text.tag_names():
-                txt_edit.tag_remove(tag)
-        except NameError: pass'''
-        txt_edit.tag_add(tag, "matchStart-1c wordstart", "matchEnd")
-        #txt_edit.tag_add(tag + "end", "matchStart lineend-2c", "matchEnd lineend")
-        txt_edit.tag_configure(tag, foreground=color)
 def checksyntax(event):
-    #print("helooo")
-    syntax("<scene ", "header", "#008000", ">", "1", "1.0", "end")
-    syntax("</scene", "footer", "#008000", ">", "1", "1.0", "end")
-    syntax("<mods ", "mod", "#881280", "/>", "2", "1.0", "end")
-    #syntax("block ", "blocks", "#d0450f")
-    syntax("<block ", "blocks", "#BC4B00", "/>", "2", "1.0", "end")
-    #syntax("moved ", "moveds", "#7f0000")
-    syntax("<moved ", "moveds", "#9B933B", "/>", "2", "1.0", "end")
-    syntax("<destroyed ", "destroys", "#880000", "/>", "2", "1.0", "end")
-    '''syntax(" sceneID=", "scids", "#000080", None, "2", "1.0", "end")
-    syntax(" blockID=", "bids", "#000080", None, "2", "1.0", "end")
-    syntax(" pX=", "pxids", "#000080", None, "2", "1.0", "end")
-    syntax(" pY=", "pyids", "#000080", None, "2", "1.0", "end")
-    syntax(" pZ=", "pzids", "#000080", None, "2", "1.0", "end")
-    syntax(" rX=", "rxids", "#000080", None, "2", "1.0", "end")
-    syntax(" rY=", "ryids", "#000080", None, "2", "1.0", "end")
-    syntax(" rZ=", "rzids", "#000080", None, "2", "1.0", "end")
-    syntax(" sX=", "sxids", "#000080", None, "2", "1.0", "end")
-    syntax(" sY=", "syids", "#000080", None, "2", "1.0", "end")
-    syntax(" sZ=", "szids", "#000080", None, "2", "1.0", "end")
-    syntax(" pX=", "pxids", "#000080", None, "2", "1.0", "end")
-    syntax(" pY=", "pyids", "#000080", None, "2", "1.0", "end")
-    syntax(" parentID=", "parids", "#000080", None, "2", "1.0", "end")
-    syntax(" mainID=", "mids", "#000080", None, "2", "1.0", "end")
-    syntax(" subElementName=", "subids", "#000080", None, "2", "1.0", "end")
-    syntax(" placeableID=", "plaids", "#000080", None, "2", "1.0", "end")'''
-    syntax1("=", "sids", "#000080", "1.0", "end")
-    #syntax(" blockID=", "bids", "#000080", None, "1")
+    syntax("<scene ", "header", "#008000", "1.0", "end")
+    syntax("</scene>", "footer", "#008000", "1.0", "end")
+    syntax("<mods ", "mod", "#881280", "1.0", "end")
+    syntax("<block ", "blocks", "#bc4b00", "1.0", "end")
+    syntax("<moved ", "moveds", "#9b933b", "1.0", "end")
+    syntax("<destroyed ", "destroys", "#880000", "1.0", "end")
+    syntax("=", "sids", "#000080", "1.0", "end")
 def checksx(event):
-    #print("helooo")
-    syntax("<scene ", "header", "#008000", ">", "1", "insert linestart", "insert lineend")
-    syntax("</scene", "footer", "#008000", ">", "1", "insert linestart", "insert lineend")
-    syntax("<mods ", "mod", "#0068b2", "/>", "2", "insert linestart", "insert lineend")
-    #syntax("block ", "blocks", "#d0450f")
-    syntax("<block ", "blocks", "#BC4B00", "/>", "2", "insert linestart", "insert lineend")
-    #syntax("moved ", "moveds", "#7f0000")
-    syntax("<moved ", "moveds", "#7f3300", "/>", "2", "insert linestart", "insert lineend")
-    syntax("<destroyed ", "destroys", "#880000", "/>", "2", "insert linestart", "insert lineend")
-    #syntax1("=", "sids", "#000080", "insert linestart", "insert lineend")
-    #syntax(" blockID=", "bids", "#000080", None, "1")
-    syntax1("=", "sids", "#000080", "insert linestart", "insert lineend")
+    syntax("<scene ", "header", "#008000", "insert linestart", "insert lineend")
+    syntax("</scene>", "footer", "#008000", "insert linestart", "insert lineend")
+    syntax("<mods ", "mod", "#0068b2", "insert linestart", "insert lineend")
+    syntax("<block ", "blocks", "#bc4b00", "insert linestart", "insert lineend")
+    syntax("<moved ", "moveds", "#9b933b", "insert linestart", "insert lineend")
+    syntax("<destroyed ", "destroys", "#880000", "insert linestart", "insert lineend")
+    syntax("=", "sids", "#000080", "insert linestart", "insert lineend")
 def nsave():
     global filepath
     if filepath != "":
