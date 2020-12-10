@@ -436,21 +436,39 @@ def syntax(pattern, tag, color, start, end,regexp=False):
             #txt_edit.tag_configure(tag + "end", foreground=color)
 
 def checksyntax(event):
-    syntax("<scene ", "header", "#008000", "1.0", "end")
-    syntax("</scene>", "footer", "#008000", "1.0", "end")
-    syntax("<mods ", "mod", "#881280", "1.0", "end")
-    syntax("<block ", "blocks", "#bc4b00", "1.0", "end")
-    syntax("<moved ", "moveds", "#9b933b", "1.0", "end")
-    syntax("<destroyed ", "destroys", "#880000", "1.0", "end")
-    syntax("=", "sids", "#000080", "1.0", "end")
+    #print(event)
+    if event == None:
+        strt= "1.0"
+        fin= "end"
+    else:
+        strt= "insert linestart"
+        fin= "insert lineend"
+    if data["theme"] == "dark":
+        colh= "#63bf63"
+        colr= "#ab758b"
+        colb= "#d4863b"
+        colm= "#9b933b"
+        cold= "#f85149"
+        colt= "#569cd6"
+    else:
+        colh= "#008000"
+        colr= "#bc2b6a"
+        colb= "#bc4b00"
+        colm= "#a88b1c"
+        cold= "#880000"
+        colt= "#3d5aef"
+    syntax("<scene ", "header", colh, strt, fin)
+    syntax("</scene>", "footer", colh, strt, fin)
+    syntax("<mods ", "mod", colr, strt, fin)
+    syntax("<block ", "blocks", colb, strt, fin)
+    syntax("<moved ", "moveds", colm, strt, fin)
+    syntax("<destroyed ", "destroys", cold, strt, fin)
+    syntax("=", "sids", colt, strt, fin)
 def checksx(event):
-    syntax("<scene ", "header", "#008000", "insert linestart", "insert lineend")
-    syntax("</scene>", "footer", "#008000", "insert linestart", "insert lineend")
-    syntax("<mods ", "mod", "#0068b2", "insert linestart", "insert lineend")
-    syntax("<block ", "blocks", "#bc4b00", "insert linestart", "insert lineend")
-    syntax("<moved ", "moveds", "#9b933b", "insert linestart", "insert lineend")
-    syntax("<destroyed ", "destroys", "#880000", "insert linestart", "insert lineend")
-    syntax("=", "sids", "#000080", "insert linestart", "insert lineend")
+    #print("as")
+    checksyntax(None)
+def modf(event):
+    print(event)
 def nsave():
     global filepath
     if filepath != "":
@@ -620,21 +638,21 @@ def tlight():
     s.configure("TRadiobutton", background= "#f0f0f0", foreground= "black")
 def tdark():
     for change in wmcol:
-        change["bg"]= "#2a2a2a"
+        change["bg"]= "#242424"
     for change in uif:
-        change["fg"]= "#e2e2e2"
+        change["fg"]= "#dedede"
     #txt_edit["bg"]="#323232"
     #txt_edit["fg"]="#e2e2e2"
     #txt_edit["insertbackground"]="#f0f0f0"
-    txt_edit.configure(bg="#323232", fg="#e2e2e2", insertbackground="#e2e2e2", selectbackground= "#717171", selectforeground= "#e2e2e2")
-    btn_conf['activebackground'] = "#2a2a2a"
+    txt_edit.configure(bg="#2e2e2e", fg="#dedede", insertbackground="#dedede", selectbackground= "#717171", selectforeground= "#e2e2e2")
+    btn_conf['activebackground'] = "#2e2e2e"
     s.configure("TSeparator", background= "black")
     s.configure("TFrame", background= "#323232")
-    s.configure("TLabel", background= "#454545", foreground= "#e2e2e2")
-    s.configure("TLabelframe", background= "#454545", foreground= "#e2e2e2")
-    s.configure("TLabelframe.Label", background= "#454545", foreground= "#e2e2e2")
-    s.configure("TCheckbutton", background= "#454545", foreground= "#e2e2e2")
-    s.configure("TRadiobutton", background= "#454545", foreground= "#e2e2e2")
+    s.configure("TLabel", background= "#454545", foreground= "#dedede")
+    s.configure("TLabelframe", background= "#454545", foreground= "#dedede")
+    s.configure("TLabelframe.Label", background= "#454545", foreground= "#dedede")
+    s.configure("TCheckbutton", background= "#454545", foreground= "#dedede")
+    s.configure("TRadiobutton", background= "#454545", foreground= "#dedede")
 
 def get_line1():
     #ln, col = txt_edit.index("insert").split(".")
@@ -673,10 +691,16 @@ def get_line1():
         txt_edit.tag_delete("curr1", "1.0", "end")
         txt_edit.tag_delete("curr2", "1.0", "end")
     except NameError: pass
+    if data["theme"] == "dark":
+        selc= "#717171"
+        curc= "#394447"
+    else:
+        selc= "#c0c0c0"
+        curc= "#e8e8ff"
     txt_edit.tag_add("curr1", "insert linestart", "insert")
     txt_edit.tag_add("curr2", "insert", "insert lineend")
-    txt_edit.tag_configure("curr1", selectbackground= "#c0c0c0", background="#e8e8ff")
-    txt_edit.tag_configure("curr2", selectbackground= "#c0c0c0", background="#e8e8ff")
+    txt_edit.tag_configure("curr1", selectbackground= selc, background= curc)
+    txt_edit.tag_configure("curr2", selectbackground= selc, background= curc)
     root.after(15, get_line1)
 
 def x_scroll(*args):
@@ -735,7 +759,7 @@ s.configure("TButton", font= data["ufnt"])
 
 scroll = ttk.Scrollbar(root, orient="vertical")
 xascroll = ttk.Scrollbar(root, orient="horizontal")
-txt_edit = tk.Text(root, padx=4, undo=True, autoseparators=True, maxundo=25, font= data["fnt"], wrap="none", xscrollcommand= xascroll.set, yscrollcommand=scroll.set)
+txt_edit = tk.Text(root, padx=4, undo=True, autoseparators=True, font= data["fnt"], wrap="none", xscrollcommand= xascroll.set, yscrollcommand=scroll.set)
 #txt_edit.tag_add('<scene', 1.0, tk.END)
 #txt_edit.tag_configure('<scene', background='#7f00ab')
 scroll.config(command=y_scroll)
@@ -778,7 +802,10 @@ txpos.grid(row=6, column=1, sticky="e")
 scroll.bind("<ButtonRelease-1>", scrllstop)
 xascroll.bind("<ButtonRelease-1>", scrllstop)
 txt_edit.bind("<ButtonRelease-1>", scrllstop)
-txt_edit.bind("<KeyRelease>", checksx)
+txt_edit.bind("<KeyRelease>", checksyntax)
+txt_edit.bind("<KeyRelease-Control_L>", checksx)
+txt_edit.bind("<KeyRelease-Control_R>", checksx)
+#txt_edit.bind("<<Modified>>", modf)
 
 wmcol = (root, fr_buttons, sepfr, txpos, statusbar, btn_conf)
 uif = (txpos, statusbar)
