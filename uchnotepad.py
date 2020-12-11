@@ -1,11 +1,12 @@
 import tkinter as tk
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from tkinter import ttk, font, messagebox
-import lzma, pathlib, PIL, bs4, os, win32clipboard, hashlib, json, sys, requests, webbrowser
+import lzma, pathlib, PIL, bs4, os, win32clipboard, hashlib, json, sys, urllib, webbrowser
 from pathlib import Path
 from bs4 import BeautifulSoup
 from PIL import ImageTk, Image, ImageGrab
 from io import BytesIO
+from urllib import request, error
 
 shldiscr= 1
 check = 0
@@ -158,14 +159,14 @@ class config():
         self.onstr = ttk.Checkbutton(self.foont, variable= self.sortx, text= "Sort XML values alphabetically")
         self.supp = ttk.Frame(self.foont)
         self.onsyt = ttk.Checkbutton(self.supp, variable= self.sythl, text= "Syntax highlighting:")
-        self.warn = ttk.Label(self.foont, text= "Warning: \"All\" will increase lag if used with small font size")
+        self.warn = ttk.Label(self.foont, font= "{Segoe UI} 8", text= "Warning: Syntax highlighting \"Everything\" will increase\nloading times and scroll lag if used with small font size")
         self.onftn.grid(row=6, column=1, sticky="w", padx=10)
         self.onflc.grid(row=7, column=1, sticky="w", padx=10)
         self.onstr.grid(row=8, column=1, sticky="w", padx=10)
         self.supp.grid(row=9, column=1, sticky="w", padx=10)
         self.onsyt.grid(row=9, column=1, sticky="w")
         self.warn.grid(row=10, column=1, sticky="w", padx=10)
-        self.combo1 = ttk.Combobox(self.supp, width=17, values=('Current line', 'Current line + tags', 'All'))
+        self.combo1 = ttk.Combobox(self.supp, width=17, values=('Current line', 'Current line + tags', 'Everything'))
         #self.combo2 = ttk.Radiobutton(self.foont, text="Current line + tags")
         self.combo1.grid(row=9, column=2, sticky="w")
         #self.combo2.grid(row=10, column=1, sticky="w", padx=70)
@@ -234,15 +235,15 @@ class config():
         #self.filler.grid(row=8, column=1, ipady=11)
     def update(self):
         try:
-            r = requests.get("https://github.com/GrimStride/UCH-Notepad/releases/latest")
-            e = r.url.replace("https:/", "")
+            r = urllib.request.urlopen("https://github.com/GrimStride/UCH-Notepad/releases/latest")
+            e = r.geturl()
             d = os.path.basename(e)
             if d > str(1.2):
                 self.result["text"]= "Version " + d + " is available"
                 self.dwl.configure(bg= self.root["bg"], activebackground= self.root["bg"])
                 self.dwl.grid(row=7, column=3, pady=3)
             else: self.result["text"]= "No updates are available"
-        except requests.ConnectionError: self.result["text"]= "No internet connection"
+        except urllib.error.URLError: self.result["text"]= "No internet connection"
     def browupt(self):
         webbrowser.open('https://github.com/GrimStride/UCH-Notepad/releases/latest', new=2)
     def okb(self):
@@ -331,14 +332,22 @@ class UnsortedAttributes(bs4.formatter.XMLFormatter):
         for k, v in tag.attrs.items():
             yield k, v
 
-def open_file():
-    filepath1 = askopenfilename(
-        initialdir=str(Path.home()) + "/AppData/LocalLow/Clever Endeavour Games/Ultimate Chicken Horse/snapshots",filetypes=(("UCH Compressed Level", "*.v.snapshot *.c.snapshot"), ("UCH Compressed Party Level", "*.v.snapshot"), ("UCH Compressed Challenge Level", "*.c.snapshot"), ("UCH Uncompressed Party Level", "*.v"), ("UCH Uncompressed Challenge Level", "*.c"), ("All Files", "*.*")))
+def open_file(mode):
+    if mode != "2":
+        if mode == "1":
+            stype= "rules"
+            ftype= (("UCH Compressed Ruleset", "*.ruleset"), ("All Files", "*.*"))
+        else:
+            stype= "snapshots"
+            ftype= (("UCH Compressed Level", "*.v.snapshot *.c.snapshot"), ("UCH Compressed Party Level", "*.v.snapshot"), ("UCH Compressed Challenge Level", "*.c.snapshot"), ("UCH Uncompressed Party Level", "*.v"), ("UCH Uncompressed Challenge Level", "*.c"), ("All Files", "*.*"))
+        filepath1 = askopenfilename(
+            initialdir=str(Path.home()) + "/AppData/LocalLow/Clever Endeavour Games/Ultimate Chicken Horse/" + stype, filetypes= ftype)
+    else: filepath1= sys.argv[1]
     if not filepath1:
         return
     txt_edit.delete("1.0", tk.END)
     extension = os.path.splitext(filepath1)[1]
-    if extension == ".snapshot":
+    if extension == ".snapshot" or extension == ".ruleset":
         with lzma.open(filepath1, "r") as input_file:
             text = input_file.read()
             text1 = BeautifulSoup(text, "xml")
@@ -437,9 +446,10 @@ def syntax(pattern, tag, color, start, end,regexp=False):
 
 def checksyntax(event):
     #print(event)
-    if event == None:
+    if event == None or event.keysym == "Control_L" or event.keysym == "Control_R":
         strt= "1.0"
         fin= "end"
+        #print("hey")
     else:
         strt= "insert linestart"
         fin= "insert lineend"
@@ -456,7 +466,7 @@ def checksyntax(event):
         colb= "#bc4b00"
         colm= "#a88b1c"
         cold= "#880000"
-        colt= "#3d5aef"
+        colt= "#006abc"
     syntax("<scene ", "header", colh, strt, fin)
     syntax("</scene>", "footer", colh, strt, fin)
     syntax("<mods ", "mod", colr, strt, fin)
@@ -466,6 +476,7 @@ def checksyntax(event):
     syntax("=", "sids", colt, strt, fin)
 def checksx(event):
     #print("as")
+    print(event.keysym)
     checksyntax(None)
 def modf(event):
     print(event)
@@ -644,7 +655,7 @@ def tdark():
     #txt_edit["bg"]="#323232"
     #txt_edit["fg"]="#e2e2e2"
     #txt_edit["insertbackground"]="#f0f0f0"
-    txt_edit.configure(bg="#2e2e2e", fg="#dedede", insertbackground="#dedede", selectbackground= "#717171", selectforeground= "#e2e2e2")
+    txt_edit.configure(bg="#2e2e2e", fg="#dedede", insertbackground="#dedede", selectbackground= "#4d5d60", selectforeground= "#e2e2e2")
     btn_conf['activebackground'] = "#2e2e2e"
     s.configure("TSeparator", background= "black")
     s.configure("TFrame", background= "#323232")
@@ -692,7 +703,7 @@ def get_line1():
         txt_edit.tag_delete("curr2", "1.0", "end")
     except NameError: pass
     if data["theme"] == "dark":
-        selc= "#717171"
+        selc= "#4d5d60"
         curc= "#394447"
     else:
         selc= "#c0c0c0"
@@ -766,8 +777,8 @@ scroll.config(command=y_scroll)
 xascroll.config(command=x_scroll)
 
 fr_buttons = tk.Frame(root)
-btn_open = ttk.Button(fr_buttons, text="Open Level", command=open_file)
-btn_orul = ttk.Button(fr_buttons, text="Open Ruleset", command=open_rule)
+btn_open = ttk.Button(fr_buttons, text="Open Level", command= lambda:[open_file("0")])
+btn_orul = ttk.Button(fr_buttons, text="Open Ruleset", command= lambda:[open_file("1")])
 btn_nsav = ttk.Button(fr_buttons, text="Save", command=nsave)
 btn_save = ttk.Button(fr_buttons, text="Save As...", command=save_file)
 btn_open.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
@@ -803,8 +814,8 @@ scroll.bind("<ButtonRelease-1>", scrllstop)
 xascroll.bind("<ButtonRelease-1>", scrllstop)
 txt_edit.bind("<ButtonRelease-1>", scrllstop)
 txt_edit.bind("<KeyRelease>", checksyntax)
-txt_edit.bind("<KeyRelease-Control_L>", checksx)
-txt_edit.bind("<KeyRelease-Control_R>", checksx)
+txt_edit.bind("<KeyRelease-Control_L>", checksyntax)
+txt_edit.bind("<KeyRelease-Control_R>", checksyntax)
 #txt_edit.bind("<<Modified>>", modf)
 
 wmcol = (root, fr_buttons, sepfr, txpos, statusbar, btn_conf)
@@ -812,6 +823,8 @@ uif = (txpos, statusbar)
 buttons = (btn_open, btn_orul, btn_nsav, btn_save)
 if data["theme"] == "dark": tdark()
 else: tlight()
+try: open_file("2")
+except IndexError: pass
 root.after(5, get_line1)
 
 root.mainloop()
