@@ -373,35 +373,6 @@ def open_file(mode):
     txt_edit.mark_set("insert", "1.0")
     root.title(f"{filepath} - UCH Notepad 1.2")
 
-def open_rule():
-    filepath1 = askopenfilename(
-        initialdir=str(Path.home()) + "/AppData/LocalLow/Clever Endeavour Games/Ultimate Chicken Horse/rules",filetypes=(("UCH Compressed Ruleset", "*.ruleset"), ("All Files", "*.*")))
-    if not filepath1:
-        return
-    txt_edit.delete("1.0", tk.END)
-    extension = os.path.splitext(filepath1)[1]
-    if extension == ".ruleset":
-        with lzma.open(filepath1, "r") as input_file:
-            text = input_file.read()
-            text1 = BeautifulSoup(text, "xml")
-            text2 = text1.prettify(formatter=frmat)
-            text3 = text2.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n", "")
-            txt_edit.insert(tk.END, text3)
-    else:
-        with open(filepath1, "r") as input_file:
-            text = input_file.read()
-            text1 = BeautifulSoup(text, "xml")
-            text2 = text1.prettify(formatter=frmat)
-            text3 = text2.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n", "")
-            txt_edit.insert(tk.END, text3)
-    global filepath
-    filepath = filepath1
-    bhash= txt_edit.get(1.0, tk.END)
-    global chash
-    chash = hashlib.md5(bhash.encode('utf-8')).hexdigest()
-    root.title(f"{filepath} - UCH Notepad 1.2")
-    txt_edit.mark_set("insert", "1.0")
-    destroyTN()
 def syntax(pattern, tag, color, start, end,regexp=False):
     #print(txt_edit.tag_names())
     #print("happened")
@@ -456,23 +427,35 @@ def checksyntax(event):
     if data["theme"] == "dark":
         colh= "#63bf63"
         colr= "#ab758b"
+        colru= "#a55dc6"
         colb= "#d4863b"
         colm= "#9b933b"
         cold= "#f85149"
+        colp= "#c17c00"
         colt= "#569cd6"
     else:
         colh= "#008000"
         colr= "#bc2b6a"
+        colru= "#680099"
         colb= "#bc4b00"
         colm= "#a88b1c"
         cold= "#880000"
+        colp= "#a56800"
         colt= "#006abc"
     syntax("<scene ", "header", colh, strt, fin)
+    syntax("<Ruleset ", "header1", colh, strt, fin)
     syntax("</scene>", "footer", colh, strt, fin)
+    syntax("</Ruleset>", "footer1", colh, strt, fin)
     syntax("<mods ", "mod", colr, strt, fin)
+    syntax("<rules ", "rul", colru, strt, fin)
     syntax("<block ", "blocks", colb, strt, fin)
     syntax("<moved ", "moveds", colm, strt, fin)
     syntax("<destroyed ", "destroys", cold, strt, fin)
+    syntax("<points>", "points", colp, strt, fin)
+    syntax("</points>", "points1", colp, strt, fin)
+    syntax("<point ", "point", colm, strt, fin)
+    syntax("<blocks>", "blockos", cold, strt, fin)
+    syntax("</blocks>", "blockos1", cold, strt, fin)
     syntax("=", "sids", colt, strt, fin)
 def checksx(event):
     #print("as")
