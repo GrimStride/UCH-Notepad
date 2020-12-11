@@ -342,7 +342,7 @@ def open_file(mode):
             ftype= (("UCH Compressed Level", "*.v.snapshot *.c.snapshot"), ("UCH Compressed Party Level", "*.v.snapshot"), ("UCH Compressed Challenge Level", "*.c.snapshot"), ("UCH Uncompressed Party Level", "*.v"), ("UCH Uncompressed Challenge Level", "*.c"), ("All Files", "*.*"))
         filepath1 = askopenfilename(
             initialdir=str(Path.home()) + "/AppData/LocalLow/Clever Endeavour Games/Ultimate Chicken Horse/" + stype, filetypes= ftype)
-    else: filepath1= sys.argv[1]
+    else: filepath1= sys.argv[1].replace("\\", "/")
     if not filepath1:
         return
     txt_edit.delete("1.0", tk.END)
@@ -364,6 +364,7 @@ def open_file(mode):
             text2 = text1.prettify(formatter=frmat)
             text3 = text2.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n", "")
             txt_edit.insert(tk.END, text3)
+            checksyntax(None)
     global filepath
     filepath = filepath1
     TButton()
