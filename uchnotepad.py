@@ -342,7 +342,9 @@ def open_file(mode):
             ftype= (("UCH Compressed Level", "*.v.snapshot *.c.snapshot"), ("UCH Compressed Party Level", "*.v.snapshot"), ("UCH Compressed Challenge Level", "*.c.snapshot"), ("UCH Uncompressed Party Level", "*.v"), ("UCH Uncompressed Challenge Level", "*.c"), ("All Files", "*.*"))
         filepath1 = askopenfilename(
             initialdir=str(Path.home()) + "/AppData/LocalLow/Clever Endeavour Games/Ultimate Chicken Horse/" + stype, filetypes= ftype)
-    else: filepath1= sys.argv[1].replace("\\", "/")
+    else:
+        filepath1= os.path.abspath(sys.argv[1]).replace("\\", "/")
+        print(os.path.basename(filepath1))
     if not filepath1:
         return
     txt_edit.delete("1.0", tk.END)
@@ -483,10 +485,12 @@ def nsave():
     else: save_file()
 
 def save_file():
+    global filepath
     itlvl = txt_edit.search("<scene", "1.0", "1.7")
     itrul = txt_edit.search("<Ruleset", "1.0", "1.9")
     if itlvl == "1.0":
         filepaths = asksaveasfilename(
+            initialdir= filepath.replace(os.path.basename(filepath),""),
             defaultextension="v.snapshot",
             filetypes=[("UCH Compressed Party Level", "*.v.snapshot"), ("UCH Compressed Challenge Level", "*.c.snapshot"), ("UCH Uncompressed Party Level", "*.v"), ("UCH Uncompressed Challenge Level", "*.c"), ("All Files", "*.*")],
         )
@@ -503,6 +507,7 @@ def save_file():
                 output_file.write(text)
     elif itrul == "1.0":
         filepaths = asksaveasfilename(
+            initialdir= filepath.replace(os.path.basename(filepath),""),
             defaultextension="v.snapshot",
             filetypes=[("UCH Compressed Ruleset", "*.ruleset"), ("All Files", "*.*")],
         )
@@ -518,7 +523,7 @@ def save_file():
                 text = txt_edit.get(1.0, tk.END)
                 output_file.write(text)
     else:
-        filepaths = asksaveasfilename(defaultextension="lzma", filetypes=[("LZMA Encoded File", "*.lzma"), ("Text File", "*.txt"), ("All Files", "*.*")])
+        filepaths = asksaveasfilename(initialdir= filepath.replace(os.path.basename(filepath),""), defaultextension="lzma", filetypes=[("LZMA Encoded File", "*.lzma"), ("Text File", "*.txt"), ("All Files", "*.*")])
         if not filepaths:
             return
         extension = os.path.splitext(filepaths)[1]
@@ -530,7 +535,7 @@ def save_file():
             with open(filepaths, "w") as output_file:
                 text = txt_edit.get(1.0, tk.END)
                 output_file.write(text)
-    global filepath
+    #global filepath
     filepath = filepaths
     bhash= txt_edit.get(1.0, tk.END)
     global chash
@@ -807,8 +812,10 @@ uif = (txpos, statusbar)
 buttons = (btn_open, btn_orul, btn_nsav, btn_save)
 if data["theme"] == "dark": tdark()
 else: tlight()
-try: open_file("2")
-except IndexError: pass
+if len(sys.argv) >= 2:
+    open_file("2")
+    #print(os.path.abspath(sys.argv[1]))
+else: pass
 root.after(5, get_line1)
 
 root.mainloop()
