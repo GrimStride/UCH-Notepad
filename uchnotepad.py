@@ -320,6 +320,10 @@ class config():
         else:
             data["sort"] = True
             frmat= None
+        if self.sythl.get() == "0":
+            data["syntax"] = False
+        else:
+            data["syntax"] = True
         if self.combo1.get() == "Current line + tags":
             data["stxtype"]= "Current line + tags"
         elif self.combo1.get() == "Everything":
@@ -373,7 +377,7 @@ def open_file(mode):
             initialdir=str(Path.home()) + "/AppData/LocalLow/Clever Endeavour Games/Ultimate Chicken Horse/" + stype, filetypes= ftype)
     else:
         filepath1= os.path.abspath(sys.argv[1]).replace("\\", "/")
-        print(os.path.basename(filepath1))
+        #print(os.path.basename(filepath1))
     if not filepath1:
         return
     txt_edit.delete("1.0", tk.END)
@@ -385,7 +389,8 @@ def open_file(mode):
             text2 = text1.prettify(formatter=frmat)
             text3 = text2.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n", "")
             txt_edit.insert(tk.END, text3)
-            checksyntax(None)
+            if data["syntax"] == True:
+                checksyntax(None)
             #txt_edit.tag_add('<scene', "1.0", "1.0 lineend")
             #txt_edit.tag_configure('<scene', foreground='#7f00ab')
     else:
@@ -395,7 +400,8 @@ def open_file(mode):
             text2 = text1.prettify(formatter=frmat)
             text3 = text2.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n", "")
             txt_edit.insert(tk.END, text3)
-            checksyntax(None)
+            if data["syntax"] == True:
+                checksyntax(None)
     global filepath
     filepath = filepath1
     TButton()
@@ -488,7 +494,8 @@ def checksyntax(event):
     syntax("<point ", "point", colm, strt, fin)
     syntax("<blocks>", "blockos", cold, strt, fin)
     syntax("</blocks>", "blockos1", cold, strt, fin)
-    syntax("=", "sids", colt, strt, fin)
+    if data["syntax"] == True and data["stxtype"] == "Everything":
+        syntax("=", "sids", colt, strt, fin)
 def checksx(event):
     #print("as")
     print(event.keysym)
