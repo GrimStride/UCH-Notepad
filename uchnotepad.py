@@ -85,7 +85,7 @@ class config():
         self.desc1.grid(row=5, column=1, sticky="nsew", rowspan=3)
         #self.filler= tk.Label(self.desct, text="A")
         #self.filler.grid(row=0, column=1, sticky="nsew")
-        self.change_tab1(None)
+        #self.change_tab1(None)
         self.gen.bind("<Button-1>", self.change_tab1)
         self.theme.bind("<Button-1>", self.change_tab2)
         self.info.bind("<Button-1>", self.change_tab3)
@@ -97,6 +97,22 @@ class config():
         self.bok.grid(row=8, column=3, sticky="se", pady=8)
         self.bcl.grid(row=8, column=4, sticky="se", pady=8, padx=8)
         self.bap.grid(row=8, column=5, sticky="se", pady=8)
+        #
+        self.showtn= tk.StringVar()
+        self.showlc= tk.StringVar()
+        self.sortx= tk.StringVar()
+        self.sythl= tk.StringVar()
+        self.showtn.set(data["shwtn"])
+        self.showlc.set(data["shwlc"])
+        self.sortx.set(data["sort"])
+        self.onftn = ttk.Checkbutton(self.foont, variable= self.showtn, text= "Show level thumbnails")
+        self.onflc = ttk.Checkbutton(self.foont, variable= self.showlc, text= "Show current line/column position")
+        self.onstr = ttk.Checkbutton(self.foont, variable= self.sortx, text= "Sort XML values alphabetically")
+        self.supp = ttk.Frame(self.foont)
+        self.onsyt = ttk.Checkbutton(self.supp, variable= self.sythl, text= "Syntax highlighting:")
+        self.warn = ttk.Label(self.foont, font= "{Segoe UI} 8", text= "Warning: Syntax highlighting \"Everything\" will increase\nloading times and scroll lag if used with small font size")
+        self.combo1 = ttk.Combobox(self.supp, width=17, values=('Current line', 'Current line + tags', 'Everything'))
+        #
         self.crtf = tk.StringVar()
         self.cruf = tk.StringVar()
         self.crtf.set(data["fnt"])
@@ -116,6 +132,7 @@ class config():
         self.dwl= tk.Button(self.desct, relief="flat", activeforeground= "#0094FF", fg= "#0094FF", text="(Download)", command= self.browupt)
         root.bind("<FocusIn>", self.focuz)
         self.root.protocol("WM_DELETE_WINDOW", self.ext)
+        self.change_tab1(None)
     def ext(self):
         root.unbind("<FocusIn>")
         root.attributes('-disabled', False)
@@ -130,6 +147,7 @@ class config():
             widgetts.grid_remove()
         #for widgets in self.cont.winfo_children():
             #widgets.grid_remove()
+        self.desct.grid(rowspan=1)
         self.foont.grid(row=6, column=1, sticky="nsew", columnspan=5)
         self.desc.grid(row=1, column=1, sticky="nw", rowspan=4, columnspan=1)
         self.sel.grid(row= 1)
@@ -147,7 +165,7 @@ class config():
         self.desc["text"]="   Window position (X,Y):\n\n   Window size (W, H):"
         self.foont["text"]=" Options "
         #self.foont.grid(row=5, column=1, sticky="w", columnspan=9)
-        self.showtn= tk.StringVar()
+        '''self.showtn= tk.StringVar()
         self.showlc= tk.StringVar()
         self.sortx= tk.StringVar()
         self.sythl= tk.StringVar()
@@ -159,14 +177,14 @@ class config():
         self.onstr = ttk.Checkbutton(self.foont, variable= self.sortx, text= "Sort XML values alphabetically")
         self.supp = ttk.Frame(self.foont)
         self.onsyt = ttk.Checkbutton(self.supp, variable= self.sythl, text= "Syntax highlighting:")
-        self.warn = ttk.Label(self.foont, font= "{Segoe UI} 8", text= "Warning: Syntax highlighting \"Everything\" will increase\nloading times and scroll lag if used with small font size")
+        self.warn = ttk.Label(self.foont, font= "{Segoe UI} 8", text= "Warning: Syntax highlighting \"Everything\" will increase\nloading times and scroll lag if used with small font size")'''
         self.onftn.grid(row=6, column=1, sticky="w", padx=10)
         self.onflc.grid(row=7, column=1, sticky="w", padx=10)
         self.onstr.grid(row=8, column=1, sticky="w", padx=10)
         self.supp.grid(row=9, column=1, sticky="w", padx=10)
         self.onsyt.grid(row=9, column=1, sticky="w")
         self.warn.grid(row=10, column=1, sticky="w", padx=10)
-        self.combo1 = ttk.Combobox(self.supp, width=17, values=('Current line', 'Current line + tags', 'Everything'))
+        #self.combo1 = ttk.Combobox(self.supp, width=17, values=('Current line', 'Current line + tags', 'Everything'))
         #self.combo2 = ttk.Radiobutton(self.foont, text="Current line + tags")
         self.combo1.grid(row=9, column=2, sticky="w")
         #self.combo2.grid(row=10, column=1, sticky="w", padx=70)
@@ -194,6 +212,7 @@ class config():
             widgetts.grid_forget()
         #for widgets in self.cont.winfo_children():
             #3widgets.grid_remove()
+        self.desct.grid(rowspan=1)
         self.foont.grid(row=6, column=1, sticky="nsew", columnspan=5)
         self.sel.grid(row= 2)
         #self.desc.grid_remove()
@@ -221,8 +240,8 @@ class config():
             #widgets.grid_remove()
         #self.foont.grid_remove()
         self.foont.grid_forget()
-        self.desct.grid(sticky="nsew", rowspan=5)
-        self.desc.grid(row=3, column=1, sticky="nw", rowspan=4, columnspan=9)
+        self.desct.grid(sticky="nsew", rowspan=7)
+        self.desc.grid(row=0, column=1, sticky="nw", rowspan=1, columnspan=9)
         #self.foont.grid_forget()
         self.sel.grid(row= 3)
         self.info["bg"]= "#BFDDF5"
@@ -230,8 +249,8 @@ class config():
         self.theme["bg"]= "gray94"
         self.desct["text"]=" About UCH Notepad "
         self.desc["text"]="   Version 1.2\n   Made by Grim Stride using Python 3.9.0 and cx-Freeze\n   This is a heavily modified version of Real Python's Tkinter\n   tutorial\n   Text editor functionality based on Notepad++\n   Icons taken from The GNOME Project and material.io"
-        self.upt.grid(row=7, column=1, sticky="nw", padx=8, pady=8)
-        self.result.grid(row=7, column=2)
+        self.upt.grid(row=1, column=1, sticky="nw", padx=8, pady=8)
+        self.result.grid(row=1, column=2, sticky="nw", pady=11)
         #self.filler.grid(row=8, column=1, ipady=11)
     def update(self):
         try:
