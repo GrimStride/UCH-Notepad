@@ -102,16 +102,21 @@ class config():
         self.showlc= tk.StringVar()
         self.sortx= tk.StringVar()
         self.sythl= tk.StringVar()
+        #self.synthx= tk.StringVar()
         self.showtn.set(data["shwtn"])
         self.showlc.set(data["shwlc"])
         self.sortx.set(data["sort"])
+        self.sythl.set(data["syntax"])
+        #self.synthx.set(data["stxtype"])
+        #print(data["stxtype"])
         self.onftn = ttk.Checkbutton(self.foont, variable= self.showtn, text= "Show level thumbnails")
         self.onflc = ttk.Checkbutton(self.foont, variable= self.showlc, text= "Show current line/column position")
         self.onstr = ttk.Checkbutton(self.foont, variable= self.sortx, text= "Sort XML values alphabetically")
         self.supp = ttk.Frame(self.foont)
         self.onsyt = ttk.Checkbutton(self.supp, variable= self.sythl, text= "Syntax highlighting:")
         self.warn = ttk.Label(self.foont, font= "{Segoe UI} 8", text= "Warning: Syntax highlighting \"Everything\" will increase\nloading times and scroll lag if used with small font size")
-        self.combo1 = ttk.Combobox(self.supp, width=17, values=('Current line', 'Current line + tags', 'Everything'))
+        self.combo1 = ttk.Combobox(self.supp, state="readonly", width=17, values=('Current line', 'Current line + tags', 'Everything'))
+        self.combo1.set(data["stxtype"])
         #
         self.crtf = tk.StringVar()
         self.cruf = tk.StringVar()
@@ -315,6 +320,11 @@ class config():
         else:
             data["sort"] = True
             frmat= None
+        if self.combo1.get() == "Current line + tags":
+            data["stxtype"]= "Current line + tags"
+        elif self.combo1.get() == "Everything":
+            data["stxtype"]= "Everything"
+        else: data["stxtype"]= "Current line"
     def ask(self):
         a= messagebox.askyesnocancel(parent= self.root, message='All preferences will be reset to their defaults.\nProceed?', icon='question', title='Settings')
         if a == True:
