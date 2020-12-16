@@ -25,7 +25,7 @@ A simple Ultimate Chicken Horse ruleset and custom level file editor written in 
 ## Features
 
 - Automatic XML "beautifier".
-- 25 undos and redos (Might increase it if needed).
+- Unlimited undos and redos.
 - Level thumbnail displayer.
 
 ## FAQ
