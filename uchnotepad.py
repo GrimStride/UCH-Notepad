@@ -30,12 +30,12 @@ def saveJson():
     f.write(json.dumps(data, indent=4))
     f.close()
 def updateJson():
-    try:
-        a= data["sort"]
-        b= data["syntax"]
-    except KeyError:
-        data["sort"]= False
-        data["syntax"]= 1
+    try: a= data["sort"]
+    except KeyError: data["sort"]= False
+    try: b= data["syntax"]
+    except KeyError: data["syntax"]= True
+    try: c= data["stxtype"]
+    except KeyError: data["stxtype"]= "Current line + tags"
 class config():
     def __init__(self):
         global data
@@ -117,6 +117,7 @@ class config():
         self.warn = ttk.Label(self.foont, font= "{Segoe UI} 8", text= "Warning: Syntax highlighting \"Everything\" will increase\nloading times and scroll lag if used with small font size")
         self.combo1 = ttk.Combobox(self.supp, state="readonly", width=17, values=('Current line', 'Current line + tags', 'Everything'))
         self.combo1.set(data["stxtype"])
+        self.change_tab1(None)
         #
         self.crtf = tk.StringVar()
         self.cruf = tk.StringVar()
@@ -137,7 +138,7 @@ class config():
         self.dwl= tk.Button(self.desct, relief="flat", activeforeground= "#0094FF", fg= "#0094FF", text="(Download)", command= self.browupt)
         root.bind("<FocusIn>", self.focuz)
         self.root.protocol("WM_DELETE_WINDOW", self.ext)
-        self.change_tab1(None)
+        #self.change_tab1(None)
     def ext(self):
         root.unbind("<FocusIn>")
         root.attributes('-disabled', False)
@@ -280,11 +281,13 @@ class config():
     def savechges(self):
         global s
         global frmat
+        b = False
         x = self.wmx.get()
         y = self.wmy.get()
         w = self.wmw.get()
         h = self.wmh.get()
         a = root.geometry(str(w) + "x" + str(h) + "+" + str(x) + "+" + str(y))
+        if self.currenttheme.get() != data["theme"]: b=True
         if self.currenttheme.get() == "dark":
             tdark()
             data["theme"]= "dark"
@@ -322,13 +325,21 @@ class config():
             frmat= None
         if self.sythl.get() == "0":
             data["syntax"] = False
+            try:
+                for tag in txt_edit.tag_names():
+                    txt_edit.tag_delete(tag)
+            except NameError: pass
         else:
             data["syntax"] = True
+        if self.combo1.get() != data["stxtype"]: b= True
         if self.combo1.get() == "Current line + tags":
             data["stxtype"]= "Current line + tags"
+            try: txt_edit.tag_remove("sids", "1.0", "end")
+            except NameError: pass
         elif self.combo1.get() == "Everything":
             data["stxtype"]= "Everything"
         else: data["stxtype"]= "Current line"
+        if b == True: checksyntax(None)
     def ask(self):
         a= messagebox.askyesnocancel(parent= self.root, message='All preferences will be reset to their defaults.\nProceed?', icon='question', title='Settings')
         if a == True:
@@ -340,6 +351,9 @@ class config():
         self.currenttheme.set("light")
         self.showtn.set("1")
         self.showlc.set("1")
+        self.sortx.set("0")
+        self.sythl.set("1")
+        self.combo1.set("Current line + tags")
         self.savechges()
         self.txf.configure(text= self.nsf.translate(str.maketrans({'{': '', '}': ''})), font= self.nsf)
         self.uxf.configure(text= self.nsuf.translate(str.maketrans({'{': '', '}': ''})), font= self.nsuf)
@@ -389,8 +403,8 @@ def open_file(mode):
             text2 = text1.prettify(formatter=frmat)
             text3 = text2.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n", "")
             txt_edit.insert(tk.END, text3)
-            if data["syntax"] == True:
-                checksyntax(None)
+            #if data["syntax"] == True:
+            checksyntax(None)
             #txt_edit.tag_add('<scene', "1.0", "1.0 lineend")
             #txt_edit.tag_configure('<scene', foreground='#7f00ab')
     else:
@@ -400,8 +414,8 @@ def open_file(mode):
             text2 = text1.prettify(formatter=frmat)
             text3 = text2.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n", "")
             txt_edit.insert(tk.END, text3)
-            if data["syntax"] == True:
-                checksyntax(None)
+            #if data["syntax"] == True:
+            checksyntax(None)
     global filepath
     filepath = filepath1
     TButton()
@@ -415,12 +429,23 @@ def syntax(pattern, tag, color, start, end,regexp=False):
     #print(txt_edit.tag_names())
     #print("happened")
     #print(pattern[-3:])
-    try:
-        txt_edit.tag_remove(tag, start, end)
-        #txt_edit.tag_remove(tag + "end", start, end)
-    except NameError: pass
-    start = txt_edit.index(start)
-    end = txt_edit.index(end)
+    if data["stxtype"] == "Current line":
+        try: txt_edit.tag_remove(tag, "1.0", "end")
+        except NameError: pass
+        start= txt_edit.index("insert linestart")
+        end= txt_edit.index("insert lineend")
+    elif data["stxtype"] == "Current line + tags" and tag == "sids":
+        try: txt_edit.tag_remove(tag, "1.0", "end")
+        except NameError: pass
+        start= txt_edit.index("insert linestart")
+        end= txt_edit.index("insert lineend")
+    else:
+        try:
+            txt_edit.tag_remove(tag, start, end)
+            #txt_edit.tag_remove(tag + "end", start, end)
+        except NameError: pass
+        start = txt_edit.index(start)
+        end = txt_edit.index(end)
     txt_edit.mark_set("matchStart", start)
     txt_edit.mark_set("matchEnd", start)
     txt_edit.mark_set("searchLimit", end)
@@ -455,6 +480,7 @@ def syntax(pattern, tag, color, start, end,regexp=False):
 
 def checksyntax(event):
     #print(event)
+    if data["syntax"] == False: return
     if event == None or event.keysym == "Control_L" or event.keysym == "Control_R":
         strt= "1.0"
         fin= "end"
@@ -494,12 +520,18 @@ def checksyntax(event):
     syntax("<point ", "point", colm, strt, fin)
     syntax("<blocks>", "blockos", cold, strt, fin)
     syntax("</blocks>", "blockos1", cold, strt, fin)
-    if data["syntax"] == True and data["stxtype"] == "Everything":
-        syntax("=", "sids", colt, strt, fin)
+    #if data["stxtype"] != "Current line + tags":
+    syntax("=", "sids", colt, strt, fin)
+    #else: syntax("=", "sids", colt, "insert linestart", "insert lineend")
 def checksx(event):
     #print("as")
-    print(event.keysym)
+    #print(event.keysym)
     checksyntax(None)
+    if data["theme"] == "dark": colt= "#569cd6"
+    else: colt= "#006abc"
+    try: txt_edit.tag_remove("sids", "1.0", "end")
+    except NameError: pass
+    syntax("=", "sids", colt, "insert linestart", "insert lineend")
 def modf(event):
     print(event)
 def nsave():
@@ -737,7 +769,11 @@ def get_line1():
     txt_edit.tag_add("curr2", "insert", "insert lineend")
     txt_edit.tag_configure("curr1", selectbackground= selc, background= curc)
     txt_edit.tag_configure("curr2", selectbackground= selc, background= curc)
-    root.after(15, get_line1)
+    if data["syntax"] == True and data["stxtype"] != "Everything":
+        checksyntax(None)
+        #elif data["stxtype"] == "Current line + tags":
+            #checksyntax(None)
+    root.after(33, get_line1)
 
 def x_scroll(*args):
     global shldiscr
