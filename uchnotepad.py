@@ -49,9 +49,7 @@ class config():
         self.root.rowconfigure(6, weight=1)
         self.root.rowconfigure(8, weight=0)
         self.root.minsize(500,263)
-        #self.root.columnconfigure(3, weight=1)
         self.root.columnconfigure(3, weight=1)
-        #self.root.columnconfigure(9, weight=1)
         root.attributes('-disabled', True)
         self.root.focus_set()
         panel = ttk.Frame(self.root, relief="groove", borderwidth=2)
@@ -72,20 +70,12 @@ class config():
         if data["theme"] == "dark":
             self.root["bg"]= "#454545"
             self.cont["bg"]= "#45457c"
-            #self.desct.configure(bg="#454545", fg= "white")
-        #self.cont.columnconfigure(1, weight=1)
-        #self.cont.rowconfigure(8, weight=1)
         self.desc = ttk.Label(self.desct, justify="left")
         self.desct.grid(row=1, column=1, sticky="nsew", columnspan=5)
-        #self.desct.columnconfigure(4, weight=1)
         self.foont = ttk.Labelframe(self.root)
         self.desc1 = ttk.Label(self.foont, justify="left")
-        #self.cont.grid(row=1, column=1, sticky="nsew", columnspan=9, rowspan=6, padx=8)
         self.desc.grid(row=1, column=1, sticky="nw", rowspan=3)
         self.desc1.grid(row=5, column=1, sticky="nsew", rowspan=3)
-        #self.filler= tk.Label(self.desct, text="A")
-        #self.filler.grid(row=0, column=1, sticky="nsew")
-        #self.change_tab1(None)
         self.gen.bind("<Button-1>", self.change_tab1)
         self.theme.bind("<Button-1>", self.change_tab2)
         self.info.bind("<Button-1>", self.change_tab3)
@@ -97,18 +87,14 @@ class config():
         self.bok.grid(row=8, column=3, sticky="se", pady=8)
         self.bcl.grid(row=8, column=4, sticky="se", pady=8, padx=8)
         self.bap.grid(row=8, column=5, sticky="se", pady=8)
-        #
         self.showtn= tk.StringVar()
         self.showlc= tk.StringVar()
         self.sortx= tk.StringVar()
         self.sythl= tk.StringVar()
-        #self.synthx= tk.StringVar()
         self.showtn.set(data["shwtn"])
         self.showlc.set(data["shwlc"])
         self.sortx.set(data["sort"])
         self.sythl.set(data["syntax"])
-        #self.synthx.set(data["stxtype"])
-        #print(data["stxtype"])
         self.onftn = ttk.Checkbutton(self.foont, variable= self.showtn, text= "Show level thumbnails")
         self.onflc = ttk.Checkbutton(self.foont, variable= self.showlc, text= "Show current line/column position")
         self.onstr = ttk.Checkbutton(self.foont, variable= self.sortx, text= "Sort XML values alphabetically")
@@ -118,7 +104,6 @@ class config():
         self.combo1 = ttk.Combobox(self.supp, state="readonly", width=17, values=('Current line', 'Current line + tags', 'Everything'))
         self.combo1.set(data["stxtype"])
         self.change_tab1(None)
-        #
         self.crtf = tk.StringVar()
         self.cruf = tk.StringVar()
         self.crtf.set(data["fnt"])
@@ -138,7 +123,6 @@ class config():
         self.dwl= tk.Button(self.desct, relief="flat", activeforeground= "#0094FF", fg= "#0094FF", text="(Download)", command= self.browupt)
         root.bind("<FocusIn>", self.focuz)
         self.root.protocol("WM_DELETE_WINDOW", self.ext)
-        #self.change_tab1(None)
     def ext(self):
         root.unbind("<FocusIn>")
         root.attributes('-disabled', False)
@@ -151,8 +135,6 @@ class config():
             widgts.grid_remove()
         for widgetts in self.foont.winfo_children():
             widgetts.grid_remove()
-        #for widgets in self.cont.winfo_children():
-            #widgets.grid_remove()
         self.desct.grid(rowspan=1)
         self.foont.grid(row=6, column=1, sticky="nsew", columnspan=5)
         self.desc.grid(row=1, column=1, sticky="nw", rowspan=4, columnspan=1)
@@ -170,30 +152,13 @@ class config():
         self.desct["text"]=" Window "
         self.desc["text"]="   Window position (X,Y):\n\n   Window size (W, H):"
         self.foont["text"]=" Options "
-        #self.foont.grid(row=5, column=1, sticky="w", columnspan=9)
-        '''self.showtn= tk.StringVar()
-        self.showlc= tk.StringVar()
-        self.sortx= tk.StringVar()
-        self.sythl= tk.StringVar()
-        self.showtn.set(data["shwtn"])
-        self.showlc.set(data["shwlc"])
-        self.sortx.set(data["sort"])
-        self.onftn = ttk.Checkbutton(self.foont, variable= self.showtn, text= "Show level thumbnails")
-        self.onflc = ttk.Checkbutton(self.foont, variable= self.showlc, text= "Show current line/column position")
-        self.onstr = ttk.Checkbutton(self.foont, variable= self.sortx, text= "Sort XML values alphabetically")
-        self.supp = ttk.Frame(self.foont)
-        self.onsyt = ttk.Checkbutton(self.supp, variable= self.sythl, text= "Syntax highlighting:")
-        self.warn = ttk.Label(self.foont, font= "{Segoe UI} 8", text= "Warning: Syntax highlighting \"Everything\" will increase\nloading times and scroll lag if used with small font size")'''
         self.onftn.grid(row=6, column=1, sticky="w", padx=10)
         self.onflc.grid(row=7, column=1, sticky="w", padx=10)
         self.onstr.grid(row=8, column=1, sticky="w", padx=10)
         self.supp.grid(row=9, column=1, sticky="w", padx=10)
         self.onsyt.grid(row=9, column=1, sticky="w")
         self.warn.grid(row=10, column=1, sticky="w", padx=10)
-        #self.combo1 = ttk.Combobox(self.supp, width=17, values=('Current line', 'Current line + tags', 'Everything'))
-        #self.combo2 = ttk.Radiobutton(self.foont, text="Current line + tags")
         self.combo1.grid(row=9, column=2, sticky="w")
-        #self.combo2.grid(row=10, column=1, sticky="w", padx=70)
         self.wmx = tk.Entry(self.desct, width=6)
         self.wmx.insert(10, wmcx)
         self.wmx.grid(row=1,column=2, sticky="nw", padx=2)
@@ -203,8 +168,6 @@ class config():
         self.wmw.grid(row=2,column=2, sticky="nw", padx=2, pady=11)
         self.wmh = tk.Entry(self.desct, width=6, textvariable= wmch)
         self.wmh.grid(row=2,column=3, sticky="nw", padx=6, pady=11)
-        #self.filler= ttk.Label(self.desct, text="                  ")
-        #self.filler.grid(row=1, column=8)
         self.desct.rowconfigure(1, weight=1)
         self.desct.columnconfigure(3, weight=30)
         self.filler= ttk.Label(self.root, text=" ")
@@ -216,12 +179,9 @@ class config():
             widgts.grid_remove()
         for widgetts in self.foont.winfo_children():
             widgetts.grid_forget()
-        #for widgets in self.cont.winfo_children():
-            #3widgets.grid_remove()
         self.desct.grid(rowspan=1)
         self.foont.grid(row=6, column=1, sticky="nsew", columnspan=5)
         self.sel.grid(row= 2)
-        #self.desc.grid_remove()
         self.theme["bg"]= "#BFDDF5"
         self.gen["bg"]= "gray94"
         self.info["bg"]= "gray94"
@@ -235,20 +195,14 @@ class config():
         self.uxf.grid(row=7, column=2, sticky="nw", pady=5)
         self.cuxf.grid(row=7, column=3, sticky="ne", pady=5)
         self.foont["text"]=" Font "
-        #self.foont.grid(row=5, column=1, sticky="w", columnspan=15)
-        #self.filler.grid(row=8, column=1, ipady=10)
     def change_tab3(self, event):
         for widgts in self.desct.winfo_children():
             widgts.grid_remove()
         for widgetts in self.foont.winfo_children():
             widgetts.grid_remove()
-        #for widgets in self.cont.winfo_children():
-            #widgets.grid_remove()
-        #self.foont.grid_remove()
         self.foont.grid_forget()
         self.desct.grid(sticky="nsew", rowspan=7)
         self.desc.grid(row=0, column=1, sticky="nw", rowspan=1, columnspan=9)
-        #self.foont.grid_forget()
         self.sel.grid(row= 3)
         self.info["bg"]= "#BFDDF5"
         self.gen["bg"]= "gray94"
@@ -257,7 +211,6 @@ class config():
         self.desc["text"]="   Version 1.2\n   Made by Grim Stride using Python 3.9.0 and cx-Freeze\n   This is a heavily modified version of Real Python's Tkinter\n   tutorial\n   Text editor functionality based on Notepad++\n   Icons taken from The GNOME Project and material.io"
         self.upt.grid(row=1, column=1, sticky="nw", padx=8, pady=8)
         self.result.grid(row=1, column=2, sticky="nw", pady=11)
-        #self.filler.grid(row=8, column=1, ipady=11)
     def update(self):
         try:
             r = urllib.request.urlopen("https://github.com/GrimStride/UCH-Notepad/releases/latest")
@@ -293,13 +246,11 @@ class config():
             data["theme"]= "dark"
             self.root["bg"]= "#454545"
             self.cont["bg"]= "#454545"
-            #self.desct.configure(bg="#454545", fg= "white")
         else:
             tlight()
             data["theme"]= "light"
             self.root["bg"]= "#f0f0f0"
             self.cont["bg"]= "#f0f0f0"
-            #self.desct.configure(bg="#f0f0f0", fg= "black")
         if self.nsf != data["fnt"]:
             txt_edit["font"] = self.nsf
             data["fnt"] = self.nsf 
@@ -391,7 +342,6 @@ def open_file(mode):
             initialdir=str(Path.home()) + "/AppData/LocalLow/Clever Endeavour Games/Ultimate Chicken Horse/" + stype, filetypes= ftype)
     else:
         filepath1= os.path.abspath(sys.argv[1]).replace("\\", "/")
-        #print(os.path.basename(filepath1))
     if not filepath1:
         return
     txt_edit.delete("1.0", tk.END)
@@ -403,10 +353,7 @@ def open_file(mode):
             text2 = text1.prettify(formatter=frmat)
             text3 = text2.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n", "")
             txt_edit.insert(tk.END, text3)
-            #if data["syntax"] == True:
             checksyntax(None)
-            #txt_edit.tag_add('<scene', "1.0", "1.0 lineend")
-            #txt_edit.tag_configure('<scene', foreground='#7f00ab')
     else:
         with open(filepath1, "r") as input_file:
             text = input_file.read()
@@ -414,7 +361,6 @@ def open_file(mode):
             text2 = text1.prettify(formatter=frmat)
             text3 = text2.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n", "")
             txt_edit.insert(tk.END, text3)
-            #if data["syntax"] == True:
             checksyntax(None)
     global filepath
     filepath = filepath1
@@ -426,9 +372,6 @@ def open_file(mode):
     root.title(f"{filepath} - UCH Notepad 1.2")
 
 def syntax(pattern, tag, color, start, end,regexp=False):
-    #print(txt_edit.tag_names())
-    #print("happened")
-    #print(pattern[-3:])
     if data["stxtype"] == "Current line":
         try: txt_edit.tag_remove(tag, "1.0", "end")
         except NameError: pass
@@ -442,7 +385,6 @@ def syntax(pattern, tag, color, start, end,regexp=False):
     else:
         try:
             txt_edit.tag_remove(tag, start, end)
-            #txt_edit.tag_remove(tag + "end", start, end)
         except NameError: pass
         start = txt_edit.index(start)
         end = txt_edit.index(end)
@@ -454,7 +396,7 @@ def syntax(pattern, tag, color, start, end,regexp=False):
     while True:
         index = txt_edit.search(pattern, "matchEnd","searchLimit", count=count, regexp=regexp)
         if index == "": break
-        if count.get() == 0: break # degenerate pattern which matches zero-length strings
+        if count.get() == 0: break
         txt_edit.mark_set("matchStart", index)
         txt_edit.mark_set("matchEnd", "%s+%sc" % (index, count.get()))
         '''try:
@@ -463,7 +405,6 @@ def syntax(pattern, tag, color, start, end,regexp=False):
         except NameError: pass'''
         if pattern[-1] == " ":
             txt_edit.tag_add(tag, "matchStart+1c", "matchEnd")
-            #txt_edit.tag_add(tag + "end", "matchStart lineend-2c", "matchEnd lineend")
             txt_edit.tag_configure(tag, foreground=color)
         elif pattern[-1] == ">":
             txt_edit.tag_add(tag, "matchStart+1c", "matchEnd-1c")
@@ -471,20 +412,12 @@ def syntax(pattern, tag, color, start, end,regexp=False):
         else:
             txt_edit.tag_add(tag, "matchStart-1c wordstart", "matchEnd")
             txt_edit.tag_configure(tag, foreground=color)
-        #if txt_edit.get("matchStart lineend-" + long + "c", "matchEnd lineend") == fchar and fchar != None:
-            #txt_edit.tag_add(tag + "end", "matchStart lineend-" + long + "c", "matchEnd lineend")
-            #txt_edit.tag_configure(tag + "end", foreground=color)
-        #elif fchar == None:
-            #txt_edit.tag_add(tag + "end", "matchStart wordstart", "matchEnd")
-            #txt_edit.tag_configure(tag + "end", foreground=color)
 
 def checksyntax(event):
-    #print(event)
     if data["syntax"] == False: return
     if event == None or event.keysym == "Control_L" or event.keysym == "Control_R":
         strt= "1.0"
         fin= "end"
-        #print("hey")
     else:
         strt= "insert linestart"
         fin= "insert lineend"
@@ -520,20 +453,8 @@ def checksyntax(event):
     syntax("<point ", "point", colm, strt, fin)
     syntax("<blocks>", "blockos", cold, strt, fin)
     syntax("</blocks>", "blockos1", cold, strt, fin)
-    #if data["stxtype"] != "Current line + tags":
     syntax("=", "sids", colt, strt, fin)
-    #else: syntax("=", "sids", colt, "insert linestart", "insert lineend")
-def checksx(event):
-    #print("as")
-    #print(event.keysym)
-    checksyntax(None)
-    if data["theme"] == "dark": colt= "#569cd6"
-    else: colt= "#006abc"
-    try: txt_edit.tag_remove("sids", "1.0", "end")
-    except NameError: pass
-    syntax("=", "sids", colt, "insert linestart", "insert lineend")
-def modf(event):
-    print(event)
+
 def nsave():
     global filepath
     if filepath != "":
@@ -692,9 +613,6 @@ def tlight():
         change["bg"]= "#f0f0f0"
     for change in uif:
         change["fg"]= "black"
-    #txt_edit["bg"]="white"
-    #txt_edit["fg"]="black"
-    #txt_edit["insertbackground"]="black"
     txt_edit.configure(bg="white", fg="black", insertbackground="black", selectbackground= "#c0c0c0", selectforeground= "black")
     btn_conf['activebackground'] = "#f0f0f0"
     s.configure("TSeparator", background= "#f0f0f0")
@@ -709,9 +627,6 @@ def tdark():
         change["bg"]= "#242424"
     for change in uif:
         change["fg"]= "#dedede"
-    #txt_edit["bg"]="#323232"
-    #txt_edit["fg"]="#e2e2e2"
-    #txt_edit["insertbackground"]="#f0f0f0"
     txt_edit.configure(bg="#2e2e2e", fg="#dedede", insertbackground="#dedede", selectbackground= "#4d5d60", selectforeground= "#e2e2e2")
     btn_conf['activebackground'] = "#2e2e2e"
     s.configure("TSeparator", background= "black")
@@ -723,8 +638,6 @@ def tdark():
     s.configure("TRadiobutton", background= "#454545", foreground= "#dedede")
 
 def get_line1():
-    #ln, col = txt_edit.index("insert").split(".")
-    #coll= int(float(col) + 1)
     global txpos
     global chash
     global filepath
@@ -743,7 +656,6 @@ def get_line1():
     if gethash != chash:
         if chash != "68b329da9893e34099c7d8ad5cb9c940":
             root.title(f"*{filepath} - UCH Notepad 1.2")
-            #syntax("<scene", "header")
             unsaved= True
         else:
             root.title(f"*UCH Notepad 1.2")
@@ -771,8 +683,6 @@ def get_line1():
     txt_edit.tag_configure("curr2", selectbackground= selc, background= curc)
     if data["syntax"] == True and data["stxtype"] != "Everything":
         checksyntax(None)
-        #elif data["stxtype"] == "Current line + tags":
-            #checksyntax(None)
     root.after(33, get_line1)
 
 def x_scroll(*args):
@@ -780,9 +690,6 @@ def x_scroll(*args):
     shldiscr = 1
     global txt_edit
     txt_edit.xview(*args)
-    #print(txt_edit.xview())
-    #txt_edit.xview_moveto(1.20)
-    #txt_edit.xview_scroll(0, "units")
     txt_edit.config(state="disabled")
 def y_scroll(*args):
     global shldiscr
@@ -832,8 +739,7 @@ s.configure("TButton", font= data["ufnt"])
 scroll = ttk.Scrollbar(root, orient="vertical")
 xascroll = ttk.Scrollbar(root, orient="horizontal")
 txt_edit = tk.Text(root, padx=4, undo=True, autoseparators=True, font= data["fnt"], wrap="none", xscrollcommand= xascroll.set, yscrollcommand=scroll.set)
-#txt_edit.tag_add('<scene', 1.0, tk.END)
-#txt_edit.tag_configure('<scene', background='#7f00ab')
+
 scroll.config(command=y_scroll)
 xascroll.config(command=x_scroll)
 
@@ -877,7 +783,6 @@ txt_edit.bind("<ButtonRelease-1>", scrllstop)
 txt_edit.bind("<KeyRelease>", checksyntax)
 txt_edit.bind("<KeyRelease-Control_L>", checksyntax)
 txt_edit.bind("<KeyRelease-Control_R>", checksyntax)
-#txt_edit.bind("<<Modified>>", modf)
 
 wmcol = (root, fr_buttons, sepfr, txpos, statusbar, btn_conf)
 uif = (txpos, statusbar)
@@ -886,7 +791,6 @@ if data["theme"] == "dark": tdark()
 else: tlight()
 if len(sys.argv) >= 2:
     open_file("2")
-    #print(os.path.abspath(sys.argv[1]))
 else: pass
 root.after(5, get_line1)
 
