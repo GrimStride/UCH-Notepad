@@ -7,6 +7,6 @@
     "fnt": "Courier 10",
     "ufnt": "{Segoe UI} 9",
     "sort": false,
-    "syntax": 1,
+    "syntax": true,
     "stxtype": "Current line + tags"
 }
