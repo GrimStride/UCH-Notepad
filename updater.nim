@@ -25,6 +25,5 @@ when isMainModule:
   else:
     echo("Error: UCH Notepad executable not found, please move this file to the folder containing UCH Notepad's executable")
   echo("Press any key to exit...")
-  while true:
-    var c = getch()
-    quit()
+  var c = getch()
+  quit()
