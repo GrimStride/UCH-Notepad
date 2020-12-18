@@ -14,7 +14,7 @@ A simple Ultimate Chicken Horse ruleset and custom level file editor written in 
 - Detect file formats with error handlers instead of file extension (Still considering this one, maybe i will leave it like that).
 - macOS and Linux version.
 - 32 bit version for all OSes.
-- Updater (DONE)
+- ~~Updater~~
 
 ## Installation and Usage instructions
 
