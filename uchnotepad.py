@@ -700,14 +700,55 @@ def y_scroll(*args):
 def scrllstop(event):
     shldiscr = 0
     txt_edit.config(state="normal")
-    '''try:
-        txt_edit.tag_delete("curr1", "1.0", "end")
-        txt_edit.tag_delete("curr2", "1.0", "end")
-    except NameError: pass
-    txt_edit.tag_add("curr1", "insert-1c linestart", "insert-1c")
-    txt_edit.tag_add("curr2", "insert+1c", "insert+1c lineend")
-    txt_edit.tag_configure("curr1", background="#e8e8ff")
-    txt_edit.tag_configure("curr2", background="#e8e8ff")'''
+
+def rclkmenu(event):
+    global filepath
+    if filepath == "": tempst="normal"
+    else: tempst="disabled"
+    template=tk.Menu(root, tearoff=0, activebackground="#91c9f7", activeforeground="black")
+    template.add_command(label="Blank Level")
+    template.add_command(label="Crumbling Bridge")
+    template.add_command(label="Dance Party")
+    template.add_command(label="Farm")
+    template.add_command(label="Iceberg")
+    template.add_command(label="Jungle Temple")
+    template.add_command(label="Metal Plant")
+    template.add_command(label="Nuclear Plant")
+    template.add_command(label="Old Mansion")
+    template.add_command(label="Pyramid")
+    template.add_command(label="Rooftops")
+    template.add_command(label="Space")
+    template.add_command(label="The Ballroom")
+    template.add_command(label="The Farm")
+    template.add_command(label="The Mainframe")
+    template.add_command(label="The Pier")
+    template.add_command(label="Volcano")
+    template.add_command(label="Waterfall")
+    template.add_command(label="Windmill")
+    m = tk.Menu(root, tearoff=0, activebackground="#91c9f7", activeforeground="black")
+    m.add_command(label ="Cut", command= lambda: copycut(0))
+    m.add_command(label ="Copy", command= lambda: copycut(1))
+    m.add_command(label ="Paste", command= paste)
+    m.add_command(label ="Delete", command=lambda: copycut(2))
+    m.add_separator() 
+    m.add_cascade(label ="Insert template", menu= template, state=tempst)
+    try:
+        m.tk_popup(event.x_root, event.y_root) 
+    finally:
+        m.grab_release()
+
+def copycut(mode):
+    if txt_edit.tag_ranges("sel"):
+        if mode == 2:
+            txt_edit.delete("sel.first", "sel.last")
+            return
+        else: pass
+        root.clipboard_clear()
+        root.clipboard_append(txt_edit.get("sel.first", "sel.last"))
+        if mode == 0: txt_edit.delete("sel.first", "sel.last")
+    else: return
+def paste():
+    txt_edit.insert("insert", root.clipboard_get())
 def winquit():
     if unsaved == True:
         a= messagebox.askyesnocancel(parent= root, message='Want to save your changes?', icon='warning', title='Unsaved Changes')
@@ -780,6 +821,7 @@ txpos.grid(row=6, column=1, sticky="e")
 scroll.bind("<ButtonRelease-1>", scrllstop)
 xascroll.bind("<ButtonRelease-1>", scrllstop)
 txt_edit.bind("<ButtonRelease-1>", scrllstop)
+txt_edit.bind("<ButtonRelease-3>", rclkmenu)
 txt_edit.bind("<KeyRelease>", checksyntax)
 txt_edit.bind("<KeyRelease-Control_L>", checksyntax)
 txt_edit.bind("<KeyRelease-Control_R>", checksyntax)
