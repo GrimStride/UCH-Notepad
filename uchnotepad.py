@@ -208,7 +208,7 @@ class config():
         self.gen["bg"]= "gray94"
         self.theme["bg"]= "gray94"
         self.desct["text"]=" About UCH Notepad "
-        self.desc["text"]="   Version 1.2\n   Made by Grim Stride using Python 3.9.0 and cx-Freeze\n   This is a heavily modified version of Real Python's Tkinter\n   tutorial\n   Text editor functionality based on Notepad++\n   Icons taken from The GNOME Project and material.io"
+        self.desc["text"]="   Version 1.3\n   Made by Grim Stride using Python 3.9.0 and cx-Freeze\n   This is a heavily modified version of Real Python's Tkinter\n   tutorial\n   Text editor functionality based on Notepad++\n   Icons taken from The GNOME Project and material.io"
         self.upt.grid(row=1, column=1, sticky="nw", padx=8, pady=8)
         self.result.grid(row=1, column=2, sticky="nw", pady=11)
     def update(self):
@@ -216,7 +216,7 @@ class config():
             r = urllib.request.urlopen("https://github.com/GrimStride/UCH-Notepad/releases/latest")
             e = r.geturl()
             d = os.path.basename(e)
-            if d > str(1.2):
+            if d > str(1.3):
                 self.result["text"]= "Version " + d + " is available"
                 self.dwl.configure(bg= self.root["bg"], activebackground= self.root["bg"])
                 self.dwl.grid(row=7, column=3, pady=3)
@@ -353,6 +353,8 @@ def open_file(mode):
             text2 = text1.prettify(formatter=frmat)
             text3 = text2.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n", "")
             txt_edit.insert(tk.END, text3)
+            txt_edit.edit_modified(0)
+            txt_edit.edit_reset()
             checksyntax(None)
     else:
         with open(filepath1, "r") as input_file:
@@ -361,6 +363,8 @@ def open_file(mode):
             text2 = text1.prettify(formatter=frmat)
             text3 = text2.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n", "")
             txt_edit.insert(tk.END, text3)
+            txt_edit.edit_modified(0)
+            txt_edit.edit_reset()
             checksyntax(None)
     global filepath
     filepath = filepath1
@@ -369,7 +373,7 @@ def open_file(mode):
     global chash
     chash = hashlib.md5(bhash.encode('utf-8')).hexdigest()
     txt_edit.mark_set("insert", "1.0")
-    root.title(f"{filepath} - UCH Notepad 1.2")
+    root.title(f"{filepath} - UCH Notepad ")
 
 def syntax(pattern, tag, color, start, end,regexp=False):
     if data["stxtype"] == "Current line":
@@ -470,7 +474,7 @@ def nsave():
         bhash= txt_edit.get(1.0, tk.END)
         global chash
         chash = hashlib.md5(bhash.encode('utf-8')).hexdigest()
-        root.title(f"{filepath} - UCH Notepad 1.2")
+        root.title(f"{filepath} - UCH Notepad 1.3")
     else: save_file()
 
 def save_file():
@@ -529,7 +533,7 @@ def save_file():
     bhash= txt_edit.get(1.0, tk.END)
     global chash
     chash = hashlib.md5(bhash.encode('utf-8')).hexdigest()
-    root.title(f"{filepath} - UCH Notepad 1.2")
+    root.title(f"{filepath} - UCH Notepad 1.3")
 
 def TButton():
     destroyTN()
@@ -655,17 +659,17 @@ def get_line1():
     gethash= hashlib.md5(cwork.encode('utf-8')).hexdigest()
     if gethash != chash:
         if chash != "68b329da9893e34099c7d8ad5cb9c940":
-            root.title(f"*{filepath} - UCH Notepad 1.2")
+            root.title(f"*{filepath} - UCH Notepad 1.3")
             unsaved= True
         else:
-            root.title(f"*UCH Notepad 1.2")
+            root.title(f"*UCH Notepad 1.3")
             unsaved= True
     else:
         if chash != "68b329da9893e34099c7d8ad5cb9c940":
-            root.title(f"{filepath} - UCH Notepad 1.2")
+            root.title(f"{filepath} - UCH Notepad 1.3")
             unsaved= False
         else:
-            root.title(f"UCH Notepad 1.2")
+            root.title(f"UCH Notepad 1.3")
             unsaved= False
     try:
         txt_edit.tag_delete("curr1", "1.0", "end")
@@ -736,7 +740,10 @@ def rclkmenu(event):
         m.tk_popup(event.x_root, event.y_root) 
     finally:
         m.grab_release()
-
+def mundo(event):
+    if txt_edit.edit_modified() == 1:
+        txt_edit.edit_undo()
+    else: print("kk")
 def copycut(mode):
     if txt_edit.tag_ranges("sel"):
         if mode == 2:
@@ -764,7 +771,7 @@ updateJson()
 if data["sort"] == False: frmat = UnsortedAttributes()
 else: frmat = None
 root = tk.Tk()
-root.title("UCH Notepad 1.2")
+root.title("UCH Notepad 1.3")
 root.geometry(data["wm"])
 root.minsize(200,270)
 root.state(data["state"])
@@ -822,6 +829,7 @@ scroll.bind("<ButtonRelease-1>", scrllstop)
 xascroll.bind("<ButtonRelease-1>", scrllstop)
 txt_edit.bind("<ButtonRelease-1>", scrllstop)
 txt_edit.bind("<ButtonRelease-3>", rclkmenu)
+txt_edit.bind("<Control-Shift-Z>", mundo)
 txt_edit.bind("<KeyRelease>", checksyntax)
 txt_edit.bind("<KeyRelease-Control_L>", checksyntax)
 txt_edit.bind("<KeyRelease-Control_R>", checksyntax)
