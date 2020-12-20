@@ -682,7 +682,7 @@ def get_line1():
         selc= "#c0c0c0"
         curc= "#e8e8ff"
     txt_edit.tag_add("curr1", "insert linestart", "insert")
-    txt_edit.tag_add("curr2", "insert", "insert lineend")
+    txt_edit.tag_add("curr2", "insert", "insert lineend+1c")
     txt_edit.tag_configure("curr1", selectbackground= selc, background= curc)
     txt_edit.tag_configure("curr2", selectbackground= selc, background= curc)
     if data["syntax"] == True and data["stxtype"] != "Everything":
@@ -713,7 +713,6 @@ def rclkmenu(event):
     template.add_command(label="Blank Level")
     template.add_command(label="Crumbling Bridge")
     template.add_command(label="Dance Party")
-    template.add_command(label="Farm")
     template.add_command(label="Iceberg")
     template.add_command(label="Jungle Temple")
     template.add_command(label="Metal Plant")
