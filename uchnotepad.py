@@ -741,9 +741,9 @@ def rclkmenu(event):
     finally:
         m.grab_release()
 def mundo(event):
-    if txt_edit.edit_modified() == 1:
-        txt_edit.edit_undo()
-    else: print("kk")
+    try:
+        txt_edit.edit_redo()
+    except tk.TclError: return
 def copycut(mode):
     if txt_edit.tag_ranges("sel"):
         if mode == 2:
