@@ -18,13 +18,16 @@ linec = "1.0"
 
 
 def loadJson():
-    f = open(os.path.join(sys.path[0], 'config.json'), "r")
+    #a= os.path.isfile("config.json")
+    #print(a)
+    #f = open(os.path.join(sys.path[0], 'config.json'), "r")
+    f = open('config.json', "r")
     data= json.loads(f.read())
     f.close()
     return data
 def saveJson():
     global data
-    f = open(os.path.join(sys.path[0], 'config.json'), "w+")
+    f = open('config.json', "w+")
     data["state"] = root.attributes('-zoomed')
     if root.attributes('-zoomed') == 1:
         root.attributes('-zoomed', False)
@@ -595,6 +598,7 @@ class ShowTN:
         output = BytesIO()
         cpyim.save(output, format='png')
         sub = subprocess.Popen(("xclip", "-selection", "clipboard", "-t", "image/png", "-i"), 
+
                           stdin=subprocess.PIPE)
         sub.stdin.write(output.getvalue())
         sub.stdin.close()
