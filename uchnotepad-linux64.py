@@ -595,7 +595,6 @@ class ShowTN:
         output = BytesIO()
         cpyim.save(output, format='png')
         sub = subprocess.Popen(("xclip", "-selection", "clipboard", "-t", "image/png", "-i"), 
-
                           stdin=subprocess.PIPE)
         sub.stdin.write(output.getvalue())
         sub.stdin.close()
