@@ -41,21 +41,18 @@ def updateJson():
 class config():
     def __init__(self):
         global data
-        #print(root.attributes('-zoomed'))
         self.root = tk.Toplevel(root)
         self.root.title("Settings")
         scy = int(((root.winfo_y() + (root.winfo_height()/2) - 133)**2)**0.5)
         scx = int(root.winfo_x() + (root.winfo_width()/2) - 250)
         self.root.geometry("+" + str(scx) + "+" + str(scy))
         self.root.transient(root)
-        #self.root.iconbitmap(os.path.join(sys.path[0], 'icon.ico'))
         self.root.rowconfigure(6, weight=1)
         self.root.rowconfigure(8, weight=0)
         self.root.minsize(500,263)
         self.root.columnconfigure(3, weight=1)
         #root.resizable(False, False)
         self.root.grab_set()
-        #root.attributes('-disabled', True)
         self.root.focus_set()
         panel = ttk.Frame(self.root, relief="groove", style="A.TFrame", borderwidth=2)
         panel.grid(row=1, column=0, sticky="nsw", padx=8, rowspan=7)
@@ -129,12 +126,11 @@ class config():
         root.bind("<FocusIn>", self.focuz)
         self.root.protocol("WM_DELETE_WINDOW", self.ext)
         #abc= self.root.geometry()
-        self.root.geometry("512x266")
+        #self.root.geometry("512x266")
     def ext(self):
         root.unbind("<FocusIn>")
         self.root.grab_release()
         root.resizable(True, True)
-        #root.attributes('-disabled', False)
         self.root.destroy()
     def focuz(self, event):
         self.root.focus_force()
@@ -152,9 +148,9 @@ class config():
         self.gen["bg"]= "#BFDDF5"
         self.theme["bg"]= "gray94"
         self.info["bg"]= "gray94"
-        wmcx = root.winfo_x()
+        wmcx = root.winfo_x() - 2
         wmcy = tk.StringVar()
-        wmcy.set(root.winfo_y())
+        wmcy.set(root.winfo_y() - 23)
         wmcw = tk.StringVar()
         wmcw.set(root.winfo_width())
         wmch = tk.StringVar()
@@ -324,13 +320,7 @@ class config():
         global data
         self.root.tk.call('tk', 'fontchooser', 'configure', '-font', self.nsf, '-command', root.register(self.font_changed))
         self.root.tk.call('tk', 'fontchooser', 'show')
-        #print(root.tk.eval('wm stackorder '+str(self.root)))
-        #print(root.grab_current())
-        #tk.fontchooser.grab_set()
         self.root.grab_release()
-        #self.root.tk.Toplevel.grab_set()
-        #for widgts in self.root.winfo_children():
-            #widgts.grab_set()
     def font_changed(self, font):
         self.root.grab_set()
         self.nsf = font
@@ -501,7 +491,7 @@ def save_file():
     if itlvl == "1.0":
         filepaths = asksaveasfilename(
             initialdir= filepath.replace(os.path.basename(filepath),""),
-            defaultextension="v.snapshot",
+            defaultextension=".v.snapshot",
             filetypes=[("UCH Compressed Party Level", "*.v.snapshot"), ("UCH Compressed Challenge Level", "*.c.snapshot"), ("UCH Uncompressed Party Level", "*.v"), ("UCH Uncompressed Challenge Level", "*.c"), ("All Files", "*.*")],
         )
         if not filepaths:
@@ -545,7 +535,6 @@ def save_file():
             with open(filepaths, "w") as output_file:
                 text = txt_edit.get(1.0, tk.END)
                 output_file.write(text)
-    #global filepath
     filepath = filepaths
     bhash= txt_edit.get(1.0, tk.END)
     global chash
@@ -666,8 +655,8 @@ def tdark():
     s.map("A.TCheckbutton", background=[("active", "#555555")])
     s.configure("TRadiobutton", background= "#454545", foreground= "#dedede")
     s.map("TRadiobutton", background=[("active", "#555555")])
-    s.configure("A.Vertical.TScrollbar", troughcolor="#323232", background="#6a6a6a", arrowcolor="#dedede")
-    s.configure("A.Horizontal.TScrollbar", troughcolor="#323232", background="#6a6a6a", arrowcolor="#dedede")
+    s.configure("A.Vertical.TScrollbar", troughcolor="#242424", background="#6a6a6a", arrowcolor="#dedede")
+    s.configure("A.Horizontal.TScrollbar", troughcolor="#242424", background="#6a6a6a", arrowcolor="#dedede")
     s.map("A.Vertical.TScrollbar", background=[("active", "#757575")])
     s.map("A.Horizontal.TScrollbar", background=[("active", "#757575")])
 
@@ -750,7 +739,14 @@ if data["sort"] == False: frmat = UnsortedAttributes()
 else: frmat = None
 root = tk.Tk()
 root.title("UCH Notepad 1.2")
-root.geometry(data["wm"])
+#wx= data["wm"].split("+")[1]
+ww= data["wm"].split("+")[0]
+#print(ww)
+wx= int(data["wm"].split("+")[1]) - 2
+wy= int(data["wm"].split("+")[2]) - 23
+#root.geometry(data["wm"])
+#print(wx + wy)
+root.geometry(ww + "+" + str(wx) + "+" + str(wy))
 root.minsize(200,270)
 if data["state"] == 1:
     root.attributes('-zoomed', True)
