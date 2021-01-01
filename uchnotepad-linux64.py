@@ -51,7 +51,6 @@ class config():
         self.root.rowconfigure(8, weight=0)
         self.root.minsize(500,263)
         self.root.columnconfigure(3, weight=1)
-        #root.resizable(False, False)
         self.root.grab_set()
         self.root.focus_set()
         panel = ttk.Frame(self.root, relief="groove", style="A.TFrame", borderwidth=2)
@@ -125,12 +124,9 @@ class config():
         self.dwl= tk.Button(self.desct, relief="flat", activeforeground= "#0094FF", fg= "#0094FF", text="(Download)", command= self.browupt)
         root.bind("<FocusIn>", self.focuz)
         self.root.protocol("WM_DELETE_WINDOW", self.ext)
-        #abc= self.root.geometry()
-        #self.root.geometry("512x266")
     def ext(self):
         root.unbind("<FocusIn>")
         self.root.grab_release()
-        root.resizable(True, True)
         self.root.destroy()
     def focuz(self, event):
         self.root.focus_force()
@@ -599,6 +595,7 @@ class ShowTN:
         output = BytesIO()
         cpyim.save(output, format='png')
         sub = subprocess.Popen(("xclip", "-selection", "clipboard", "-t", "image/png", "-i"), 
+
                           stdin=subprocess.PIPE)
         sub.stdin.write(output.getvalue())
         sub.stdin.close()
@@ -739,13 +736,9 @@ if data["sort"] == False: frmat = UnsortedAttributes()
 else: frmat = None
 root = tk.Tk()
 root.title("UCH Notepad 1.2")
-#wx= data["wm"].split("+")[1]
 ww= data["wm"].split("+")[0]
-#print(ww)
 wx= int(data["wm"].split("+")[1]) - 2
 wy= int(data["wm"].split("+")[2]) - 23
-#root.geometry(data["wm"])
-#print(wx + wy)
 root.geometry(ww + "+" + str(wx) + "+" + str(wy))
 root.minsize(200,270)
 if data["state"] == 1:
