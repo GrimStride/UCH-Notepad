@@ -128,6 +128,8 @@ class config():
         self.dwl= tk.Button(self.desct, relief="flat", activeforeground= "#0094FF", fg= "#0094FF", text="(Download)", command= self.browupt)
         root.bind("<FocusIn>", self.focuz)
         self.root.protocol("WM_DELETE_WINDOW", self.ext)
+        #abc= self.root.geometry()
+        self.root.geometry("512x266")
     def ext(self):
         root.unbind("<FocusIn>")
         self.root.grab_release()
@@ -307,7 +309,7 @@ class config():
         else: return
     def defaults(self):
         self.nsf= "Courier 10"
-        self.nsuf= "{Segoe UI} 9"
+        self.nsuf= "{DejaVu Sans} 10"
         self.currenttheme.set("light")
         self.showtn.set("1")
         self.showlc.set("1")
@@ -322,7 +324,15 @@ class config():
         global data
         self.root.tk.call('tk', 'fontchooser', 'configure', '-font', self.nsf, '-command', root.register(self.font_changed))
         self.root.tk.call('tk', 'fontchooser', 'show')
+        #print(root.tk.eval('wm stackorder '+str(self.root)))
+        #print(root.grab_current())
+        #tk.fontchooser.grab_set()
+        self.root.grab_release()
+        #self.root.tk.Toplevel.grab_set()
+        #for widgts in self.root.winfo_children():
+            #widgts.grab_set()
     def font_changed(self, font):
+        self.root.grab_set()
         self.nsf = font
         self.txf["font"]= font
         self.txf["text"]= font.translate(str.maketrans({'{': '', '}': ''}))
@@ -330,7 +340,9 @@ class config():
         global data
         self.root.tk.call('tk', 'fontchooser', 'configure', '-font', self.nsuf, '-command', root.register(self.ufont_changed))
         self.root.tk.call('tk', 'fontchooser', 'show')
+        self.root.grab_release()
     def ufont_changed(self, font):
+        self.root.grab_set()
         self.nsuf = font
         self.uxf["font"]= font
         self.uxf["text"]= font.translate(str.maketrans({'{': '', '}': ''}))
@@ -578,7 +590,6 @@ class ShowTN:
         self.root.title(clvl)
         self.root.geometry("512x366")
         self.root.resizable(False,False)
-        #self.root.iconbitmap(os.path.join(sys.path[0], 'icon.ico'))
         self.root.focus_set()
         self.root.photo = ImageTk.PhotoImage(file= self.lvlthumb)
         cw = tk.Canvas(self.root, height=512, width=366, bg="black")
@@ -633,13 +644,10 @@ def tlight():
     s.map("A.TCheckbutton", background=[("active", "#ececec")])
     s.configure("TRadiobutton", background= "#d9d9d9", foreground= "black")
     s.map("TRadiobutton", background=[("active", "#ececec")])
-    #s.configure("Scroll", width=18)
-    #s.configure("Vertical.Scroll", width=18)
-    #s.configure("Vertical.TScrollbar", width=18)
-    s.configure("A.TScrollbar", throughcolor="white")
-    s.configure("A.Vertical.TScrollbar", troughcolor="#c3c3c3")
-    s.configure("A.Horizontal.TScrollbar", troughcolor="#c3c3c3")
-    #print(s.layout("Vertical.TScrollbar"))
+    s.configure("A.Vertical.TScrollbar", troughcolor="#c3c3c3", background="#d9d9d9", arrowcolor="black")
+    s.configure("A.Horizontal.TScrollbar", troughcolor="#c3c3c3", background="#d9d9d9", arrowcolor="black")
+    s.map("A.Vertical.TScrollbar", background=[("active", "#ececec")])
+    s.map("A.Horizontal.TScrollbar", background=[("active", "#ececec")])
 def tdark():
     for change in wmcol:
         change["bg"]= "#242424"
@@ -650,8 +658,7 @@ def tdark():
     s.configure("TSeparator", background= "black")
     s.configure("A.TFrame", background= "#323232")
     s.configure("A.TButton", background= "#555555", foreground="#dedede")
-    s.map("A.TButton", background=[("active", "#6a6a6a")])
-    #s.configure("TLabel", background= "#454545", foreground= "#dedede")
+    s.map("A.TButton", background=[("active", "#757575")])
     s.configure("A.TLabel", background= "#454545", foreground= "#dedede")
     s.configure("A.TLabelframe", background= "#454545", foreground= "#dedede")
     s.configure("A.TLabelframe.Label", background= "#454545", foreground= "#dedede")
@@ -659,6 +666,10 @@ def tdark():
     s.map("A.TCheckbutton", background=[("active", "#555555")])
     s.configure("TRadiobutton", background= "#454545", foreground= "#dedede")
     s.map("TRadiobutton", background=[("active", "#555555")])
+    s.configure("A.Vertical.TScrollbar", troughcolor="#323232", background="#6a6a6a", arrowcolor="#dedede")
+    s.configure("A.Horizontal.TScrollbar", troughcolor="#323232", background="#6a6a6a", arrowcolor="#dedede")
+    s.map("A.Vertical.TScrollbar", background=[("active", "#757575")])
+    s.map("A.Horizontal.TScrollbar", background=[("active", "#757575")])
 
 def get_line1():
     global txpos
@@ -723,14 +734,6 @@ def y_scroll(*args):
 def scrllstop(event):
     shldiscr = 0
     txt_edit.config(state="normal")
-    '''try:
-        txt_edit.tag_delete("curr1", "1.0", "end")
-        txt_edit.tag_delete("curr2", "1.0", "end")
-    except NameError: pass
-    txt_edit.tag_add("curr1", "insert-1c linestart", "insert-1c")
-    txt_edit.tag_add("curr2", "insert+1c", "insert+1c lineend")
-    txt_edit.tag_configure("curr1", background="#e8e8ff")
-    txt_edit.tag_configure("curr2", background="#e8e8ff")'''
 def winquit():
     if unsaved == True:
         a= messagebox.askyesnocancel(parent= root, message='Want to save your changes?', icon='warning', title='Unsaved Changes')
