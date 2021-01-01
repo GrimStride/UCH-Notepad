@@ -18,8 +18,10 @@ A simple Ultimate Chicken Horse ruleset and custom level file editor written in 
 ## Installation and Usage instructions
 
 - Unzip the downloaded file in any folder.
-- Run uchnotepad.exe inside the extracted folder.
+- * **Windows:** Run uchnotepad.exe inside the extracted folder.
+  * **Linux:** Open a terminal in the extracted folder and enter `./uchnotepad` to run the tool.
 - Use "Open Level" to edit a custom level file, or "Open ruleset" to edit a custom ruleset file.
+- Click the settings button in the lower right corner to modify the program settings.
 
 ## Features
 
