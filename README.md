@@ -12,9 +12,8 @@ A simple Ultimate Chicken Horse ruleset and custom level file editor written in 
 - Implement Find and Replace functionality.
 - Implement Drag and drop.
 - Detect file formats with error handlers instead of file extension (Still considering this one, maybe i will leave it like that).
-- macOS and Linux version.
+- macOS version.
 - 32 bit version for all OSes.
-- ~~Updater~~
 
 ## Installation and Usage instructions
 
