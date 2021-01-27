@@ -15,6 +15,8 @@ filepath= ""
 unsaved= False
 frmat = None
 linec = "1.0"
+#global fnd
+fnd = 0
 def loadJson():
     f = open(os.path.join(sys.path[0], 'config.json'), "r")
     data= json.loads(f.read())
@@ -673,7 +675,7 @@ def get_line1():
             unsaved= False
     try:
         txt_edit.tag_delete("curr1", "1.0", "end")
-        txt_edit.tag_delete("curr2", "1.0", "end")
+        #txt_edit.tag_delete("curr2", "1.0", "end")
     except NameError: pass
     if data["theme"] == "dark":
         selc= "#4d5d60"
@@ -681,10 +683,10 @@ def get_line1():
     else:
         selc= "#c0c0c0"
         curc= "#e8e8ff"
-    txt_edit.tag_add("curr1", "insert linestart", "insert")
-    txt_edit.tag_add("curr2", "insert", "insert lineend+1c")
+    txt_edit.tag_add("curr1", "insert linestart", "insert lineend+1c")
+    #txt_edit.tag_add("curr2", "insert", "insert lineend+1c")
     txt_edit.tag_configure("curr1", selectbackground= selc, background= curc)
-    txt_edit.tag_configure("curr2", selectbackground= selc, background= curc)
+    #txt_edit.tag_configure("curr2", selectbackground= selc, background= curc)
     if data["syntax"] == True and data["stxtype"] != "Everything":
         checksyntax(None)
     root.after(33, get_line1)
@@ -718,7 +720,7 @@ def rclkmenu(event):
     template.add_command(label="Metal Plant")
     template.add_command(label="Nuclear Plant")
     template.add_command(label="Old Mansion")
-    template.add_command(label="Pyramid")
+    template.add_command(label="Pyramid", command=lambda: insertemp("pyr"))
     template.add_command(label="Rooftops")
     template.add_command(label="Space")
     template.add_command(label="The Ballroom")
@@ -743,6 +745,96 @@ def mundo(event):
     try:
         txt_edit.edit_redo()
     except tk.TclError: return
+''''class findtool:
+    def __init__(self, event):
+        self.root = tk.Toplevel(root)
+        #self.root.transient(root)
+        self.root.overrideredirect(True)
+        self.root.wm_attributes('-transparentcolor','white')
+        self.root.wm_transient(root)
+        #self.root.attributes("-topmost", 1)
+        #self.root.transient(root)
+        self.root.focus_force()
+        x1=0
+        x2=385
+        y1=0
+        y2=44
+        a = tk.Canvas(self.root, bg= "white", width= 387, height=46, bd=0, highlightthickness=0)
+        #a.create_arc(x1, y1+4, x1+4, y1, start= 180, extent=-90, style="pieslice", fill="#242424", outline="")
+        #a.create_arc(x1, y2-4, x1+4, y2, start= 180, extent=90, style="pieslice", fill="#242424", outline="")
+        #a.create_arc(x2, y1+4, x2-4, y1, start= 0, extent=90, style="pieslice", fill="#242424", outline="")
+        #a.create_arc(x2, y2-4, x2-4, y2, start= 0, extent=-90, style="pieslice", fill="#242424", outline="")
+        #a.create_rectangle(x1, y1, 387, 46, fill="", outline="")
+        a.create_oval(x1, y1, x1+5, y1+5, fill="#242424", outline="")
+        a.create_oval(x2-5, y1, x2, y1+5, fill="#242424", outline="")
+        a.create_oval(x1, y2-5, x1+5, y2, fill="#242424", outline="")
+        a.create_oval(x2-5, y2-5, x2, y2, fill="#242424", outline="")
+        a.create_rectangle(x1+3, y1, x2-3, y2+1, fill="#242424", outline="")
+        a.create_rectangle(x1, y1+3, x2+1, y2-3, fill="#242424", outline="")
+        a.grid(row=0, column=1, sticky="ne")
+        self.root.bind("<ButtonPress-1>", self.start_move)
+        self.root.bind("<ButtonRelease-1>", self.stop_move)
+        self.root.bind("<B1-Motion>", self.do_move)
+        #root.bind("<ButtonPress-1>", self.start_move)
+        #root.bind("<ButtonRelease-1>", self.stop_move)
+        #root.bind("<B1-Motion>", self.do_move)
+        #self.root.transient(root)
+        #root.bind("<Configure>", self.liftme)
+        #self.liftme(None)
+    def start_move(self, event):
+        self.x = event.x
+        self.y = event.y
+
+    def stop_move(self, event):
+        self.x = None
+        self.y = None
+
+    def do_move(self, event):
+        deltax = event.x - self.x
+        deltay = event.y - self.y
+        x = self.root.winfo_x() + deltax
+        y = self.root.winfo_y() + deltay
+        self.root.geometry(f"+{x}+{y}")
+    def liftme(self, event):
+        self.root.lift(root)'''
+def findtool(event):
+    global fnd
+    if fnd == 1: return
+    fnd = 1
+    global base
+    print("what")
+    a= "🡰"
+    b= "🡲"
+    c= "❌"
+    finder = tk.Frame(base, relief="groove", borderwidth=2)
+    finder.grid(row=0, column=1, sticky="ne")
+    search= tk.StringVar()
+    ent = tk.Entry(finder, textvariable= search, relief="solid")
+    expand= tk.Button(finder, text="🞃", relief="solid", width=2, font="{Segoe UI} 8", borderwidth=0)
+    prev= tk.Button(finder, text=a, relief="solid", width=2, font="{Segoe UI} 8", compound= "center", borderwidth=1)
+    nxt= tk.Button(finder, text=b, relief="solid", width=2, font="{Segoe UI} 8", borderwidth=1)
+    clse= tk.Button(finder, text=c, relief="solid", width=2, font="{Segoe UI} 8", borderwidth=1)
+    expand.grid(row=0, column=0, padx=4, pady=8)
+    ent.grid(row=0, column=1, pady=8, ipady=1)
+    prev.grid(row=0, column=2, padx=4, pady=8)
+    nxt.grid(row=0, column=3, pady=8)
+    clse.grid(row=0, column=4, padx=4, pady=8)
+    '''h= root.winfo_pointerx()
+    g= root.winfo_pointery()
+    x1=0
+    x2=385
+    y1=0
+    y2=44
+    a = base.create_oval(x1, y1, x1+5, y1+5, fill="#242424", outline="")
+    B = base.create_oval(x2-5, y1, x2, y1+5, fill="#242424", outline="")
+    base.create_oval(x1, y2-5, x1+5, y2, fill="#242424", outline="")
+    base.create_oval(x2-5, y2-5, x2, y2, fill="#242424", outline="")
+    base.create_rectangle(x1+3, y1, x2-3, y2+1, fill="#242424", outline="")
+    base.create_rectangle(x1, y1+3, x2+1, y2-3, fill="#242424", outline="")
+    #base.create_oval(h, g, h + 20, g + 20, fill="black")
+    c = base.create_rectangle(0, 0, 250, 250, fill="blue", outline="")
+    base.tag_raise(c)
+    print(str(h) + " " + str(g))'''
 def copycut(mode):
     if txt_edit.tag_ranges("sel"):
         if mode == 2:
@@ -755,6 +847,9 @@ def copycut(mode):
     else: return
 def paste():
     txt_edit.insert("insert", root.clipboard_get())
+def insertemp(mode):
+    if mode == "pyr":
+        txt_edit.insert("insert", r'<scene levelSceneName="Pyramid" saveFormatVersion="1">' + "\n " + r'<mods GravityMode="0" JumpSpeedMode="0" SprintSpeedMode="0" WallJumpsDisabled="False" WallSlidesDisabled="False" GameSpeedMode="0" DanceInvincibility="False" InvisibilityMode="0" MirrorControls="False" PlatformSpeedMode="0" RateOfFireMode="0" MultiJumpMode="0" ProjectileExplosionMode="0" CharacterSizeMode="0" JetpackMode="False" PostDeathBehaviorMode="0" CameraFlipMode="0" DoomsdayMeteorsMode="0" DoomsdayLavaMode="0" PlayerPlayerCollisions="False" ProjectileSpeedMode="0" PreviewModsInTreehouse="False" ForceLobbyModifiers="False" Frictionless="False"/>')
 def winquit():
     if unsaved == True:
         a= messagebox.askyesnocancel(parent= root, message='Want to save your changes?', icon='warning', title='Unsaved Changes')
@@ -785,7 +880,9 @@ s.configure("TButton", font= data["ufnt"])
 
 scroll = ttk.Scrollbar(root, orient="vertical")
 xascroll = ttk.Scrollbar(root, orient="horizontal")
-txt_edit = tk.Text(root, padx=4, undo=True, autoseparators=True, font= data["fnt"], wrap="none", xscrollcommand= xascroll.set, yscrollcommand=scroll.set)
+base= tk.Frame(root)
+
+txt_edit = tk.Text(base, padx=4, undo=True, autoseparators=True, font= data["fnt"], wrap="none", xscrollcommand= xascroll.set, yscrollcommand=scroll.set)
 
 scroll.config(command=y_scroll)
 xascroll.config(command=x_scroll)
@@ -801,7 +898,13 @@ btn_nsav.grid(row=3, column=0, sticky="ew", padx=5, pady=5)
 btn_save.grid(row=4, column=0, sticky="ew", padx=5, pady=5)
 fr_buttons.grid(row=0, column=0, sticky="ns")
 
-txt_edit.grid(row=0, column=1, sticky="nsew")
+base.grid(row=0, column=1, sticky="nsew")
+base.rowconfigure(0, weight=1)
+base.columnconfigure(0, weight=1)
+#f = base.create_window(0,0, anchor="nw", window= txt_edit)
+#base.tag_lower(f)
+#print(base.bbox("all"))
+txt_edit.grid(row=0, column=0, sticky="nsew", columnspan=2)
 
 scroll.grid(column=2, row=0, sticky="nse", ipadx=1)
 xascroll.grid(column=1, row=1, sticky="we")
@@ -829,6 +932,8 @@ xascroll.bind("<ButtonRelease-1>", scrllstop)
 txt_edit.bind("<ButtonRelease-1>", scrllstop)
 txt_edit.bind("<ButtonRelease-3>", rclkmenu)
 txt_edit.bind("<Control-Shift-Z>", mundo)
+root.bind("<Control-f>", findtool)
+root.bind("<Control-F>", findtool)
 txt_edit.bind("<KeyRelease>", checksyntax)
 txt_edit.bind("<KeyRelease-Control_L>", checksyntax)
 txt_edit.bind("<KeyRelease-Control_R>", checksyntax)
@@ -841,6 +946,7 @@ else: tlight()
 if len(sys.argv) >= 2:
     open_file("2")
 else: pass
+#print(base.bbox("all"))
 root.after(5, get_line1)
 
 root.mainloop()
