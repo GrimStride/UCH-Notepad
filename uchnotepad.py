@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 from PIL import ImageTk, Image, ImageGrab
 from io import BytesIO
 from urllib import request, error
+from pyglet import font as pyfont
 
 shldiscr= 1
 check = 0
@@ -17,6 +18,8 @@ frmat = None
 linec = "1.0"
 #global fnd
 fnd = 0
+rpl = 0
+pyfont.add_file("lib/SearchIcons.ttf")
 def loadJson():
     f = open(os.path.join(sys.path[0], 'config.json'), "r")
     data= json.loads(f.read())
@@ -47,7 +50,7 @@ class config():
         scx = int(root.winfo_x() + (root.winfo_width()/2) - 250)
         self.root.geometry("+" + str(scx) + "+" + str(scy))
         self.root.transient(root)
-        self.root.iconbitmap(os.path.join(sys.path[0], 'icon.ico'))
+        self.root.iconbitmap('icon.ico')
         self.root.rowconfigure(6, weight=1)
         self.root.rowconfigure(8, weight=0)
         self.root.minsize(500,263)
@@ -745,96 +748,30 @@ def mundo(event):
     try:
         txt_edit.edit_redo()
     except tk.TclError: return
-''''class findtool:
-    def __init__(self, event):
-        self.root = tk.Toplevel(root)
-        #self.root.transient(root)
-        self.root.overrideredirect(True)
-        self.root.wm_attributes('-transparentcolor','white')
-        self.root.wm_transient(root)
-        #self.root.attributes("-topmost", 1)
-        #self.root.transient(root)
-        self.root.focus_force()
-        x1=0
-        x2=385
-        y1=0
-        y2=44
-        a = tk.Canvas(self.root, bg= "white", width= 387, height=46, bd=0, highlightthickness=0)
-        #a.create_arc(x1, y1+4, x1+4, y1, start= 180, extent=-90, style="pieslice", fill="#242424", outline="")
-        #a.create_arc(x1, y2-4, x1+4, y2, start= 180, extent=90, style="pieslice", fill="#242424", outline="")
-        #a.create_arc(x2, y1+4, x2-4, y1, start= 0, extent=90, style="pieslice", fill="#242424", outline="")
-        #a.create_arc(x2, y2-4, x2-4, y2, start= 0, extent=-90, style="pieslice", fill="#242424", outline="")
-        #a.create_rectangle(x1, y1, 387, 46, fill="", outline="")
-        a.create_oval(x1, y1, x1+5, y1+5, fill="#242424", outline="")
-        a.create_oval(x2-5, y1, x2, y1+5, fill="#242424", outline="")
-        a.create_oval(x1, y2-5, x1+5, y2, fill="#242424", outline="")
-        a.create_oval(x2-5, y2-5, x2, y2, fill="#242424", outline="")
-        a.create_rectangle(x1+3, y1, x2-3, y2+1, fill="#242424", outline="")
-        a.create_rectangle(x1, y1+3, x2+1, y2-3, fill="#242424", outline="")
-        a.grid(row=0, column=1, sticky="ne")
-        self.root.bind("<ButtonPress-1>", self.start_move)
-        self.root.bind("<ButtonRelease-1>", self.stop_move)
-        self.root.bind("<B1-Motion>", self.do_move)
-        #root.bind("<ButtonPress-1>", self.start_move)
-        #root.bind("<ButtonRelease-1>", self.stop_move)
-        #root.bind("<B1-Motion>", self.do_move)
-        #self.root.transient(root)
-        #root.bind("<Configure>", self.liftme)
-        #self.liftme(None)
-    def start_move(self, event):
-        self.x = event.x
-        self.y = event.y
 
-    def stop_move(self, event):
-        self.x = None
-        self.y = None
-
-    def do_move(self, event):
-        deltax = event.x - self.x
-        deltay = event.y - self.y
-        x = self.root.winfo_x() + deltax
-        y = self.root.winfo_y() + deltay
-        self.root.geometry(f"+{x}+{y}")
-    def liftme(self, event):
-        self.root.lift(root)'''
 def findtool(event):
     global fnd
-    if fnd == 1: return
+    if fnd == 1:
+        finder.grid_forget()
+        expand.grid_forget()
+        ent.grid_forget()
+        prev.grid_forget()
+        nxt.grid_forget()
+        clse.grid_forget()
+        fnd= 0
+        txt_edit.focus_set()
+        return
     fnd = 1
-    global base
-    print("what")
-    a= "🡰"
-    b= "🡲"
-    c= "❌"
-    finder = tk.Frame(base, relief="groove", borderwidth=2)
     finder.grid(row=0, column=1, sticky="ne")
-    search= tk.StringVar()
-    ent = tk.Entry(finder, textvariable= search, relief="solid")
-    expand= tk.Button(finder, text="🞃", relief="solid", width=2, font="{Segoe UI} 8", borderwidth=0)
-    prev= tk.Button(finder, text=a, relief="solid", width=2, font="{Segoe UI} 8", compound= "center", borderwidth=1)
-    nxt= tk.Button(finder, text=b, relief="solid", width=2, font="{Segoe UI} 8", borderwidth=1)
-    clse= tk.Button(finder, text=c, relief="solid", width=2, font="{Segoe UI} 8", borderwidth=1)
-    expand.grid(row=0, column=0, padx=4, pady=8)
-    ent.grid(row=0, column=1, pady=8, ipady=1)
-    prev.grid(row=0, column=2, padx=4, pady=8)
-    nxt.grid(row=0, column=3, pady=8)
-    clse.grid(row=0, column=4, padx=4, pady=8)
-    '''h= root.winfo_pointerx()
-    g= root.winfo_pointery()
-    x1=0
-    x2=385
-    y1=0
-    y2=44
-    a = base.create_oval(x1, y1, x1+5, y1+5, fill="#242424", outline="")
-    B = base.create_oval(x2-5, y1, x2, y1+5, fill="#242424", outline="")
-    base.create_oval(x1, y2-5, x1+5, y2, fill="#242424", outline="")
-    base.create_oval(x2-5, y2-5, x2, y2, fill="#242424", outline="")
-    base.create_rectangle(x1+3, y1, x2-3, y2+1, fill="#242424", outline="")
-    base.create_rectangle(x1, y1+3, x2+1, y2-3, fill="#242424", outline="")
-    #base.create_oval(h, g, h + 20, g + 20, fill="black")
-    c = base.create_rectangle(0, 0, 250, 250, fill="blue", outline="")
-    base.tag_raise(c)
-    print(str(h) + " " + str(g))'''
+    expand.grid(row=0, column=0, padx=4, pady=4)
+    ent.grid(row=0, column=1, ipady=1, columnspan=25)
+    prev.grid(row=0, column=26, padx=4, pady=4)
+    nxt.grid(row=0, column=27, pady=4)
+    clse.grid(row=0, column=28, padx=4, pady=4)
+    casematch.grid(row=1, column=1, sticky="nw")
+    wordmatch.grid(row=1, column=2, sticky="nw", ipadx=1)
+    regmatch.grid(row=1, column=3, sticky="nw")
+    ent.focus_set()
 def copycut(mode):
     if txt_edit.tag_ranges("sel"):
         if mode == 2:
@@ -869,7 +806,7 @@ root.title("UCH Notepad 1.3")
 root.geometry(data["wm"])
 root.minsize(200,270)
 root.state(data["state"])
-root.iconbitmap(os.path.join(sys.path[0], 'icon.ico'))
+root.iconbitmap('icon.ico')
 root.rowconfigure(0, weight=1)
 root.columnconfigure(1, weight=1)
 root.protocol("WM_DELETE_WINDOW", winquit)
@@ -883,6 +820,22 @@ xascroll = ttk.Scrollbar(root, orient="horizontal")
 base= tk.Frame(root)
 
 txt_edit = tk.Text(base, padx=4, undo=True, autoseparators=True, font= data["fnt"], wrap="none", xscrollcommand= xascroll.set, yscrollcommand=scroll.set)
+
+a= "🡰"
+b= "🡲"
+c= "❌"
+
+finder = tk.Frame(base, relief="groove", borderwidth=2)
+search= tk.StringVar()
+ent = tk.Entry(finder, textvariable= search, relief="solid", width=30)
+#expand= tk.Button(finder, text="🞃", relief="solid", width=2, font="{Segoe UI} 8", borderwidth=0, command=None)
+expand= tk.Button(finder, text="¹", relief="solid", width=2, font="SearchIcons 11", borderwidth=0)
+prev= tk.Button(finder, text=a, relief="solid", width=2, font="{Segoe UI} 8", compound= "center", borderwidth=1)
+nxt= tk.Button(finder, text=b, relief="solid", width=2, font="{Segoe UI} 8", borderwidth=1)
+clse= tk.Button(finder, text="·", relief="solid", width=2, font="SearchIcons 11", borderwidth=1, command=lambda:[findtool(None)])
+casematch= tk.Button(finder, text="¼", relief="solid", width=2, font="SearchIcons 12", borderwidth=1)
+wordmatch= tk.Button(finder, text="½", relief="solid", width=2, font="SearchIcons 12", borderwidth=1)
+regmatch= tk.Button(finder, text="¾", relief="solid", width=2, font="SearchIcons 12", borderwidth=1)
 
 scroll.config(command=y_scroll)
 xascroll.config(command=x_scroll)
