@@ -762,16 +762,44 @@ def findtool(event):
         txt_edit.focus_set()
         return
     fnd = 1
-    finder.grid(row=0, column=1, sticky="ne")
-    expand.grid(row=0, column=0, padx=4, pady=4)
-    ent.grid(row=0, column=1, ipady=1, columnspan=25)
-    prev.grid(row=0, column=26, padx=4, pady=4)
-    nxt.grid(row=0, column=27, pady=4)
-    clse.grid(row=0, column=28, padx=4, pady=4)
-    casematch.grid(row=1, column=1, sticky="nw")
-    wordmatch.grid(row=1, column=2, sticky="nw", ipadx=1)
-    regmatch.grid(row=1, column=3, sticky="nw")
+    finder.grid(row=0, column=1, sticky="ne", padx=1, pady=1)
+    finder.rowconfigure(1, pad=4)
+    finder.rowconfigure(1, pad=7)
+    finder.rowconfigure(2, pad=4)
+    expand.grid(row=0, column=0, padx=4)
+    ent.grid(row=0, column=1, ipady=2, columnspan=25)
+    prev.grid(row=0, column=26, padx=4, ipadx=1, ipady=1)
+    nxt.grid(row=0, column=27, ipadx=1, ipady=1)
+    clse.grid(row=0, column=28, padx=4, pady=4, ipadx=1, ipady=1)
+    casematch.grid(row=2, column=1, sticky="nw")
+    wordmatch.grid(row=2, column=2, sticky="nw", ipadx=1)
+    regmatch.grid(row=2, column=3, sticky="nw")
+    bluethingy.grid(row=3, column=0, columnspan=29, sticky="nsew")
     ent.focus_set()
+def replacetool():
+    global rpl
+    if rpl == 0:
+        expand["text"]="¸"
+        replent.grid(row=1, column=1, ipady=2, columnspan=25)
+        rplnext.grid(row=1, column=26, padx=4)
+        rplall.grid(row=1, column=27)
+        rpl = 1
+    else:
+        expand["text"]="¹"
+        replent.grid_forget()
+        rplnext.grid_forget()
+        rplall.grid_forget()
+        rpl = 0
+def rpldefault(event):
+    if replace.get()== "":
+        replent["state"]="disabled"
+        replace.set("Replace...‏‏‎ ‎")
+def rpltip(event):
+    if replace.get() == "Replace...‏‏‎ ‎":
+        replace.set("")
+        replent["state"]="normal"
+        replent.focus_set()
+        replent.bind("<FocusOut>", rpldefault)
 def copycut(mode):
     if txt_edit.tag_ranges("sel"):
         if mode == 2:
@@ -823,19 +851,25 @@ txt_edit = tk.Text(base, padx=4, undo=True, autoseparators=True, font= data["fnt
 
 a= "🡰"
 b= "🡲"
-c= "❌"
-
-finder = tk.Frame(base, relief="groove", borderwidth=2)
+finder = tk.Frame(base, relief="solid", borderwidth=0)
+bluethingy= tk.Frame(finder, relief="solid", borderwidth=0, highlightthickness=0, bg="#007acc", height=4)
 search= tk.StringVar()
+replace= tk.StringVar()
+replace.set("Replace...‏‏‎ ‎")
 ent = tk.Entry(finder, textvariable= search, relief="solid", width=30)
 #expand= tk.Button(finder, text="🞃", relief="solid", width=2, font="{Segoe UI} 8", borderwidth=0, command=None)
-expand= tk.Button(finder, text="¹", relief="solid", width=2, font="SearchIcons 11", borderwidth=0)
+expand= tk.Button(finder, text="¹", relief="solid", width=2, font="SearchIcons 11", borderwidth=0, command= replacetool)
 prev= tk.Button(finder, text=a, relief="solid", width=2, font="{Segoe UI} 8", compound= "center", borderwidth=1)
 nxt= tk.Button(finder, text=b, relief="solid", width=2, font="{Segoe UI} 8", borderwidth=1)
 clse= tk.Button(finder, text="·", relief="solid", width=2, font="SearchIcons 11", borderwidth=1, command=lambda:[findtool(None)])
 casematch= tk.Button(finder, text="¼", relief="solid", width=2, font="SearchIcons 12", borderwidth=1)
 wordmatch= tk.Button(finder, text="½", relief="solid", width=2, font="SearchIcons 12", borderwidth=1)
 regmatch= tk.Button(finder, text="¾", relief="solid", width=2, font="SearchIcons 12", borderwidth=1)
+
+replent = tk.Entry(finder, textvariable= replace, relief="solid", width=30, state="disabled")
+rplnext= tk.Button(finder, text="º", relief="solid", width=2, font="SearchIcons 12", borderwidth=1)
+rplall= tk.Button(finder, text="»", relief="solid", width=2, font="SearchIcons 12", borderwidth=1)
+replent.bind("<ButtonRelease-1>", rpltip)
 
 scroll.config(command=y_scroll)
 xascroll.config(command=x_scroll)
