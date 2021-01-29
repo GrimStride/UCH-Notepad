@@ -1,5 +1,6 @@
+import tkinter.filedialog
 import tkinter as tk
-from tkinter.filedialog import askopenfilename, asksaveasfilename
+#from tkinter.filedialog import askopenfilename, asksaveasfilename
 from tkinter import ttk, font, messagebox
 import lzma, pathlib, PIL, bs4, os, win32clipboard, hashlib, json, sys, urllib, webbrowser
 from pathlib import Path
@@ -343,7 +344,7 @@ def open_file(mode):
         else:
             stype= "snapshots"
             ftype= (("UCH Compressed Level", "*.v.snapshot *.c.snapshot"), ("UCH Compressed Party Level", "*.v.snapshot"), ("UCH Compressed Challenge Level", "*.c.snapshot"), ("UCH Uncompressed Party Level", "*.v"), ("UCH Uncompressed Challenge Level", "*.c"), ("All Files", "*.*"))
-        filepath1 = askopenfilename(
+        filepath1 = tk.filedialog.askopenfilename(
             initialdir=str(Path.home()) + "/AppData/LocalLow/Clever Endeavour Games/Ultimate Chicken Horse/" + stype, filetypes= ftype)
     else:
         filepath1= os.path.abspath(sys.argv[1]).replace("\\", "/")
@@ -487,7 +488,7 @@ def save_file():
     itlvl = txt_edit.search("<scene", "1.0", "1.7")
     itrul = txt_edit.search("<Ruleset", "1.0", "1.9")
     if itlvl == "1.0":
-        filepaths = asksaveasfilename(
+        filepaths = tk.filedialog.asksaveasfilename(
             initialdir= filepath.replace(os.path.basename(filepath),""),
             defaultextension="v.snapshot",
             filetypes=[("UCH Compressed Party Level", "*.v.snapshot"), ("UCH Compressed Challenge Level", "*.c.snapshot"), ("UCH Uncompressed Party Level", "*.v"), ("UCH Uncompressed Challenge Level", "*.c"), ("All Files", "*.*")],
@@ -504,7 +505,7 @@ def save_file():
                 text = txt_edit.get(1.0, tk.END)
                 output_file.write(text)
     elif itrul == "1.0":
-        filepaths = asksaveasfilename(
+        filepaths = tk.filedialog.asksaveasfilename(
             initialdir= filepath.replace(os.path.basename(filepath),""),
             defaultextension="v.snapshot",
             filetypes=[("UCH Compressed Ruleset", "*.ruleset"), ("All Files", "*.*")],
@@ -521,7 +522,7 @@ def save_file():
                 text = txt_edit.get(1.0, tk.END)
                 output_file.write(text)
     else:
-        filepaths = asksaveasfilename(initialdir= filepath.replace(os.path.basename(filepath),""), defaultextension="lzma", filetypes=[("LZMA Encoded File", "*.lzma"), ("Text File", "*.txt"), ("All Files", "*.*")])
+        filepaths = tk.filedialog.asksaveasfilename(initialdir= filepath.replace(os.path.basename(filepath),""), defaultextension="lzma", filetypes=[("LZMA Encoded File", "*.lzma"), ("Text File", "*.txt"), ("All Files", "*.*")])
         if not filepaths:
             return
         extension = os.path.splitext(filepaths)[1]
@@ -533,7 +534,6 @@ def save_file():
             with open(filepaths, "w") as output_file:
                 text = txt_edit.get(1.0, tk.END)
                 output_file.write(text)
-    #global filepath
     filepath = filepaths
     bhash= txt_edit.get(1.0, tk.END)
     global chash
@@ -605,7 +605,7 @@ class ShowTN:
         win32clipboard.SetClipboardData(win32clipboard.CF_DIB, data)
         win32clipboard.CloseClipboard()
     def save_thmb(self):
-        thmbpath = asksaveasfilename(
+        thmbpath = tk.filedialog.asksaveasfilename(
         defaultextension="jpg",
         filetypes=[("JPEG", "*.jpg"), ("PNG", "*.png"), ("BMP", "*.bmp"), ("GIF", "*.gif"), ("TGA", "*.tga")],
         parent= self.root)
@@ -626,7 +626,10 @@ def tlight():
     btn_conf['activebackground'] = "#f0f0f0"
     s.configure("TSeparator", background= "#f0f0f0")
     s.configure("TFrame", background= "white")
+    s.configure("S.TFrame", background= "#f0f0f0")
     s.configure("TLabel", background= "#f0f0f0", foreground= "black")
+    s.configure("S.TLabel", background= "#f0f0f0", foreground= "black")
+    s.map("S.TLabel", borderwidth=[("hover", 1)])
     s.configure("TLabelframe", background= "#f0f0f0", foreground= "black")
     s.configure("TLabelframe.Label", background= "#f0f0f0", foreground= "black")
     s.configure("TCheckbutton", background= "#f0f0f0", foreground= "black")
@@ -640,7 +643,10 @@ def tdark():
     btn_conf['activebackground'] = "#2e2e2e"
     s.configure("TSeparator", background= "black")
     s.configure("TFrame", background= "#323232")
+    s.configure("S.TFrame", background= "#242424")
     s.configure("TLabel", background= "#454545", foreground= "#dedede")
+    s.configure("S.TLabel", background= "#242424", foreground= "#dedede")
+    s.map("S.TLabel", borderwidth=[("hover", 1)])
     s.configure("TLabelframe", background= "#454545", foreground= "#dedede")
     s.configure("TLabelframe.Label", background= "#454545", foreground= "#dedede")
     s.configure("TCheckbutton", background= "#454545", foreground= "#dedede")
@@ -762,19 +768,19 @@ def findtool(event):
         txt_edit.focus_set()
         return
     fnd = 1
-    finder.grid(row=0, column=1, sticky="ne", padx=1, pady=1)
+    finder.grid(row=0, column=1, sticky="ne")
     finder.rowconfigure(1, pad=4)
     finder.rowconfigure(1, pad=7)
     finder.rowconfigure(2, pad=4)
     expand.grid(row=0, column=0, padx=4)
     ent.grid(row=0, column=1, ipady=2, columnspan=25)
-    prev.grid(row=0, column=26, padx=4, ipadx=1, ipady=1)
+    prev.grid(row=0, column=26, padx=4, ipadx=3, ipady=3)
     nxt.grid(row=0, column=27, ipadx=1, ipady=1)
     clse.grid(row=0, column=28, padx=4, pady=4, ipadx=1, ipady=1)
     casematch.grid(row=2, column=1, sticky="nw")
     wordmatch.grid(row=2, column=2, sticky="nw", ipadx=1)
     regmatch.grid(row=2, column=3, sticky="nw")
-    bluethingy.grid(row=3, column=0, columnspan=29, sticky="nsew")
+    #bluethingy.grid(row=3, column=0, columnspan=29, sticky="nsew")
     ent.focus_set()
 def replacetool():
     global rpl
@@ -851,16 +857,16 @@ txt_edit = tk.Text(base, padx=4, undo=True, autoseparators=True, font= data["fnt
 
 a= "🡰"
 b= "🡲"
-finder = tk.Frame(base, relief="solid", borderwidth=0)
-bluethingy= tk.Frame(finder, relief="solid", borderwidth=0, highlightthickness=0, bg="#007acc", height=4)
+finder = ttk.Frame(base, relief="solid", borderwidth=1, style="S.TFrame")
+#bluethingy= tk.Frame(finder, relief="solid", borderwidth=0, highlightthickness=0, bg="#007acc", height=4)
 search= tk.StringVar()
 replace= tk.StringVar()
 replace.set("Replace...‏‏‎ ‎")
 ent = tk.Entry(finder, textvariable= search, relief="solid", width=30)
 #expand= tk.Button(finder, text="🞃", relief="solid", width=2, font="{Segoe UI} 8", borderwidth=0, command=None)
 expand= tk.Button(finder, text="¹", relief="solid", width=2, font="SearchIcons 11", borderwidth=0, command= replacetool)
-prev= tk.Button(finder, text=a, relief="solid", width=2, font="{Segoe UI} 8", compound= "center", borderwidth=1)
-nxt= tk.Button(finder, text=b, relief="solid", width=2, font="{Segoe UI} 8", borderwidth=1)
+prev= ttk.Label(finder, text=a, relief="solid", width=2, font="{Segoe UI} 8", borderwidth=0)
+nxt= tk.Button(finder, text=b, relief="solid", width=2, font="{Segoe UI} 8", borderwidth=1, style="S.TLabel")
 clse= tk.Button(finder, text="·", relief="solid", width=2, font="SearchIcons 11", borderwidth=1, command=lambda:[findtool(None)])
 casematch= tk.Button(finder, text="¼", relief="solid", width=2, font="SearchIcons 12", borderwidth=1)
 wordmatch= tk.Button(finder, text="½", relief="solid", width=2, font="SearchIcons 12", borderwidth=1)
