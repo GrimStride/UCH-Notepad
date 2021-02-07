@@ -1,6 +1,6 @@
 # UCH Notepad
 
-A simple Ultimate Chicken Horse ruleset and custom level file editor written in Python. (Windows 64bit only at the moment)
+A simple Ultimate Chicken Horse ruleset and custom level file editor written in Python. (Windows and Linux 64bit only at the moment)
 
 **Important**: the program will not read uncompressed levels with the `.snapshot` extension. Change the extension to `.v` or `.c`
 
