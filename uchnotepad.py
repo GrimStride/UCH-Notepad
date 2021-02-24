@@ -766,6 +766,10 @@ def findtool(event):
         clse.grid_forget()
         fnd= 0
         txt_edit.focus_set()
+        try: txt_edit.tag_remove("searchsel", 1.0, "end")
+        except NameError: pass
+        try: txt_edit.tag_remove("search", 1.0, "end")
+        except NameError: pass
         return
     fnd = 1
     finder.grid(row=0, column=1, sticky="ne")
@@ -774,7 +778,7 @@ def findtool(event):
     finder.rowconfigure(2, pad=4)
     expand.grid(row=0, column=0, padx=4)
     ent.grid(row=0, column=1, ipady=2, columnspan=25)
-    prev.grid(row=0, column=26, padx=4, ipadx=3, ipady=3)
+    prev.grid(row=0, column=26, padx=4, ipadx=1, ipady=1)
     nxt.grid(row=0, column=27, ipadx=1, ipady=1)
     clse.grid(row=0, column=28, padx=4, pady=4, ipadx=1, ipady=1)
     casematch.grid(row=2, column=1, sticky="nw")
@@ -782,6 +786,45 @@ def findtool(event):
     regmatch.grid(row=2, column=3, sticky="nw")
     #bluethingy.grid(row=3, column=0, columnspan=29, sticky="nsew")
     ent.focus_set()
+def searchtxt(event):
+    pattern = ent.get()
+    try: txt_edit.tag_remove("sel", 1.0, "end")
+    except NameError: pass
+    try: txt_edit.tag_remove("searchsel", 1.0, "end")
+    except NameError: pass
+    try: txt_edit.tag_remove("search", "1.0", "end")
+    except NameError: pass
+    if pattern == "": return
+    txt_edit.mark_set("searchStart", "1.0")
+    txt_edit.mark_set("searchEnd", "1.0")
+    txt_edit.mark_set("Limit", "end")
+    count = tk.IntVar()
+    a = 0
+    while True:
+        index = txt_edit.search(pattern, "searchEnd","Limit", count=count, regexp=False, nocase=True)
+        if index == "": break
+        if count.get() == 0: break
+        #if a == 0: txt_edit.mark_set("insert", index); print("xd"); a += 1
+        #txt_edit.mark_set("searchStart", index)
+        #txt_edit.mark_set("searchEnd", "%s+%sc" % (index, count.get()))
+        #txt_edit.tag_add("search", "searchStart", "searchEnd")
+        if a == 0:
+            txt_edit.mark_set("searchStart", index)
+            txt_edit.mark_set("searchEnd", "%s+%sc" % (index, count.get()))
+            txt_edit.tag_add("searchsel", "searchStart", "searchEnd")
+            txt_edit.tag_configure("searchsel", background="#FFA657", foreground="black")
+            txt_edit.mark_set("insert", index)
+            txt_edit.tag_add("sel", "searchStart", "searchEnd")
+            #txt_edit.tag_add(tk.SEL_LAST, "searchsel.last")
+            a += 1
+        else:
+            txt_edit.mark_set("searchStart", index)
+            txt_edit.mark_set("searchEnd", "%s+%sc" % (index, count.get()))
+            txt_edit.tag_add("search", "searchStart", "searchEnd")
+            txt_edit.tag_configure("search", background="#F5CC84", foreground="black")
+        #print(index)
+        #print(count.get())
+
 def replacetool():
     global rpl
     if rpl == 0:
@@ -865,8 +908,8 @@ replace.set("Replace...‏‏‎ ‎")
 ent = tk.Entry(finder, textvariable= search, relief="solid", width=30)
 #expand= tk.Button(finder, text="🞃", relief="solid", width=2, font="{Segoe UI} 8", borderwidth=0, command=None)
 expand= tk.Button(finder, text="¹", relief="solid", width=2, font="SearchIcons 11", borderwidth=0, command= replacetool)
-prev= ttk.Label(finder, text=a, relief="solid", width=2, font="{Segoe UI} 8", borderwidth=0)
-nxt= tk.Button(finder, text=b, relief="solid", width=2, font="{Segoe UI} 8", borderwidth=1, style="S.TLabel")
+prev= tk.Button(finder, text=a, relief="solid", width=2, font="{Segoe UI} 8", borderwidth=1, compound="center")
+nxt= tk.Button(finder, text=b, relief="solid", width=2, font="{Segoe UI} 8", borderwidth=1)#, style="S.TLabel")
 clse= tk.Button(finder, text="·", relief="solid", width=2, font="SearchIcons 11", borderwidth=1, command=lambda:[findtool(None)])
 casematch= tk.Button(finder, text="¼", relief="solid", width=2, font="SearchIcons 12", borderwidth=1)
 wordmatch= tk.Button(finder, text="½", relief="solid", width=2, font="SearchIcons 12", borderwidth=1)
@@ -930,6 +973,8 @@ root.bind("<Control-F>", findtool)
 txt_edit.bind("<KeyRelease>", checksyntax)
 txt_edit.bind("<KeyRelease-Control_L>", checksyntax)
 txt_edit.bind("<KeyRelease-Control_R>", checksyntax)
+ent.bind("<KeyRelease>", searchtxt)
+
 
 wmcol = (root, fr_buttons, sepfr, txpos, statusbar, btn_conf)
 uif = (txpos, statusbar)
