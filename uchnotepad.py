@@ -472,7 +472,7 @@ def nsave():
     global filepath
     if filepath != "":
         extension = os.path.splitext(filepath)[1]
-        if extension == ".ruleset" or extension == ".snapshot":
+        if extension == ".ruleset" or extension == ".snapshot" or extension == ".lzma":
             with lzma.open(filepath, "w", format=lzma.FORMAT_ALONE) as output_file:
                 text = txt_edit.get(1.0, tk.END)
                 output_file.write(bytes(text, "utf-8"))
@@ -680,7 +680,13 @@ def get_line1():
         txt_edit.tag_add("curr1", "insert linestart", "insert lineend+1c")
         #txt_edit.tag_add("curr2", "insert", "insert lineend+1c")
         txt_edit.tag_configure("curr1", selectbackground= selc, background= curc)
+        if "search" in txt_edit.tag_names():
+            txt_edit.tag_lower("curr1", belowThis="search")
+            '''print("3")
+            txt_edit.tag_configure("search", background="#F5CC84", foreground="black", underline=True, underlinefg="#ffa657")
         #txt_edit.tag_configure("curr2", selectbackground= selc, background= curc)
+        '''
+        #txt_edit.tag_lower("curr1", belowThis="search")
         lastcol = txt_edit.index("insert").split(".")[0]
     if data["syntax"] == True and data["stxtype"] != "Everything":
         checksyntax(None)
@@ -786,30 +792,51 @@ def searchtxt(event):
     txt_edit.mark_set("Limit", "end")
     count = tk.IntVar()
     a = 0
+    current= txt_edit.index("insert")
     while True:
         index = txt_edit.search(pattern, "searchEnd","Limit", count=count, regexp=False, nocase=True)
         if index == "": break
         if count.get() == 0: break
         #if a == 0: txt_edit.mark_set("insert", index); print("xd"); a += 1
-        #txt_edit.mark_set("searchStart", index)
-        #txt_edit.mark_set("searchEnd", "%s+%sc" % (index, count.get()))
-        #txt_edit.tag_add("search", "searchStart", "searchEnd")
-        if a == 0:
+        txt_edit.mark_set("searchStart", index)
+        txt_edit.mark_set("searchEnd", "%s+%sc" % (index, count.get()))
+        txt_edit.tag_add("search", "searchStart", "searchEnd")
+        #txt_edit.tag_configure("search", background="#F5CC84", foreground="black")
+        '''if a == 0 and index >= current:
+            a += 1
+            print(index + "--" + current)
             txt_edit.mark_set("searchStart", index)
             txt_edit.mark_set("searchEnd", "%s+%sc" % (index, count.get()))
-            txt_edit.tag_add("searchsel", "searchStart", "searchEnd")
-            txt_edit.tag_configure("searchsel", background="#FFA657", foreground="black")
             txt_edit.mark_set("insert", index)
             txt_edit.tag_add("sel", "searchStart", "searchEnd")
+            txt_edit.tag_add("searchsel", "searchStart", "searchEnd")
+            txt_edit.tag_configure("searchsel", background="#FFA657", foreground="black")
+            ##txt_edit.mark_set("insert", index)
+            ##txt_edit.tag_add("sel", "searchStart", "searchEnd")
             #txt_edit.tag_add(tk.SEL_LAST, "searchsel.last")
-            a += 1
+            ##a += 1
         else:
             txt_edit.mark_set("searchStart", index)
             txt_edit.mark_set("searchEnd", "%s+%sc" % (index, count.get()))
             txt_edit.tag_add("search", "searchStart", "searchEnd")
             txt_edit.tag_configure("search", background="#F5CC84", foreground="black")
-        #print(index)
-        #print(count.get())
+        ''''''txt_edit.mark_set("searchStart", index)
+        txt_edit.mark_set("searchEnd", "%s+%sc" % (index, count.get()))
+        txt_edit.tag_add("search", "searchStart", "searchEnd")
+        txt_edit.tag_configure("search", background="#F5CC84", foreground="black")
+    nearest = txt_edit.search(pattern, "insert","Schend", regexp=False, nocase=True)
+    txt_edit.mark_set("insert", nearest)
+    txt_edit.tag_add("sel", "searchStart", "schEnd")'''
+    try:
+        txt_edit.mark_set("insert", txt_edit.tag_nextrange("search", "insert", "end")[0])
+        txt_edit.tag_add("sel", txt_edit.tag_nextrange("search", "insert", "end")[0], txt_edit.tag_nextrange("search", "insert", "end")[1])
+    except IndexError:
+        try:
+            txt_edit.mark_set("insert", txt_edit.tag_nextrange("search", "1.0", "end")[0])
+            txt_edit.tag_add("sel", txt_edit.tag_nextrange("search", "1.0", "end")[0], txt_edit.tag_nextrange("search", "insert", "end")[1])
+        except IndexError: return
+    txt_edit.tag_configure("search", background="#F5CC84", foreground="black", selectbackground="#ffa657")
+    #print(txt_edit.tag_nextrange("search", "insert", "end"))
 
 def replacetool():
     global rpl
