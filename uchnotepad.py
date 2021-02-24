@@ -488,6 +488,7 @@ def nsave():
 
 def save_file():
     global filepath
+    known = [".snapshot", ".ruleset", ".lzma"]
     itlvl = txt_edit.search("<scene", "1.0", "1.7")
     itrul = txt_edit.search("<Ruleset", "1.0", "1.9")
     if itlvl == "1.0":
@@ -496,47 +497,24 @@ def save_file():
             defaultextension="v.snapshot",
             filetypes=[("UCH Compressed Party Level", "*.v.snapshot"), ("UCH Compressed Challenge Level", "*.c.snapshot"), ("UCH Uncompressed Party Level", "*.v"), ("UCH Uncompressed Challenge Level", "*.c"), ("All Files", "*.*")],
         )
-        if not filepaths:
-            return
-        extension = os.path.splitext(filepaths)[1]
-        if extension == ".snapshot":
-            with lzma.open(filepaths, "w", format=lzma.FORMAT_ALONE) as output_file:
-                text = txt_edit.get(1.0, tk.END)        
-                output_file.write(bytes(text, "utf-8"))
-        else:
-            with open(filepaths, "w") as output_file:
-                text = txt_edit.get(1.0, tk.END)
-                output_file.write(text)
     elif itrul == "1.0":
         filepaths = tk.filedialog.asksaveasfilename(
             initialdir= filepath.replace(os.path.basename(filepath),""),
-            defaultextension="v.snapshot",
+            defaultextension="ruleset",
             filetypes=[("UCH Compressed Ruleset", "*.ruleset"), ("All Files", "*.*")],
         )
-        if not filepaths:
-            return
-        extension = os.path.splitext(filepaths)[1]
-        if extension == ".ruleset":
-            with lzma.open(filepaths, "w", format=lzma.FORMAT_ALONE) as output_file:
-                text = txt_edit.get(1.0, tk.END)        
-                output_file.write(bytes(text, "utf-8"))
-        else:
-            with open(filepaths, "w") as output_file:
-                text = txt_edit.get(1.0, tk.END)
-                output_file.write(text)
     else:
         filepaths = tk.filedialog.asksaveasfilename(initialdir= filepath.replace(os.path.basename(filepath),""), defaultextension="lzma", filetypes=[("LZMA Encoded File", "*.lzma"), ("Text File", "*.txt"), ("All Files", "*.*")])
-        if not filepaths:
-            return
-        extension = os.path.splitext(filepaths)[1]
-        if extension == ".lzma":
-            with lzma.open(filepaths, "w", format=lzma.FORMAT_ALONE) as output_file:
-                text = txt_edit.get(1.0, tk.END)        
-                output_file.write(bytes(text, "utf-8"))
-        else:
-            with open(filepaths, "w") as output_file:
-                text = txt_edit.get(1.0, tk.END)
-                output_file.write(text)
+    if not filepaths: return
+    extension = os.path.splitext(filepaths)[1]
+    if extension in known:
+        with lzma.open(filepaths, "w", format=lzma.FORMAT_ALONE) as output_file:
+            text = txt_edit.get(1.0, tk.END)        
+            output_file.write(bytes(text, "utf-8"))
+    else:
+        with open(filepaths, "w") as output_file:
+            text = txt_edit.get(1.0, tk.END)
+            output_file.write(text)
     filepath = filepaths
     bhash= txt_edit.get(1.0, tk.END)
     global chash
