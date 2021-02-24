@@ -20,6 +20,7 @@ linec = "1.0"
 #global fnd
 fnd = 0
 rpl = 0
+lastcol= "a"
 pyfont.add_file("lib/SearchIcons.ttf")
 def loadJson():
     f = open(os.path.join(sys.path[0], 'config.json'), "r")
@@ -373,12 +374,14 @@ def open_file(mode):
             txt_edit.edit_reset()
             checksyntax(None)
     global filepath
+    global lastcol
     filepath = filepath1
     TButton()
     bhash= txt_edit.get(1.0, tk.END)
     global chash
     chash = hashlib.md5(bhash.encode('utf-8')).hexdigest()
     txt_edit.mark_set("insert", "1.0")
+    lastcol = "a"
     root.title(f"{filepath} - UCH Notepad ")
 
 def syntax(pattern, tag, color, start, end,regexp=False):
@@ -653,6 +656,7 @@ def tdark():
     s.configure("TRadiobutton", background= "#454545", foreground= "#dedede")
 
 def get_line1():
+    global lastcol
     global txpos
     global chash
     global filepath
@@ -682,20 +686,24 @@ def get_line1():
         else:
             root.title(f"UCH Notepad 1.3")
             unsaved= False
-    try:
+    '''try:
         txt_edit.tag_delete("curr1", "1.0", "end")
         #txt_edit.tag_delete("curr2", "1.0", "end")
-    except NameError: pass
+    except NameError: pass'''
     if data["theme"] == "dark":
         selc= "#4d5d60"
         curc= "#394447"
     else:
         selc= "#c0c0c0"
         curc= "#e8e8ff"
-    txt_edit.tag_add("curr1", "insert linestart", "insert lineend+1c")
-    #txt_edit.tag_add("curr2", "insert", "insert lineend+1c")
-    txt_edit.tag_configure("curr1", selectbackground= selc, background= curc)
-    #txt_edit.tag_configure("curr2", selectbackground= selc, background= curc)
+    if lastcol != txt_edit.index("insert").split(".")[0]:
+        try: txt_edit.tag_delete("curr1", "1.0", "end")
+        except NameError: pass
+        txt_edit.tag_add("curr1", "insert linestart", "insert lineend+1c")
+        #txt_edit.tag_add("curr2", "insert", "insert lineend+1c")
+        txt_edit.tag_configure("curr1", selectbackground= selc, background= curc)
+        #txt_edit.tag_configure("curr2", selectbackground= selc, background= curc)
+        lastcol = txt_edit.index("insert").split(".")[0]
     if data["syntax"] == True and data["stxtype"] != "Everything":
         checksyntax(None)
     root.after(33, get_line1)
