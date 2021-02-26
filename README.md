@@ -25,7 +25,7 @@ A simple Ultimate Chicken Horse ruleset and custom level file editor written in 
 - Click the settings button in the lower right corner to modify the program settings.
 
 If you want to get the latest unstable version:
-- Download python from www.python.org
+- Download python 3.x from www.python.org if it is not already installed in your system (python 3.9.0 is recommended).
 - Download the repository.
 - Install the following modules with **pip**:
   * Pillow
