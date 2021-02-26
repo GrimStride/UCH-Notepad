@@ -4,7 +4,6 @@ import tkinter as tk
 from tkinter import ttk, font, messagebox
 import lzma, xml.dom.minidom, pathlib, PIL, os, win32clipboard, hashlib, json, sys, urllib, webbrowser
 from pathlib import Path
-#from bs4 import BeautifulSoup
 from PIL import ImageTk, Image, ImageGrab
 from io import BytesIO
 from urllib import request, error
@@ -333,10 +332,6 @@ class config():
         self.nsuf = font
         self.uxf["font"]= font
         self.uxf["text"]= font.translate(str.maketrans({'{': '', '}': ''}))
-'''class UnsortedAttributes(bs4.formatter.XMLFormatter):
-    def attributes(self, tag):
-        for k, v in tag.attrs.items():
-            yield k, v'''
 
 def open_file(mode):
     if mode != "2":
@@ -357,11 +352,15 @@ def open_file(mode):
     if extension == ".snapshot" or extension == ".ruleset":
         with lzma.open(filepath1, "r") as input_file:
             text = input_file.read()
+            if text.decode("utf-8").find("  ") == -1: b = True
+            else: b = False
     else:
         with open(filepath1, "r") as input_file:
             text = input_file.read()
-    print(type(text))
-    if text.decode("utf-8").find("  ") != -1:
+            if text.find("  ") == -1: b = True
+            else: b = False
+    #print(type(text))
+    if b == False:
         text3 = text
     else:
         text1 = xml.dom.minidom.parseString(text)
@@ -927,8 +926,7 @@ def winquit():
 
 data = loadJson()
 updateJson()
-#if data["sort"] == False: frmat = None
-#else: frmat = None
+
 root = tk.Tk()
 root.title("UCH Notepad 1.3")
 root.geometry(data["wm"])
