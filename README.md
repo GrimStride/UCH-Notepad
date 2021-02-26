@@ -17,11 +17,22 @@ A simple Ultimate Chicken Horse ruleset and custom level file editor written in 
 
 ## Installation and Usage instructions
 
+- Go to the **Releases** section and download the binaries for your platform.
 - Unzip the downloaded file in any folder.
-- * **Windows:** Run uchnotepad.exe inside the extracted folder.
+  * **Windows:** Run uchnotepad.exe inside the extracted folder.
   * **Linux:** Open a terminal in the extracted folder and enter `./uchnotepad` to run the tool.
 - Use "Open Level" to edit a custom level file, or "Open ruleset" to edit a custom ruleset file.
 - Click the settings button in the lower right corner to modify the program settings.
+
+If you want to get the latest unstable version:
+- Download python from www.python.org
+- Install the following modules with **pip**:
+  * Pillow
+  * pyglet
+  * pywin32 (Windows-only)
+- For previous unstable versions the following modules are also required:
+  * Beautifulsoup4
+  * requests (For commits before version 1.2)
 
 ## Features
 
