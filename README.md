@@ -26,13 +26,15 @@ A simple Ultimate Chicken Horse ruleset and custom level file editor written in 
 
 If you want to get the latest unstable version:
 - Download python from www.python.org
+- Download the repository.
 - Install the following modules with **pip**:
   * Pillow
   * pyglet
   * pywin32 (Windows-only)
-- For previous unstable versions the following modules are also required:
+- For unstable versions prior to [02f8a7a](https://github.com/GrimStride/UCH-Notepad/commit/02f8a7aa6328cbb402538ad81fdc12765e5aa058), the following modules are also required:
   * Beautifulsoup4
-  * requests (For commits before version 1.2)
+  * requests (For commits prior to [51bce7e](https://github.com/GrimStride/UCH-Notepad/commit/51bce7ee2e7e97fb3d8dbb271a737616e5122775))
+- Run the **.py** script.
 
 ## Features
 
