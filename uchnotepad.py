@@ -2,9 +2,9 @@ import tkinter.filedialog
 import tkinter as tk
 #from tkinter.filedialog import askopenfilename, asksaveasfilename
 from tkinter import ttk, font, messagebox
-import lzma, xml.dom.minidom, pathlib, PIL, bs4, os, win32clipboard, hashlib, json, sys, urllib, webbrowser
+import lzma, xml.dom.minidom, pathlib, PIL, os, win32clipboard, hashlib, json, sys, urllib, webbrowser
 from pathlib import Path
-from bs4 import BeautifulSoup
+#from bs4 import BeautifulSoup
 from PIL import ImageTk, Image, ImageGrab
 from io import BytesIO
 from urllib import request, error
@@ -20,7 +20,7 @@ linec = "1.0"
 #global fnd
 fnd = 0
 rpl = 0
-lastcol= "a"
+lastcol= None
 lastpatt= ""
 pyfont.add_file("lib/SearchIcons.ttf")
 def loadJson():
@@ -276,12 +276,12 @@ class config():
             data["shwlc"] = False
             txpos["text"] = ""
         else: data["shwlc"] = True
-        if self.sortx.get() == "0":
+        '''if self.sortx.get() == "0":
             data["sort"] = False
             frmat = UnsortedAttributes()
         else:
             data["sort"] = True
-            frmat= None
+            frmat= None'''
         if self.sythl.get() == "0":
             data["syntax"] = False
             try:
@@ -333,10 +333,10 @@ class config():
         self.nsuf = font
         self.uxf["font"]= font
         self.uxf["text"]= font.translate(str.maketrans({'{': '', '}': ''}))
-class UnsortedAttributes(bs4.formatter.XMLFormatter):
+'''class UnsortedAttributes(bs4.formatter.XMLFormatter):
     def attributes(self, tag):
         for k, v in tag.attrs.items():
-            yield k, v
+            yield k, v'''
 
 def open_file(mode):
     if mode != "2":
@@ -357,23 +357,23 @@ def open_file(mode):
     if extension == ".snapshot" or extension == ".ruleset":
         with lzma.open(filepath1, "r") as input_file:
             text = input_file.read()
-            text1 = xml.dom.minidom.parseString(text)
-            text2 = text1.toprettyxml(indent=" ")
-            text3 = text2.replace("<?xml version=\"1.0\" ?>" + "\n", "")
-            txt_edit.insert(tk.END, text3)
-            txt_edit.edit_modified(0)
-            txt_edit.edit_reset()
-            checksyntax(None)
     else:
         with open(filepath1, "r") as input_file:
             text = input_file.read()
-            text1 = xml.dom.minidom.parseString(text)
-            text2 = text1.toprettyxml(indent=" ")
-            text3 = text2.replace("<?xml version=\"1.0\" ?>" + "\n", "")
-            txt_edit.insert(tk.END, text3)
-            txt_edit.edit_modified(0)
-            txt_edit.edit_reset()
-            checksyntax(None)
+    print(type(text))
+    if text.decode("utf-8").find("  ") != -1:
+        text3 = text
+    else:
+        text1 = xml.dom.minidom.parseString(text)
+        text2 = text1.toprettyxml(indent=" ")
+        text3 = text2.replace("<?xml version=\"1.0\" ?>" + "\n", "")
+    '''text1 = xml.dom.minidom.parseString(text)
+    text2 = text1.toprettyxml(indent=indt)
+    text3 = text2.replace("<?xml version=\"1.0\" ?>" + "\n", "")'''
+    txt_edit.insert(tk.END, text3)
+    txt_edit.edit_modified(0)
+    txt_edit.edit_reset()
+    checksyntax(None)
     global filepath
     global lastcol
     filepath = filepath1
@@ -382,7 +382,7 @@ def open_file(mode):
     global chash
     chash = hashlib.md5(bhash.encode('utf-8')).hexdigest()
     txt_edit.mark_set("insert", "1.0")
-    lastcol = "a"
+    lastcol = None
     root.title(f"{filepath} - UCH Notepad ")
 
 def syntax(pattern, tag, color, start, end,regexp=False):
@@ -927,8 +927,8 @@ def winquit():
 
 data = loadJson()
 updateJson()
-if data["sort"] == False: frmat = UnsortedAttributes()
-else: frmat = None
+#if data["sort"] == False: frmat = None
+#else: frmat = None
 root = tk.Tk()
 root.title("UCH Notepad 1.3")
 root.geometry(data["wm"])
