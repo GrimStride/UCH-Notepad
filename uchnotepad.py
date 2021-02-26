@@ -2,7 +2,7 @@ import tkinter.filedialog
 import tkinter as tk
 #from tkinter.filedialog import askopenfilename, asksaveasfilename
 from tkinter import ttk, font, messagebox
-import lzma, pathlib, PIL, bs4, os, win32clipboard, hashlib, json, sys, urllib, webbrowser
+import lzma, xml.dom.minidom, pathlib, PIL, bs4, os, win32clipboard, hashlib, json, sys, urllib, webbrowser
 from pathlib import Path
 from bs4 import BeautifulSoup
 from PIL import ImageTk, Image, ImageGrab
@@ -21,6 +21,7 @@ linec = "1.0"
 fnd = 0
 rpl = 0
 lastcol= "a"
+lastpatt= ""
 pyfont.add_file("lib/SearchIcons.ttf")
 def loadJson():
     f = open(os.path.join(sys.path[0], 'config.json'), "r")
@@ -356,9 +357,9 @@ def open_file(mode):
     if extension == ".snapshot" or extension == ".ruleset":
         with lzma.open(filepath1, "r") as input_file:
             text = input_file.read()
-            text1 = BeautifulSoup(text, "xml")
-            text2 = text1.prettify(formatter=frmat)
-            text3 = text2.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n", "")
+            text1 = xml.dom.minidom.parseString(text)
+            text2 = text1.toprettyxml(indent=" ")
+            text3 = text2.replace("<?xml version=\"1.0\" ?>" + "\n", "")
             txt_edit.insert(tk.END, text3)
             txt_edit.edit_modified(0)
             txt_edit.edit_reset()
@@ -366,9 +367,9 @@ def open_file(mode):
     else:
         with open(filepath1, "r") as input_file:
             text = input_file.read()
-            text1 = BeautifulSoup(text, "xml")
-            text2 = text1.prettify(formatter=frmat)
-            text3 = text2.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n", "")
+            text1 = xml.dom.minidom.parseString(text)
+            text2 = text1.toprettyxml(indent=" ")
+            text3 = text2.replace("<?xml version=\"1.0\" ?>" + "\n", "")
             txt_edit.insert(tk.END, text3)
             txt_edit.edit_modified(0)
             txt_edit.edit_reset()
@@ -608,6 +609,7 @@ def tlight():
     s.configure("TSeparator", background= "#f0f0f0")
     s.configure("TFrame", background= "white")
     s.configure("S.TFrame", background= "#f0f0f0")
+    s.map("S.TFrame", highlightbackground =[('focus', 'green'),('!focus', 'red')], highlightcolor= [('focus', 'green'),('!focus', 'red')])
     s.configure("TLabel", background= "#f0f0f0", foreground= "black")
     s.configure("S.TLabel", background= "#f0f0f0", foreground= "black")
     s.map("S.TLabel", borderwidth=[("hover", 1)])
@@ -625,6 +627,7 @@ def tdark():
     s.configure("TSeparator", background= "black")
     s.configure("TFrame", background= "#323232")
     s.configure("S.TFrame", background= "#242424")
+    s.map("S.TFrame", highlightbackground = "black", highlightcolor= "black")
     s.configure("TLabel", background= "#454545", foreground= "#dedede")
     s.configure("S.TLabel", background= "#242424", foreground= "#dedede")
     s.map("S.TLabel", borderwidth=[("hover", 1)])
@@ -779,6 +782,7 @@ def findtool(event):
     #bluethingy.grid(row=3, column=0, columnspan=29, sticky="nsew")
     ent.focus_set()
 def searchtxt(event):
+    global lastpatt
     pattern = ent.get()
     try: txt_edit.tag_remove("sel", 1.0, "end")
     except NameError: pass
@@ -827,16 +831,50 @@ def searchtxt(event):
     nearest = txt_edit.search(pattern, "insert","Schend", regexp=False, nocase=True)
     txt_edit.mark_set("insert", nearest)
     txt_edit.tag_add("sel", "searchStart", "schEnd")'''
-    try:
-        txt_edit.mark_set("insert", txt_edit.tag_nextrange("search", "insert", "end")[0])
-        txt_edit.tag_add("sel", txt_edit.tag_nextrange("search", "insert", "end")[0], txt_edit.tag_nextrange("search", "insert", "end")[1])
-    except IndexError:
+    if lastpatt != pattern:
         try:
-            txt_edit.mark_set("insert", txt_edit.tag_nextrange("search", "1.0", "end")[0])
-            txt_edit.tag_add("sel", txt_edit.tag_nextrange("search", "1.0", "end")[0], txt_edit.tag_nextrange("search", "insert", "end")[1])
-        except IndexError: return
+            #txt_edit.mark_set("insert", txt_edit.tag_nextrange("search", "insert", "end")[1])
+            txt_edit.tag_add("sel", txt_edit.tag_nextrange("search", "insert", "end")[0], txt_edit.tag_nextrange("search", "insert", "end")[1])
+            txt_edit.mark_set("insert", "sel.first")
+        except IndexError:
+            try:
+                #txt_edit.mark_set("insert", txt_edit.tag_nextrange("search", "1.0", "end")[1])
+                txt_edit.tag_add("sel", txt_edit.tag_nextrange("search", "1.0", "end")[0], txt_edit.tag_nextrange("search", "insert", "end")[1])
+                txt_edit.mark_set("insert", "sel.first")
+            except IndexError: return
     txt_edit.tag_configure("search", background="#F5CC84", foreground="black", selectbackground="#ffa657")
+    lastpatt == pattern
     #print(txt_edit.tag_nextrange("search", "insert", "end"))
+
+def movesearch(mode):
+    if ent.get() == "" or not "search" in txt_edit.tag_names(): return
+    #try: txt_edit.tag_remove("sel", 1.0, "end")
+    chars= str(len(ent.get()))
+    #except NameError: pass
+    if mode == 0:
+        try:
+            idx1= txt_edit.tag_nextrange("search", "insert", "end")[0]
+            idx2= txt_edit.tag_nextrange("search", "insert", "end")[1]
+        except IndexError:
+            idx1= txt_edit.tag_nextrange("search", "1.0", "end")[0]
+            idx2= txt_edit.tag_nextrange("search", "1.0", "end")[1]
+        #txt_edit.mark_set("insert", txt_edit.tag_nextrange("search", "sel.last", "end")[0])
+    else:
+        #print("a")
+        try:
+            idx1= txt_edit.tag_prevrange("search", "insert-" + chars + "c", "1.0")[0]
+            idx2= txt_edit.tag_prevrange("search", "insert-" + chars + "c", "1.0")[1]
+        except IndexError:
+            idx1= txt_edit.tag_prevrange("search", "end", "1.0")[0]
+            idx2= txt_edit.tag_prevrange("search", "end", "1.0")[1]
+        #print(idx1 + " -- " + idx2)
+        #fwd= False
+        #bwd= True
+        #move= txt_edit.mark_set("insert", txt_edit.tag_prevrange("sel.last", "insert", "end")[0])
+    try: txt_edit.tag_remove("sel", "1.0", "end")
+    except NameError: pass
+    txt_edit.tag_add("sel", idx1, idx2)
+    txt_edit.mark_set("insert", "sel.last")
 
 def replacetool():
     global rpl
@@ -921,8 +959,8 @@ replace.set("Replace...‏‏‎ ‎")
 ent = tk.Entry(finder, textvariable= search, relief="solid", width=30)
 #expand= tk.Button(finder, text="🞃", relief="solid", width=2, font="{Segoe UI} 8", borderwidth=0, command=None)
 expand= tk.Button(finder, text="¹", relief="solid", width=2, font="SearchIcons 11", borderwidth=0, command= replacetool)
-prev= tk.Button(finder, text=a, relief="solid", width=2, font="{Segoe UI} 8", borderwidth=1, compound="center")
-nxt= tk.Button(finder, text=b, relief="solid", width=2, font="{Segoe UI} 8", borderwidth=1)#, style="S.TLabel")
+prev= tk.Button(finder, text=a, command= lambda:[movesearch(1)], relief="solid", width=2, font="{Segoe UI} 8", borderwidth=1, compound="center")
+nxt= tk.Button(finder, text=b, command= lambda:[movesearch(0)], relief="solid", width=2, font="{Segoe UI} 8", borderwidth=1)#, style="S.TLabel")
 clse= tk.Button(finder, text="·", relief="solid", width=2, font="SearchIcons 11", borderwidth=1, command=lambda:[findtool(None)])
 casematch= tk.Button(finder, text="¼", relief="solid", width=2, font="SearchIcons 12", borderwidth=1)
 wordmatch= tk.Button(finder, text="½", relief="solid", width=2, font="SearchIcons 12", borderwidth=1)
