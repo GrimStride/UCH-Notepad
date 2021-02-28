@@ -559,7 +559,7 @@ class ShowTN:
         self.root.title(clvl)
         self.root.geometry("512x366")
         self.root.resizable(False,False)
-        self.root.iconbitmap(os.path.join(sys.path[0], 'icon.ico'))
+        self.root.iconbitmap('icon.ico')
         self.root.focus_set()
         self.root.photo = ImageTk.PhotoImage(file= self.lvlthumb)
         cw = tk.Canvas(self.root, height=512, width=366)
@@ -847,9 +847,7 @@ def searchtxt(event):
 
 def movesearch(mode):
     if ent.get() == "" or not "search" in txt_edit.tag_names(): return
-    #try: txt_edit.tag_remove("sel", 1.0, "end")
     chars= str(len(ent.get()))
-    #except NameError: pass
     if "sel" in txt_edit.tag_names():
         fidx= "sel.last"
         bidx= "sel.first"
@@ -857,24 +855,23 @@ def movesearch(mode):
         fidx, bidx= "insert", "insert"
     if mode == 0:
         try:
-            idx1= txt_edit.tag_nextrange("search", fidx, "end")[0]
-            idx2= txt_edit.tag_nextrange("search", fidx, "end")[1]
-        except IndexError:
-            idx1= txt_edit.tag_nextrange("search", "1.0", "end")[0]
-            idx2= txt_edit.tag_nextrange("search", "1.0", "end")[1]
-        #txt_edit.mark_set("insert", txt_edit.tag_nextrange("search", "sel.last", "end")[0])
+            #print(txt_edit.tag_nextrange("search", fidx, "end"))
+            #idx1= txt_edit.tag_nextrange("search", fidx, "end")[0]
+            #idx2= txt_edit.tag_nextrange("search", fidx, "end")[1]
+            idx1, idx2 = txt_edit.tag_nextrange("search", fidx, "end")
+        except ValueError:
+            #idx1= txt_edit.tag_nextrange("search", "1.0", "end")[0]
+            #idx2= txt_edit.tag_nextrange("search", "1.0", "end")[1]
+            idx1, idx2 = txt_edit.tag_nextrange("search", "1.0", "end")
     else:
-        #print("a")
         try:
-            idx1= txt_edit.tag_prevrange("search", bidx, "1.0")[0]
-            idx2= txt_edit.tag_prevrange("search", bidx, "1.0")[1]
-        except IndexError:
-            idx1= txt_edit.tag_prevrange("search", "end", "1.0")[0]
-            idx2= txt_edit.tag_prevrange("search", "end", "1.0")[1]
-        #print(idx1 + " -- " + idx2)
-        #fwd= False
-        #bwd= True
-        #move= txt_edit.mark_set("insert", txt_edit.tag_prevrange("sel.last", "insert", "end")[0])
+            #idx1= txt_edit.tag_prevrange("search", bidx, "1.0")[0]
+            #idx2= txt_edit.tag_prevrange("search", bidx, "1.0")[1]
+            idx1, idx2 = txt_edit.tag_prevrange("search", bidx, "1.0")
+        except ValueError:
+            #idx1= txt_edit.tag_prevrange("search", "end", "1.0")[0]
+            #idx2= txt_edit.tag_prevrange("search", "end", "1.0")[1]
+            idx1, idx2 = txt_edit.tag_prevrange("search", "end", "1.0")
     try: txt_edit.tag_remove("sel", "1.0", "end")
     except NameError: pass
     txt_edit.tag_add("sel", idx1, idx2)
