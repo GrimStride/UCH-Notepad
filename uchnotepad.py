@@ -352,17 +352,20 @@ def open_file(mode):
     if extension == ".snapshot" or extension == ".ruleset":
         with lzma.open(filepath1, "r") as input_file:
             text = input_file.read()
-            if text.decode("utf-8").find("  ") == -1: b = True
+            if text.decode("utf-8").find("\n ") == -1: b = True
             else: b = False
     else:
         with open(filepath1, "r") as input_file:
             text = input_file.read()
-            if text.find("  ") == -1: b = True
+            if text.find("\n ") == -1: b = True
             else: b = False
     if b == False:
         text3 = text
+        print("haha")
+        #print(text2)
     else:
         text1 = xml.dom.minidom.parseString(text)
+        print(text)
         text2 = text1.toprettyxml(indent=" ")
         text3 = text2.replace("<?xml version=\"1.0\" ?>" + "\n", "")
     txt_edit.insert(tk.END, text3)
