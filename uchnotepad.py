@@ -359,16 +359,12 @@ def open_file(mode):
             text = input_file.read()
             if text.find("  ") == -1: b = True
             else: b = False
-    #print(type(text))
     if b == False:
         text3 = text
     else:
         text1 = xml.dom.minidom.parseString(text)
         text2 = text1.toprettyxml(indent=" ")
         text3 = text2.replace("<?xml version=\"1.0\" ?>" + "\n", "")
-    '''text1 = xml.dom.minidom.parseString(text)
-    text2 = text1.toprettyxml(indent=indt)
-    text3 = text2.replace("<?xml version=\"1.0\" ?>" + "\n", "")'''
     txt_edit.insert(tk.END, text3)
     txt_edit.edit_modified(0)
     txt_edit.edit_reset()
@@ -475,12 +471,12 @@ def nsave():
         if extension == ".ruleset" or extension == ".snapshot" or extension == ".lzma":
             with lzma.open(filepath, "w", format=lzma.FORMAT_ALONE) as output_file:
                 text = txt_edit.get(1.0, tk.END)
-                text1= text.replace("  ", "").replace("\n", "")
+                text1= text.replace("  ", "").replace("\n ", "")
                 output_file.write(bytes(text1, "utf-8"))
         else:
             with open(filepath, "w") as output_file:
                 text = txt_edit.get(1.0, tk.END)
-                text1= text.replace("  ", "").replace("\n", "")
+                text1= text.replace("  ", " ").replace("\n ", "")
                 output_file.write(text1)
         bhash= txt_edit.get(1.0, tk.END)
         global chash
@@ -512,12 +508,12 @@ def save_file():
     if extension in known:
         with lzma.open(filepaths, "w", format=lzma.FORMAT_ALONE) as output_file:
             text = txt_edit.get(1.0, tk.END)
-            text1= text.replace("  ", "").replace("\n", "")
+            text1= text.replace("  ", " ").replace("\n ", "")
             output_file.write(bytes(text1, "utf-8"))
     else:
         with open(filepaths, "w") as output_file:
             text = txt_edit.get(1.0, tk.END)
-            text1= text.replace("  ", "").replace("\n", "")
+            text1= text.replace("  ", " ").replace("\n ", "")
             output_file.write(text1)
     filepath = filepaths
     bhash= txt_edit.get(1.0, tk.END)
