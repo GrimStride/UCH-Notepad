@@ -361,11 +361,8 @@ def open_file(mode):
             else: b = False
     if b == False:
         text3 = text
-        print("haha")
-        #print(text2)
     else:
         text1 = xml.dom.minidom.parseString(text)
-        print(text)
         text2 = text1.toprettyxml(indent=" ")
         text3 = text2.replace("<?xml version=\"1.0\" ?>" + "\n", "")
     txt_edit.insert(tk.END, text3)
@@ -853,10 +850,15 @@ def movesearch(mode):
     #try: txt_edit.tag_remove("sel", 1.0, "end")
     chars= str(len(ent.get()))
     #except NameError: pass
+    if "sel" in txt_edit.tag_names():
+        fidx= "sel.last"
+        bidx= "sel.first"
+    else:
+        fidx, bidx= "insert", "insert"
     if mode == 0:
         try:
-            idx1= txt_edit.tag_nextrange("search", "insert", "end")[0]
-            idx2= txt_edit.tag_nextrange("search", "insert", "end")[1]
+            idx1= txt_edit.tag_nextrange("search", fidx, "end")[0]
+            idx2= txt_edit.tag_nextrange("search", fidx, "end")[1]
         except IndexError:
             idx1= txt_edit.tag_nextrange("search", "1.0", "end")[0]
             idx2= txt_edit.tag_nextrange("search", "1.0", "end")[1]
@@ -864,8 +866,8 @@ def movesearch(mode):
     else:
         #print("a")
         try:
-            idx1= txt_edit.tag_prevrange("search", "insert-" + chars + "c", "1.0")[0]
-            idx2= txt_edit.tag_prevrange("search", "insert-" + chars + "c", "1.0")[1]
+            idx1= txt_edit.tag_prevrange("search", bidx, "1.0")[0]
+            idx2= txt_edit.tag_prevrange("search", bidx, "1.0")[1]
         except IndexError:
             idx1= txt_edit.tag_prevrange("search", "end", "1.0")[0]
             idx2= txt_edit.tag_prevrange("search", "end", "1.0")[1]
