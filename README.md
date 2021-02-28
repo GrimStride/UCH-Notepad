@@ -33,6 +33,7 @@ If you want to get the latest unstable version:
   * pywin32 (Windows-only)
 - For unstable versions prior to [02f8a7a](https://github.com/GrimStride/UCH-Notepad/commit/02f8a7aa6328cbb402538ad81fdc12765e5aa058), the following modules are also required:
   * Beautifulsoup4
+  * lxml
   * requests (For commits prior to [51bce7e](https://github.com/GrimStride/UCH-Notepad/commit/51bce7ee2e7e97fb3d8dbb271a737616e5122775))
 - Run the **.py** script.
 
