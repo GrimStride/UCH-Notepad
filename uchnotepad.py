@@ -471,7 +471,7 @@ def nsave():
         if extension == ".ruleset" or extension == ".snapshot" or extension == ".lzma":
             with lzma.open(filepath, "w", format=lzma.FORMAT_ALONE) as output_file:
                 text = txt_edit.get(1.0, tk.END)
-                text1= text.replace("  ", "").replace("\n ", "")
+                text1= text.replace("  ", " ").replace("\n ", "")
                 output_file.write(bytes(text1, "utf-8"))
         else:
             with open(filepath, "w") as output_file:
