@@ -847,35 +847,22 @@ def searchtxt(event):
 
 def movesearch(mode):
     if ent.get() == "" or not "search" in txt_edit.tag_names(): return
-    chars= str(len(ent.get()))
-    if "sel" in txt_edit.tag_names():
+    if txt_edit.tag_ranges("sel"):
         fidx= "sel.last"
         bidx= "sel.first"
     else:
         fidx, bidx= "insert", "insert"
     if mode == 0:
-        try:
-            #print(txt_edit.tag_nextrange("search", fidx, "end"))
-            #idx1= txt_edit.tag_nextrange("search", fidx, "end")[0]
-            #idx2= txt_edit.tag_nextrange("search", fidx, "end")[1]
-            idx1, idx2 = txt_edit.tag_nextrange("search", fidx, "end")
-        except ValueError:
-            #idx1= txt_edit.tag_nextrange("search", "1.0", "end")[0]
-            #idx2= txt_edit.tag_nextrange("search", "1.0", "end")[1]
-            idx1, idx2 = txt_edit.tag_nextrange("search", "1.0", "end")
+        try: idx1, idx2 = txt_edit.tag_nextrange("search", fidx, "end")
+        except ValueError: idx1, idx2 = txt_edit.tag_nextrange("search", "1.0", "end")
     else:
-        try:
-            #idx1= txt_edit.tag_prevrange("search", bidx, "1.0")[0]
-            #idx2= txt_edit.tag_prevrange("search", bidx, "1.0")[1]
-            idx1, idx2 = txt_edit.tag_prevrange("search", bidx, "1.0")
-        except ValueError:
-            #idx1= txt_edit.tag_prevrange("search", "end", "1.0")[0]
-            #idx2= txt_edit.tag_prevrange("search", "end", "1.0")[1]
-            idx1, idx2 = txt_edit.tag_prevrange("search", "end", "1.0")
+        try: idx1, idx2 = txt_edit.tag_prevrange("search", bidx, "1.0")
+        except ValueError: idx1, idx2 = txt_edit.tag_prevrange("search", "end", "1.0")
     try: txt_edit.tag_remove("sel", "1.0", "end")
     except NameError: pass
     txt_edit.tag_add("sel", idx1, idx2)
-    txt_edit.mark_set("insert", "sel.last")
+    txt_edit.mark_set("insert", "sel.first")
+    txt_edit.see("insert")
 
 def replacetool():
     global rpl
