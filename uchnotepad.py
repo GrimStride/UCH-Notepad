@@ -215,7 +215,7 @@ class config():
         self.gen["bg"]= "gray94"
         self.theme["bg"]= "gray94"
         self.desct["text"]=" About UCH Notepad "
-        self.desc["text"]="   Version 1.3\n   Made by Grim Stride using Python 3.9.0 and cx-Freeze\n   This is a heavily modified version of Real Python's Tkinter\n   tutorial\n   Text editor functionality based on Notepad++\n   Icons taken from The GNOME Project and material.io"
+        self.desc["text"]="   Version 1.3 Beta 1\n   Made by Grim Stride using Python 3.9.0 and cx-Freeze\n   This is a heavily modified version of Real Python's Tkinter\n   tutorial\n   Text editor functionality based on Notepad++\n   Icons taken from The GNOME Project and material.io"
         self.upt.grid(row=1, column=1, sticky="nw", padx=8, pady=8)
         self.result.grid(row=1, column=2, sticky="nw", pady=11)
     def update(self):
@@ -223,7 +223,7 @@ class config():
             r = urllib.request.urlopen("https://github.com/GrimStride/UCH-Notepad/releases/latest")
             e = r.geturl()
             d = os.path.basename(e)
-            if d > str(1.3):
+            if d > str(1.2):
                 self.result["text"]= "Version " + d + " is available"
                 self.dwl.configure(bg= self.root["bg"], activebackground= self.root["bg"])
                 self.dwl.grid(row=7, column=3, pady=3)
@@ -253,11 +253,13 @@ class config():
             data["theme"]= "dark"
             self.root["bg"]= "#454545"
             self.cont["bg"]= "#454545"
+            txt_edit.tag_configure("curr1", selectbackground= "#4d5d60", background= "#394447")
         else:
             tlight()
             data["theme"]= "light"
             self.root["bg"]= "#f0f0f0"
             self.cont["bg"]= "#f0f0f0"
+            txt_edit.tag_configure("curr1", selectbackground= "#c0c0c0", background= "#e8e8ff")
         if self.nsf != data["fnt"]:
             txt_edit["font"] = self.nsf
             data["fnt"] = self.nsf 
@@ -481,7 +483,7 @@ def nsave():
         bhash= txt_edit.get(1.0, tk.END)
         global chash
         chash = hashlib.md5(bhash.encode('utf-8')).hexdigest()
-        root.title(f"{filepath} - UCH Notepad 1.3")
+        root.title(f"{filepath} - UCH Notepad 1.3 Beta 1")
     else: save_file()
 
 def save_file():
@@ -519,7 +521,7 @@ def save_file():
     bhash= txt_edit.get(1.0, tk.END)
     global chash
     chash = hashlib.md5(bhash.encode('utf-8')).hexdigest()
-    root.title(f"{filepath} - UCH Notepad 1.3")
+    root.title(f"{filepath} - UCH Notepad 1.3 Beta 1")
 
 def TButton():
     destroyTN()
@@ -608,10 +610,10 @@ def tlight():
     s.configure("TSeparator", background= "#f0f0f0")
     s.configure("TFrame", background= "white")
     s.configure("S.TFrame", background= "#f0f0f0")
-    s.map("S.TFrame", highlightbackground =[('focus', 'green'),('!focus', 'red')], highlightcolor= [('focus', 'green'),('!focus', 'red')])
+    #s.map("S.TFrame", highlightbackground =[('focus', 'green'),('!focus', 'red')], highlightcolor= [('focus', 'green'),('!focus', 'red')])
     s.configure("TLabel", background= "#f0f0f0", foreground= "black")
     s.configure("S.TLabel", background= "#f0f0f0", foreground= "black")
-    s.map("S.TLabel", borderwidth=[("hover", 1)])
+    #s.map("S.TLabel", borderwidth=[("hover", 1)])
     s.configure("TLabelframe", background= "#f0f0f0", foreground= "black")
     s.configure("TLabelframe.Label", background= "#f0f0f0", foreground= "black")
     s.configure("TCheckbutton", background= "#f0f0f0", foreground= "black")
@@ -626,10 +628,10 @@ def tdark():
     s.configure("TSeparator", background= "black")
     s.configure("TFrame", background= "#323232")
     s.configure("S.TFrame", background= "#242424")
-    s.map("S.TFrame", highlightbackground = "black", highlightcolor= "black")
+    #s.map("S.TFrame", highlightbackground = "black", highlightcolor= "black")
     s.configure("TLabel", background= "#454545", foreground= "#dedede")
     s.configure("S.TLabel", background= "#242424", foreground= "#dedede")
-    s.map("S.TLabel", borderwidth=[("hover", 1)])
+    #s.map("S.TLabel", borderwidth=[("hover", 1)])
     s.configure("TLabelframe", background= "#454545", foreground= "#dedede")
     s.configure("TLabelframe.Label", background= "#454545", foreground= "#dedede")
     s.configure("TCheckbutton", background= "#454545", foreground= "#dedede")
@@ -654,17 +656,17 @@ def get_line1():
     gethash= hashlib.md5(cwork.encode('utf-8')).hexdigest()
     if gethash != chash:
         if chash != "68b329da9893e34099c7d8ad5cb9c940":
-            root.title(f"*{filepath} - UCH Notepad 1.3")
+            root.title(f"*{filepath} - UCH Notepad 1.3 Beta 1")
             unsaved= True
         else:
-            root.title(f"*UCH Notepad 1.3")
+            root.title(f"*UCH Notepad 1.3 Beta 1")
             unsaved= True
     else:
         if chash != "68b329da9893e34099c7d8ad5cb9c940":
-            root.title(f"{filepath} - UCH Notepad 1.3")
+            root.title(f"{filepath} - UCH Notepad 1.3 Beta 1")
             unsaved= False
         else:
-            root.title(f"UCH Notepad 1.3")
+            root.title(f"UCH Notepad 1.3 Beta 1")
             unsaved= False
     '''try:
         txt_edit.tag_delete("curr1", "1.0", "end")
@@ -902,7 +904,7 @@ data = loadJson()
 updateJson()
 
 root = tk.Tk()
-root.title("UCH Notepad 1.3")
+root.title("UCH Notepad 1.3 Beta 1")
 root.geometry(data["wm"])
 root.minsize(200,270)
 root.state(data["state"])
