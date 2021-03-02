@@ -804,32 +804,6 @@ def searchtxt(event):
         txt_edit.mark_set("searchStart", index)
         txt_edit.mark_set("searchEnd", "%s+%sc" % (index, count.get()))
         txt_edit.tag_add("search", "searchStart", "searchEnd")
-        #txt_edit.tag_configure("search", background="#F5CC84", foreground="black")
-        '''if a == 0 and index >= current:
-            a += 1
-            print(index + "--" + current)
-            txt_edit.mark_set("searchStart", index)
-            txt_edit.mark_set("searchEnd", "%s+%sc" % (index, count.get()))
-            txt_edit.mark_set("insert", index)
-            txt_edit.tag_add("sel", "searchStart", "searchEnd")
-            txt_edit.tag_add("searchsel", "searchStart", "searchEnd")
-            txt_edit.tag_configure("searchsel", background="#FFA657", foreground="black")
-            ##txt_edit.mark_set("insert", index)
-            ##txt_edit.tag_add("sel", "searchStart", "searchEnd")
-            #txt_edit.tag_add(tk.SEL_LAST, "searchsel.last")
-            ##a += 1
-        else:
-            txt_edit.mark_set("searchStart", index)
-            txt_edit.mark_set("searchEnd", "%s+%sc" % (index, count.get()))
-            txt_edit.tag_add("search", "searchStart", "searchEnd")
-            txt_edit.tag_configure("search", background="#F5CC84", foreground="black")
-        ''''''txt_edit.mark_set("searchStart", index)
-        txt_edit.mark_set("searchEnd", "%s+%sc" % (index, count.get()))
-        txt_edit.tag_add("search", "searchStart", "searchEnd")
-        txt_edit.tag_configure("search", background="#F5CC84", foreground="black")
-    nearest = txt_edit.search(pattern, "insert","Schend", regexp=False, nocase=True)
-    txt_edit.mark_set("insert", nearest)
-    txt_edit.tag_add("sel", "searchStart", "schEnd")'''
     if lastpatt != pattern:
         try:
             #txt_edit.mark_set("insert", txt_edit.tag_nextrange("search", "insert", "end")[1])
@@ -843,7 +817,7 @@ def searchtxt(event):
             except IndexError: return
     txt_edit.tag_configure("search", background="#F5CC84", foreground="black", selectbackground="#ffa657")
     lastpatt == pattern
-    #print(txt_edit.tag_nextrange("search", "insert", "end"))
+    txt_edit.see("insert")
 
 def movesearch(mode):
     if ent.get() == "" or not "search" in txt_edit.tag_names(): return
@@ -888,6 +862,17 @@ def rpltip(event):
         replent["state"]="normal"
         replent.focus_set()
         replent.bind("<FocusOut>", rpldefault)
+def dorpl(mode):
+    if replace.get() == "Replace...‏‏‎ ‎" or not txt_edit.tag_ranges("search"): return
+    if mode == 0 and txt_edit.tag_ranges("sel"):
+        if 'search' in txt_edit.tag_names("sel.first"):
+            txt_edit.replace('sel.first','sel.last', replent.get())
+        else: return
+    elif mode == 1:
+        data = txt_edit.tag_ranges("search")
+        for i,k in zip(data[-1::-2], data[-2::-2]): txt_edit.replace(str(k), str(i), replent.get())
+    else: return
+
 def copycut(mode):
     if txt_edit.tag_ranges("sel"):
         if mode == 2:
@@ -954,8 +939,8 @@ wordmatch= tk.Button(finder, text="½", relief="solid", width=2, font="SearchIco
 regmatch= tk.Button(finder, text="¾", relief="solid", width=2, font="SearchIcons 12", borderwidth=1)
 
 replent = tk.Entry(finder, textvariable= replace, relief="solid", width=30, state="disabled")
-rplnext= tk.Button(finder, text="º", relief="solid", width=2, font="SearchIcons 12", borderwidth=1)
-rplall= tk.Button(finder, text="»", relief="solid", width=2, font="SearchIcons 12", borderwidth=1)
+rplnext= tk.Button(finder, text="º", command= lambda:[dorpl(0)], relief="solid", width=2, font="SearchIcons 12", borderwidth=1)
+rplall= tk.Button(finder, text="»", command= lambda:[dorpl(1)], relief="solid", width=2, font="SearchIcons 12", borderwidth=1)
 replent.bind("<ButtonRelease-1>", rpltip)
 
 scroll.config(command=y_scroll)
