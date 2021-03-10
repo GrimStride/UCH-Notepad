@@ -9,6 +9,60 @@ package require md5
 set filepath ""
 set chash "68B329DA9893E34099C7D8AD5CB9C940"
 
+# Settings - - - - - - - -
+
+proc config {} {
+    toplevel .cfg
+    wm transient .cfg .
+    wm title .cfg "Settings"
+    wm iconbitmap .cfg icon.ico
+    #wm transient .cfg .
+    focus .cfg
+    wm attributes . -disabled true
+    wm protocol .cfg WM_DELETE_WINDOW "cfgclose"
+    grid columnconfigure .cfg 1 -weight 1
+    grid rowconfigure .cfg 0 -weight 1
+    grid [ttk::frame .cfg.panel -relief "groove" -borderwidth 2] -column 0 -row 0 -sticky nsw -padx 8 -pady 8
+    grid [label .cfg.panel.gen -text "  General" -width 114 -relief "flat" -anchor w -pady 2 -compound "left" -image [image create photo genshw -format GIF -data {R0lGODlhEgASANUAAP////7+/vv7+/r6+vn5+fj4+Pb29vX19e7u7urq6ufn597e3tra2tnZ2djY2NfX19PT08zMzLy8vKurq6qqqqmpqZ+fn52dnZycnJubm5aWlpGRkYKCgoGBgXV1dW5ubmxsbGVlZV5eXlxcXFhYWFRUVFNTU09PT01NTUdHR0FBQTg4ODExMSwsLCcnJyUlJSMjIxoaGhQUFBMTExISEgQEBAEBAQAAAP///wAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAADgALAAAAAASABIAAAaqQBwOQBwSaCyTJwIQOocDIuBxq94ozScg4boADhzrDZIVAgSqKoomvnmlxE973gEsLADDat62vaoMAAUhYiQSEy1zG0QOVidSCDJtKQABGVYVTUQjYjEgIDFiGnApVhgBAKViMApEEjVWDUQbczIiJbBWIQUADFUvNnxiKwYAFgsAHcJWH3BEF20zKFUqAmVDEGIcxRcuCddDFGIPUlFPZhEeJiw0BJpFOEEAOw==}]] -column 0 -row 0 -sticky ew -padx 3 -pady 3
+    grid [label .cfg.panel.theme -text "  Appearance" -width 114 -relief "flat" -anchor w -pady 2 -compound "left" -image [image create photo them -format GIF -data {R0lGODlhEgASAOYAAP////7+/vz8/Pv7+/n5+fb29vX19fT09PHx8ezs7Ojo6OXl5ePj4+Dg4N/f39vb29TU1NDQ0M7Ozs3NzcnJycbGxsPDw8HBwcDAwL+/v7u7u7q6ura2trGxsbCwsKmpqaioqKSkpJiYmJaWlpSUlJCQkI2NjYiIiIeHh4aGhoWFhXp6enl5eXd3d3FxcXBwcGpqamhoaGZmZmRkZF1dXVxcXFtbW1dXV0pKSkZGRkVFRUBAQD09PS8vLy0tLSYmJiUlJSQkJCMjIxcXFxUVFRMTExISEg8PDwwMDAsLCwgICAcHBwYGBgUFBQQEBAMDAwICAgAAAP///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAFIALAAAAAASABIAAAergFKCg4SFhACIhopSAA4yFwCLhQAvUUUJkZKCABlRUTOZmow3UVAVkYihkwxIUT4DABs1HaqHJ54pNJ5NELWbBD9RT57CIL6IGELEUTpDK74FNstBGgAYTR6pqB/ESioEqShGJiEkFIgPTK4NqQUWASpOUUoiqCMsSxMABxICMD1HiLRYEAqRDCEICOTokQRICQOJDhXwsQMHFB4cAvgaBEBBDBcRImrSJikQADs=}]] -column 0 -row 2 -sticky ew -padx 3 -pady 3
+    grid [label .cfg.panel.info -text "  About" -width 114 -relief "flat" -anchor w -pady 2 -compound "left" -image [image create photo inf -format GIF -data {R0lGODlhEgASAMQAAP////z8/Pn5+fj4+PDw8O3t7evr6+rq6qOjo5OTk5CQkI2NjWBgYFpaWllZWVhYWAYGBgUFBQAAAP///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAABMALAAAAAASABIAAAVz4CSOQGmOKGkOgwmkYnk8kSRFz1Gm5WL/P8UuBvD9Fkab8DUBHICSQACqawIeUAYD2nDVoGDICkwggFuAAVgKFpi+PzZQbMIC5b/uC2CA4m0GTCUKQAgIQAlDVoRgEolMKgYOEDYQDQWKKC4sLjCaLpAjIQA7}]] -column 0 -row 3 -sticky ew -padx 3 -pady 3
+    grid [frame .cfg.cont -bg "white"] -column 1 -row 0 -sticky nsew -pady 7 -padx {0 8}
+    grid [ttk::labelframe .cfg.cont.box1] -column 0 -row 0 -sticky nsew
+    grid columnconfigure .cfg.cont 0 -weight 1
+    # General Tab
+    ttk::label .cfg.cont.box1.wmp -justify left
+    ttk::label .cfg.cont.box1.wms -justify left
+    entry .cfg.cont.box1.wmx -width 6
+    entry .cfg.cont.box1.wmy -width 6
+    .cfg.cont.box1.wmx insert 10 [winfo x .]
+    .cfg.cont.box1.wmy insert 10 [winfo y .]
+    entry .cfg.cont.box1.wmw -width 6
+    entry .cfg.cont.box1.wmh -width 6
+    .cfg.cont.box1.wmw insert 10 [winfo width .]
+    .cfg.cont.box1.wmh insert 10 [winfo height .]
+    ##
+    
+    #Load first tab
+    change_tab1
+}
+
+proc cfgclose {} {
+    wm attributes . -disabled false
+    destroy .cfg
+}
+
+proc change_tab1 {} {
+    .cfg.cont.box1 configure -text " Window"
+    .cfg.cont.box1.wmp configure -text "Window position (X,Y):"
+    grid .cfg.cont.box1.wmp -column 0 -row 0 -sticky w  -padx {12 0}
+    grid .cfg.cont.box1.wmx -column 1 -row 0 -padx 8
+    grid .cfg.cont.box1.wmy -column 2 -row 0 -padx {0 8}
+    .cfg.cont.box1.wms configure -text "Window size (W, H):"
+    grid .cfg.cont.box1.wms -column 0 -row 1 -sticky w -padx {12 0} -pady 8
+    grid .cfg.cont.box1.wmw -column 1 -row 1 -pady 8
+    grid .cfg.cont.box1.wmh -column 2 -row 1 -sticky w -pady 8
+}
+
 # File Handling - - - - - -
 
 proc open_file {mode} {
@@ -187,7 +241,7 @@ grid [frame .sepfr] -column 0 -row 3 -sticky ew -columnspan 3
 grid [label .sepfr.statusbar -text " By Grim Stride" -anchor w -bd 0 -relief "solid"] -column 0 -row 0 -sticky sew -pady 4
 grid columnconfigure .sepfr 0 -weight 2; grid rowconfigure .sepfr 0 -weight 1
 grid [label .sepfr.txpos -textvariable asdf -anchor e -bd 0 -relief "solid"] -column 1 -row 0 -sticky sew -pady 4 -padx 8
-grid [button .sepfr.btn_conf -relief "flat" -image [image create photo ::img::new -format GIF -data {R0lGODlhEAASANUAAP////7+/v39/fj4+PT09PHx8ZKSkomJiX9/f319fXt7e3BwcG5ubmJiYmFhYWBgYF9fX1JSUlFRUUVFRUNDQyYmJiIiIhoaGhcXFxQUFBEREQ0NDQoKCgkJCQgICAAAAP///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAACAALAAAAAAQABIAAAZxQJAQBCgOj8OiAOKhFIpQIwDxqVqvVUTRYLlYM5aw2AAgFhOVxiAKRbaRcPg7yQYQJBhGQHrQ+P8cVhsaB0V9f36BVYOFZmwEERgLe2VxQnNuRpaOChUPa3VEXF5VYGJhZFNYqx9aZgIOHRNPoUeYSEEAOw==}] -compound "center" -bd 0] -column 2 -row 0 -sticky ew
+grid [button .sepfr.btn_conf -relief "flat" -command "config" -image [image create photo ::img::new -format GIF -data {R0lGODlhEAASANUAAP////7+/v39/fj4+PT09PHx8ZKSkomJiX9/f319fXt7e3BwcG5ubmJiYmFhYWBgYF9fX1JSUlFRUUVFRUNDQyYmJiIiIhoaGhcXFxQUFBEREQ0NDQoKCgkJCQgICAAAAP///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAACAALAAAAAAQABIAAAZxQJAQBCgOj8OiAOKhFIpQIwDxqVqvVUTRYLlYM5aw2AAgFhOVxiAKRbaRcPg7yQYQJBhGQHrQ+P8cVhsaB0V9f36BVYOFZmwEERgLe2VxQnNuRpaOChUPa3VEXF5VYGJhZFNYqx9aZgIOHRNPoUeYSEEAOw==}] -compound "center" -bd 0] -column 2 -row 0 -sticky ew
 grid columnconfigure .sepfr 1 -weight 1
 
 #bind .base.txt_edit <KeyPress> {checkmod
