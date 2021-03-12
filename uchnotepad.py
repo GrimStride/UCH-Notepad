@@ -367,10 +367,12 @@ def open_file(mode):
         text1 = xml.dom.minidom.parseString(text)
         text2 = text1.toprettyxml(indent=" ")
         text3 = text2.replace("<?xml version=\"1.0\" ?>" + "\n", "")
-    txt_edit.insert(tk.END, text3)
+    txt_edit.insert(1.0, text3.rstrip())
     txt_edit.edit_modified(0)
     txt_edit.edit_reset()
     checksyntax(None)
+    print(b)
+    print(text)
     global filepath
     global lastcol
     filepath = filepath1
@@ -473,12 +475,13 @@ def nsave():
         if extension == ".ruleset" or extension == ".snapshot" or extension == ".lzma":
             with lzma.open(filepath, "w", format=lzma.FORMAT_ALONE) as output_file:
                 text = txt_edit.get(1.0, tk.END)
-                text1= text.replace("  ", " ").replace("\n ", "")
+                text1= text.replace("  ", " ").replace("\n ", "").replace("\n", "")
                 output_file.write(bytes(text1, "utf-8"))
+                print("Save - - - -:\n" + text1)
         else:
             with open(filepath, "w") as output_file:
                 text = txt_edit.get(1.0, tk.END)
-                text1= text.replace("  ", " ").replace("\n ", "")
+                text1= text.replace("  ", " ").replace("\n ", "").replace("\n", "")
                 output_file.write(text1)
         bhash= txt_edit.get(1.0, tk.END)
         global chash
@@ -605,7 +608,13 @@ def tlight():
         change["bg"]= "#f0f0f0"
     for change in uif:
         change["fg"]= "black"
+    for change in shbt:
+        change.configure(bg="#f0f0f0", fg="black", activebackground="#f0f0f0", activeforeground="black")
+    for change in chkbts:
+        change.configure(bg = "#f0f0f0", selectcolor = "#d0d0d0", fg="black", highlightcolor="black", activebackground="#f0f0f0", activeforeground="black")
+    expand.configure(bg="#f0f0f0", fg="black", activebackground="#f0f0f0", activeforeground="black")
     txt_edit.configure(bg="white", fg="black", insertbackground="black", selectbackground= "#c0c0c0", selectforeground= "black")
+    for change in sentries: change.configure(bg="white", fg="black", disabledbackground="#f0f0f0", insertbackground="black")
     btn_conf['activebackground'] = "#f0f0f0"
     s.configure("TSeparator", background= "#f0f0f0")
     s.configure("TFrame", background= "white")
@@ -623,7 +632,13 @@ def tdark():
         change["bg"]= "#242424"
     for change in uif:
         change["fg"]= "#dedede"
+    for change in shbt:
+        change.configure(bg="#343434", fg="#dedede", activebackground="#242424", activeforeground="#dedede",highlightbackground = "#dedede", highlightcolor= "#dedede")
+    for change in chkbts:
+        change.configure(bg = "#242424", selectcolor = "#444444", fg = "#dedede", highlightcolor="#dedede", activebackground="#242424", activeforeground="white")
+    expand.configure(bg="#242424", fg="#dedede", activebackground="#242424", activeforeground="#dedede")
     txt_edit.configure(bg="#2e2e2e", fg="#dedede", insertbackground="#dedede", selectbackground= "#4d5d60", selectforeground= "#e2e2e2")
+    for change in sentries: change.configure(bg= "#3e3e3e", fg= "#dedede", disabledbackground="#303030", insertbackground="#dedede")
     btn_conf['activebackground'] = "#2e2e2e"
     s.configure("TSeparator", background= "black")
     s.configure("TFrame", background= "#323232")
@@ -936,9 +951,9 @@ expand= tk.Button(finder, text="¹", relief="solid", width=2, font="SearchIcons 
 prev= tk.Button(finder, text=a, command= lambda:[movesearch(1)], relief="solid", width=2, font="{Segoe UI} 8", borderwidth=1, compound="center")
 nxt= tk.Button(finder, text=b, command= lambda:[movesearch(0)], relief="solid", width=2, font="{Segoe UI} 8", borderwidth=1)#, style="S.TLabel")
 clse= tk.Button(finder, text="·", relief="solid", width=2, font="SearchIcons 11", borderwidth=1, command=lambda:[findtool(None)])
-casematch= tk.Button(finder, text="¼", relief="solid", width=2, font="SearchIcons 12", borderwidth=1)
-wordmatch= tk.Button(finder, text="½", relief="solid", width=2, font="SearchIcons 12", borderwidth=1)
-regmatch= tk.Button(finder, text="¾", relief="solid", width=2, font="SearchIcons 12", borderwidth=1)
+casematch= tk.Checkbutton(finder, text="¼", overrelief="solid", offrelief="flat", width=2, font="SearchIcons 12", borderwidth=1, indicatoron= False)
+wordmatch= tk.Checkbutton(finder, text="½", overrelief="solid", offrelief="flat", width=2, font="SearchIcons 12", borderwidth=1, indicatoron= False)
+regmatch= tk.Checkbutton(finder, text="¾", overrelief="solid", offrelief="flat", width=2, font="SearchIcons 12", borderwidth=1, indicatoron= False)
 
 replent = tk.Entry(finder, textvariable= replace, relief="solid", width=30, state="disabled")
 rplnext= tk.Button(finder, text="º", command= lambda:[dorpl(0)], relief="solid", width=2, font="SearchIcons 12", borderwidth=1)
@@ -962,9 +977,6 @@ fr_buttons.grid(row=0, column=0, sticky="ns")
 base.grid(row=0, column=1, sticky="nsew")
 base.rowconfigure(0, weight=1)
 base.columnconfigure(0, weight=1)
-#f = base.create_window(0,0, anchor="nw", window= txt_edit)
-#base.tag_lower(f)
-#print(base.bbox("all"))
 txt_edit.grid(row=0, column=0, sticky="nsew", columnspan=2)
 
 scroll.grid(column=2, row=0, sticky="nse", ipadx=1)
@@ -1003,7 +1015,10 @@ ent.bind("<KeyRelease>", searchtxt)
 
 wmcol = (root, fr_buttons, sepfr, txpos, statusbar, btn_conf)
 uif = (txpos, statusbar)
+shbt = (prev, nxt, clse, rplnext, rplall)
 buttons = (btn_open, btn_orul, btn_nsav, btn_save)
+chkbts = (casematch, wordmatch, regmatch)
+sentries = (ent, replent)
 if data["theme"] == "dark": tdark()
 else: tlight()
 if len(sys.argv) >= 2:
