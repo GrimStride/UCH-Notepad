@@ -378,8 +378,6 @@ def open_file(mode):
     txt_edit.edit_modified(0)
     txt_edit.edit_reset()
     checksyntax(None)
-    #print(b)
-    #print(text)
     global filepath
     global lastcol
     filepath = filepath1
@@ -419,10 +417,6 @@ def syntax(pattern, tag, color, start, end,regexp=False):
         if count.get() == 0: break
         txt_edit.mark_set("matchStart", index)
         txt_edit.mark_set("matchEnd", "%s+%sc" % (index, count.get()))
-        '''try:
-            for tag in text.tag_names():
-                txt_edit.tag_remove(tag)
-        except NameError: pass'''
         if pattern[-1] == " ":
             txt_edit.tag_add(tag, "matchStart+1c", "matchEnd")
             txt_edit.tag_configure(tag, foreground=color)
@@ -484,7 +478,6 @@ def nsave():
                 text = txt_edit.get(1.0, tk.END)
                 text1= text.replace("  ", " ").replace("\n ", "").replace("\n", "")
                 output_file.write(bytes(text1, "utf-8"))
-                #print("Save - - - -:\n" + text1)
         else:
             with open(filepath, "w") as output_file:
                 text = txt_edit.get(1.0, tk.END)
@@ -626,10 +619,8 @@ def tlight():
     s.configure("TSeparator", background= "#f0f0f0")
     s.configure("TFrame", background= "white")
     s.configure("S.TFrame", background= "#f0f0f0")
-    #s.map("S.TFrame", highlightbackground =[('focus', 'green'),('!focus', 'red')], highlightcolor= [('focus', 'green'),('!focus', 'red')])
     s.configure("TLabel", background= "#f0f0f0", foreground= "black")
     s.configure("S.TLabel", background= "#f0f0f0", foreground= "black")
-    #s.map("S.TLabel", borderwidth=[("hover", 1)])
     s.configure("TLabelframe", background= "#f0f0f0", foreground= "black")
     s.configure("TLabelframe.Label", background= "#f0f0f0", foreground= "black")
     s.configure("TCheckbutton", background= "#f0f0f0", foreground= "black")
@@ -650,10 +641,8 @@ def tdark():
     s.configure("TSeparator", background= "black")
     s.configure("TFrame", background= "#323232")
     s.configure("S.TFrame", background= "#242424")
-    #s.map("S.TFrame", highlightbackground = "black", highlightcolor= "black")
     s.configure("TLabel", background= "#454545", foreground= "#dedede")
     s.configure("S.TLabel", background= "#242424", foreground= "#dedede")
-    #s.map("S.TLabel", borderwidth=[("hover", 1)])
     s.configure("TLabelframe", background= "#454545", foreground= "#dedede")
     s.configure("TLabelframe.Label", background= "#454545", foreground= "#dedede")
     s.configure("TCheckbutton", background= "#454545", foreground= "#dedede")
@@ -690,10 +679,6 @@ def get_line1():
         else:
             root.title(f"UCH Notepad 1.3 Beta 1")
             unsaved= False
-    '''try:
-        txt_edit.tag_delete("curr1", "1.0", "end")
-        #txt_edit.tag_delete("curr2", "1.0", "end")
-    except NameError: pass'''
     if data["theme"] == "dark":
         selc= "#4d5d60"
         curc= "#394447"
@@ -704,15 +689,9 @@ def get_line1():
         try: txt_edit.tag_delete("curr1", "1.0", "end")
         except NameError: pass
         txt_edit.tag_add("curr1", "insert linestart", "insert lineend+1c")
-        #txt_edit.tag_add("curr2", "insert", "insert lineend+1c")
         txt_edit.tag_configure("curr1", selectbackground= selc, background= curc)
         if "search" in txt_edit.tag_names():
             txt_edit.tag_lower("curr1", belowThis="search")
-        '''    print("3")
-            txt_edit.tag_configure("search", background="#F5CC84", foreground="black", underline=True, underlinefg="#ffa657")
-        #txt_edit.tag_configure("curr2", selectbackground= selc, background= curc)
-        '''
-        #txt_edit.tag_lower("curr1", belowThis="search")
         lastcol = txt_edit.index("insert").split(".")[0]
     if data["syntax"] == True and data["stxtype"] != "Everything":
         checksyntax(None)
@@ -802,7 +781,6 @@ def findtool(event):
     casematch.grid(row=2, column=1, sticky="nw")
     wordmatch.grid(row=2, column=2, sticky="nw", ipadx=1)
     regmatch.grid(row=2, column=3, sticky="nw")
-    #bluethingy.grid(row=3, column=0, columnspan=29, sticky="nsew")
     ent.focus_set()
 def searchtxt(event):
     global lastpatt, csem
@@ -826,18 +804,15 @@ def searchtxt(event):
         except tk.TclError: return
         if index == "": break
         if count.get() == 0: break
-        #if a == 0: txt_edit.mark_set("insert", index); print("xd"); a += 1
         txt_edit.mark_set("searchStart", index)
         txt_edit.mark_set("searchEnd", "%s+%sc" % (index, count.get()))
         txt_edit.tag_add("search", "searchStart", "searchEnd")
     if lastpatt != pattern:
         try:
-            #txt_edit.mark_set("insert", txt_edit.tag_nextrange("search", "insert", "end")[1])
             txt_edit.tag_add("sel", txt_edit.tag_nextrange("search", "insert", "end")[0], txt_edit.tag_nextrange("search", "insert", "end")[1])
             txt_edit.mark_set("insert", "sel.first")
         except IndexError:
             try:
-                #txt_edit.mark_set("insert", txt_edit.tag_nextrange("search", "1.0", "end")[1])
                 txt_edit.tag_add("sel", txt_edit.tag_nextrange("search", "1.0", "end")[0], txt_edit.tag_nextrange("search", "insert", "end")[1])
                 txt_edit.mark_set("insert", "sel.first")
             except IndexError: return
@@ -963,12 +938,11 @@ csem.set(1)
 a= "🡰"
 b= "🡲"
 finder = ttk.Frame(base, relief="solid", borderwidth=1, style="S.TFrame")
-#bluethingy= tk.Frame(finder, relief="solid", borderwidth=0, highlightthickness=0, bg="#007acc", height=4)
+
 search= tk.StringVar()
 replace= tk.StringVar()
 replace.set("Replace...‏‏‎ ‎")
 ent = tk.Entry(finder, textvariable= search, relief="solid", width=30)
-#expand= tk.Button(finder, text="🞃", relief="solid", width=2, font="{Segoe UI} 8", borderwidth=0, command=None)
 expand= tk.Button(finder, text="¹", relief="solid", width=2, font="SearchIcons 11", borderwidth=0, command= replacetool)
 prev= tk.Button(finder, text=a, command= lambda:[movesearch(1)], relief="solid", width=2, font="{Segoe UI} 8", borderwidth=1, compound="center")
 nxt= tk.Button(finder, text=b, command= lambda:[movesearch(0)], relief="solid", width=2, font="{Segoe UI} 8", borderwidth=1)#, style="S.TLabel")
@@ -1032,7 +1006,6 @@ root.bind("<Control-F>", findtool)
 txt_edit.bind("<KeyRelease>", checksyntax)
 txt_edit.bind("<KeyRelease-Control_L>", checksyntax)
 txt_edit.bind("<KeyRelease-Control_R>", checksyntax)
-#txt_edit.bind("<<ThemeChanged>>", lambda x:[print("yay")])
 ent.bind("<KeyRelease>", searchtxt)
 
 
@@ -1047,7 +1020,7 @@ else: tlight()
 if len(sys.argv) >= 2:
     open_file("2")
 else: pass
-#print(base.bbox("all"))
+
 root.after(5, get_line1)
 
 root.mainloop()
