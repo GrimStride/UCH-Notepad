@@ -21,6 +21,8 @@ fnd = 0
 rpl = 0
 lastcol= None
 lastpatt= ""
+whlm = 0
+
 pyfont.add_file("lib/SearchIcons.ttf")
 def loadJson():
     f = open(os.path.join(sys.path[0], 'config.json'), "r")
@@ -254,12 +256,17 @@ class config():
             self.root["bg"]= "#454545"
             self.cont["bg"]= "#454545"
             txt_edit.tag_configure("curr1", selectbackground= "#4d5d60", background= "#394447")
+            try:
+                txt_edit.tag_configure("search", background="#773f1f", foreground="white", selectbackground="#7f6a00")
+            except: pass    
         else:
             tlight()
             data["theme"]= "light"
             self.root["bg"]= "#f0f0f0"
             self.cont["bg"]= "#f0f0f0"
             txt_edit.tag_configure("curr1", selectbackground= "#c0c0c0", background= "#e8e8ff")
+            try: txt_edit.tag_configure("search", background="#F5CC84", foreground="black", selectbackground="#ffa657")
+            except: pass
         if self.nsf != data["fnt"]:
             txt_edit["font"] = self.nsf
             data["fnt"] = self.nsf 
@@ -371,8 +378,8 @@ def open_file(mode):
     txt_edit.edit_modified(0)
     txt_edit.edit_reset()
     checksyntax(None)
-    print(b)
-    print(text)
+    #print(b)
+    #print(text)
     global filepath
     global lastcol
     filepath = filepath1
@@ -477,7 +484,7 @@ def nsave():
                 text = txt_edit.get(1.0, tk.END)
                 text1= text.replace("  ", " ").replace("\n ", "").replace("\n", "")
                 output_file.write(bytes(text1, "utf-8"))
-                print("Save - - - -:\n" + text1)
+                #print("Save - - - -:\n" + text1)
         else:
             with open(filepath, "w") as output_file:
                 text = txt_edit.get(1.0, tk.END)
@@ -701,7 +708,7 @@ def get_line1():
         txt_edit.tag_configure("curr1", selectbackground= selc, background= curc)
         if "search" in txt_edit.tag_names():
             txt_edit.tag_lower("curr1", belowThis="search")
-            '''print("3")
+        '''    print("3")
             txt_edit.tag_configure("search", background="#F5CC84", foreground="black", underline=True, underlinefg="#ffa657")
         #txt_edit.tag_configure("curr2", selectbackground= selc, background= curc)
         '''
@@ -798,7 +805,7 @@ def findtool(event):
     #bluethingy.grid(row=3, column=0, columnspan=29, sticky="nsew")
     ent.focus_set()
 def searchtxt(event):
-    global lastpatt
+    global lastpatt, csem
     pattern = ent.get()
     try: txt_edit.tag_remove("sel", 1.0, "end")
     except NameError: pass
@@ -814,7 +821,9 @@ def searchtxt(event):
     a = 0
     current= txt_edit.index("insert")
     while True:
-        index = txt_edit.search(pattern, "searchEnd","Limit", count=count, regexp=False, nocase=True)
+        try:
+            index = txt_edit.search(pattern, "searchEnd","Limit", count=count, regexp=regm.get(), nocase=csem.get())
+        except tk.TclError: return
         if index == "": break
         if count.get() == 0: break
         #if a == 0: txt_edit.mark_set("insert", index); print("xd"); a += 1
@@ -832,7 +841,16 @@ def searchtxt(event):
                 txt_edit.tag_add("sel", txt_edit.tag_nextrange("search", "1.0", "end")[0], txt_edit.tag_nextrange("search", "insert", "end")[1])
                 txt_edit.mark_set("insert", "sel.first")
             except IndexError: return
-    txt_edit.tag_configure("search", background="#F5CC84", foreground="black", selectbackground="#ffa657")
+    if data["theme"] == "dark":
+        tbg="#773f1f"
+        tfg="white"
+        tsbg="#7f6a00"
+    else:
+        tbg="#f5cc84"
+        tfg="black"
+        tsbg="#ffa657"
+    txt_edit.tag_configure("search", background=tbg, foreground=tfg, selectbackground=tsbg)
+    txt_edit.tag_raise("search")
     lastpatt == pattern
     txt_edit.see("insert")
 
@@ -938,6 +956,10 @@ base= tk.Frame(root)
 
 txt_edit = tk.Text(base, padx=4, undo=True, autoseparators=True, font= data["fnt"], wrap="none", xscrollcommand= xascroll.set, yscrollcommand=scroll.set)
 
+csem = tk.IntVar()
+regm = tk.IntVar()
+csem.set(1)
+
 a= "🡰"
 b= "🡲"
 finder = ttk.Frame(base, relief="solid", borderwidth=1, style="S.TFrame")
@@ -951,9 +973,9 @@ expand= tk.Button(finder, text="¹", relief="solid", width=2, font="SearchIcons 
 prev= tk.Button(finder, text=a, command= lambda:[movesearch(1)], relief="solid", width=2, font="{Segoe UI} 8", borderwidth=1, compound="center")
 nxt= tk.Button(finder, text=b, command= lambda:[movesearch(0)], relief="solid", width=2, font="{Segoe UI} 8", borderwidth=1)#, style="S.TLabel")
 clse= tk.Button(finder, text="·", relief="solid", width=2, font="SearchIcons 11", borderwidth=1, command=lambda:[findtool(None)])
-casematch= tk.Checkbutton(finder, text="¼", overrelief="solid", offrelief="flat", width=2, font="SearchIcons 12", borderwidth=1, indicatoron= False)
-wordmatch= tk.Checkbutton(finder, text="½", overrelief="solid", offrelief="flat", width=2, font="SearchIcons 12", borderwidth=1, indicatoron= False)
-regmatch= tk.Checkbutton(finder, text="¾", overrelief="solid", offrelief="flat", width=2, font="SearchIcons 12", borderwidth=1, indicatoron= False)
+casematch= tk.Checkbutton(finder, text="¼", overrelief="solid", offrelief="flat", width=2, font="SearchIcons 12", borderwidth=1, indicatoron= False, variable=csem, onvalue=0, offvalue=1)
+wordmatch= tk.Checkbutton(finder, text="½", overrelief="solid", offrelief="flat", width=2, font="SearchIcons 12", borderwidth=1, indicatoron= False, variable=whlm)
+regmatch= tk.Checkbutton(finder, text="¾", overrelief="solid", offrelief="flat", width=2, font="SearchIcons 12", borderwidth=1, indicatoron= False, variable=regm)
 
 replent = tk.Entry(finder, textvariable= replace, relief="solid", width=30, state="disabled")
 rplnext= tk.Button(finder, text="º", command= lambda:[dorpl(0)], relief="solid", width=2, font="SearchIcons 12", borderwidth=1)
@@ -1010,6 +1032,7 @@ root.bind("<Control-F>", findtool)
 txt_edit.bind("<KeyRelease>", checksyntax)
 txt_edit.bind("<KeyRelease-Control_L>", checksyntax)
 txt_edit.bind("<KeyRelease-Control_R>", checksyntax)
+#txt_edit.bind("<<ThemeChanged>>", lambda x:[print("yay")])
 ent.bind("<KeyRelease>", searchtxt)
 
 
