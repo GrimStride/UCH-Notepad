@@ -1,5 +1,5 @@
 import iupp as iup
-import strformat, lzma
+import strformat, lzma, os, streams
 
 # - - - - - Images - - - - -
 proc loadf():PIhandle =
@@ -39,12 +39,24 @@ proc open_file(ih:PIhandle) =
   iup.setAttribute(filename, "DIALOGTYPE", "OPEN")
   iup.setAttributeHandle(filename, "PARENTDIALOG", iup.getDialog(ih))
   if mode == "Open Level":
-    iup.setAttribute(filename, "DIRECTORY", "c:/asdf")
+    iup.setAttribute(filename, "DIRECTORY", os.getHomeDir() & "AppData\\LocalLow\\Clever Endeavour Games\\Ultimate Chicken Horse\\snapshots")
+  else:
+    iup.setAttribute(filename, "DIRECTORY", os.getHomeDir() & "AppData\\LocalLow\\Clever Endeavour Games\\Ultimate Chicken Horse\\rules")
+    #echo(os.getHomeDir() & "AppData\\LocalLow\\Clever Endeavor Games\\Ultimate Chicken Horse\\rules")
   #echo(iup.getAttribute(ih, "TITLE"))
   iup.popup(filename, IUP_CENTERPARENT, IUP_CENTERPARENT)
   if iup.getInt(filename, "STATUS") != -1:
     let filename1 = iup.getAttribute(filename, "VALUE")
     #open_file(item_open, $filename);
+    echo(filename1)
+    #var a = open$(filename1))
+    var b = readFile($(filename1))
+    #echo(a.readAll())
+    #var c = "df"
+    var c = b.decompress
+    #a.close()
+    let fnd = iup.getDialogChild(ih, "TXT")
+    iup.setfAttribute(fnd, "INSERT", c)
   iup.destroy(filename)
   #return iup.IUP_DEFAULT
 
@@ -93,8 +105,9 @@ var txt_edit = iup.multiline(nil)
 iup.setAttribute(txt_edit, "BORDER", "NO")
 iup.setAttribute(txt_edit, "EXPAND", "YES")
 iup.setAttribute(txt_edit, "FORMATTING", "YES")
-iup.setAttribute(txt_edit, "CPADDING", "4x4")
+iup.setAttribute(txt_edit, "CPADDING", "2x4")
 iup.setCallback(txt_edit, "CARET_CB", cast[ICallback](getline))
+iup.setAttribute(txt_edit, "NAME", "TXT")
 
 var sepfr = iup.flatseparator(nil)
 iup.setAttribute(sepfr, "ORIENTATION", "HORIZONTAL")
