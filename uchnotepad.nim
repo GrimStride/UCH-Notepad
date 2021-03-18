@@ -1,17 +1,54 @@
 import iupp as iup
-import strformat
+import strformat, lzma
+
+# - - - - - Images - - - - -
+proc loadf():PIhandle =
+  let imgdata =
+    [
+    0'u8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 0, 0, 0, 111, 0, 0, 0, 79, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 239, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 48, 0, 0, 0, 160, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 128, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 64, 0, 0, 0, 128, 0, 0, 0, 128, 0, 0, 0, 144, 0, 0, 0, 255, 0, 0, 0, 159, 0, 0, 0, 223, 0, 0, 0, 208, 0, 0, 0, 128, 0, 0, 0, 128, 0, 0, 0, 128, 0, 0, 0, 128, 0, 0, 0, 128, 0, 0, 0, 128, 0, 0, 0, 128, 0, 0, 0, 64, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 144, 0, 0, 0, 240, 0, 0, 0, 208, 0, 0, 0, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 80, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 207, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 96, 0, 0, 0, 191, 0, 0, 0, 191, 0, 0, 0, 191, 0, 0, 0, 191, 0, 0, 0, 191, 0, 0, 0, 191, 0, 0, 0, 191, 0, 0, 0, 239, 0, 0, 0, 208, 0, 0, 0, 96, 0, 0, 0, 255, 0, 0, 0, 207, 0, 0, 0, 191, 0, 0, 0, 191, 0, 0, 0, 96, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 96, 0, 0, 0, 192, 0, 0, 0, 192, 0, 0, 0, 192, 0, 0, 0, 192, 0, 0, 0, 192, 0, 0, 0, 192, 0, 0, 0, 192, 0, 0, 0, 240, 0, 0, 0, 191, 0, 0, 0, 95, 0, 0, 0, 255, 0, 0, 0, 208, 0, 0, 0, 192, 0, 0, 0, 192, 0, 0, 0, 96, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 80, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 208, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 144, 0, 0, 0, 239, 0, 0, 0, 207, 0, 0, 0, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 64, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 143, 0, 0, 0, 255, 0, 0, 0, 176, 0, 0, 0, 224, 0, 0, 0, 207, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 64, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 32, 0, 0, 0, 160, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 128, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 240, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 0, 0, 0, 112, 0, 0, 0, 80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    ]
+
+  let p_imgdata = cast[ptr cuchar](unsafeAddr(imgdata))
+  var image = iup.imageRGBA(18, 18, p_imgdata)
+  discard setHandle("Tecgraf", image)
+
+  return image
+
+#var xd = iup.setHandle("CONFI", iup.imageRGBA(48, 48, cast[ptr cuchar](unsafeAddr(confpic))))
 
 proc open_file(ih:PIhandle) =
-  echo("heh")
+  let mode = iup.getAttribute(ih, "TITLE")
   let filename = iup.fileDlg()
   iup.setAttribute(filename, "DIALOGTYPE", "OPEN")
   iup.setAttributeHandle(filename, "PARENTDIALOG", iup.getDialog(ih))
+  if mode == "Open Level":
+    iup.setAttribute(filename, "DIRECTORY", "c:/asdf")
+  #echo(iup.getAttribute(ih, "TITLE"))
   iup.popup(filename, IUP_CENTERPARENT, IUP_CENTERPARENT)
+  if iup.getInt(filename, "STATUS") != -1:
+    let filename1 = iup.getAttribute(filename, "VALUE")
+    #open_file(item_open, $filename);
   iup.destroy(filename)
   #return iup.IUP_DEFAULT
 
 proc getline(ih:PIhandle, lin:int, col:int): int =
-  #echo ("hey")
   let cln = iup.getDialogChild(ih, "STATUSBAR")
   #echo (fmt"Ln: {lin} Col: {col}")
   #echo(cln)
@@ -23,7 +60,7 @@ proc getline(ih:PIhandle, lin:int, col:int): int =
 
 discard iup.open(nil, nil)
 iup.imageLibOpen()
-iup.glControlsOpen()
+#iup.glControlsOpen()
 
 var septp = iup.flatseparator(nil)
 iup.setAttribute(septp, "ORIENTATION", "HORIZONTAL")
@@ -35,12 +72,14 @@ var btn_open = iup.button("Open Level", nil)
 var btn_orul = iup.button("Open Ruleset", nil)
 var btn_nsav = iup.button("Save", nil)
 var btn_save = iup.button("Save As...", nil)
+#iup.setAttribute(btn_open, "TITLE", "Open Level")
 iup.setAttribute(btn_open, "PADDING", "0x1")
 iup.setAttribute(btn_orul, "PADDING", "0x1")
 iup.setAttribute(btn_nsav, "PADDING", "0x1")
 iup.setAttribute(btn_save, "PADDING", "0x1")
 
 iup.setCallback(btn_open, "ACTION", cast[ICallback](open_file))
+iup.setCallback(btn_orul, "ACTION", cast[ICallback](open_file))
 
 var sepmn = iup.flatseparator(nil)
 iup.setAttribute(sepmn, "ORIENTATION", "VERTICAL")
@@ -77,30 +116,39 @@ var container = iup.hbox(fr_buttons, sepmn,txt_edit, nil)
 var info = iup.label(nil)
 iup.setAttribute(info, "TITLE", " By Grim Stride")
 iup.setAttribute(info, "EXPAND", "HORIZONTAL")
-iup.setAttribute(info, "PADDING", "0x3")
+#iup.setAttribute(info, "PADDING", "0x3")
 
 var cln = iup.label(nil)
 iup.setAttribute(cln, "TITLE", "Ln: 1 Col: 1")
-iup.setAttribute(cln, "PADDING", "0x3")
+iup.setAttribute(cln, "PADDING", "6x0")
 iup.setAttribute(cln, "NAME", "STATUSBAR")
 iup.setAttribute(cln, "ALIGNMENT", "ARIGHT")
 #echo (iup.getHandle(cln))
 
-var conf = iup.button(nil)
-#iup.setAttribute(conf, "ACTION", nil)
-iup.setAttribute(conf, "IMAGE", "IUP_ToolsSettings")
+#var xd = iup.setHandle("CONFI", iup.imageRGBA(48, 48, cast[ptr cuchar](unsafeAddr(confpic))))
 
+var conf = iup.button(nil, nil)
+#iup.setAttribute(conf, "ACTION", nil)
+#iup.setAttribute(conf, "IMAGE", "CONFI")
+#iup.setAttribute(conf, "IMAGE", "C:\\nim-1.4.2\\scripts\\kk.bmp")
+#iup.setAttributeHandle(conf, "IMAGE", iup.imageRGBA(48, 48, cast[ptr cuchar](unsafeAddr(confpic))))
+iup.setAttributeHandle(conf, "IMAGE", loadf())
+#iup.setAttribute(conf, "IMAGE", "IUP_ToolsSettings")
+iup.setAttribute(conf, "FLAT", "YES")
 
 var statusbar = iup.hbox(info, cln, conf, nil)
 iup.setAttribute(statusbar, "NAME", "BAR")
+iup.setAttribute(statusbar, "ALIGNMENT", "ACENTER")
 
 var root = iup.dialog(iup.vbox(septp, container, sepfr, statusbar,nil))
 iup.setAttribute(root, "TITLE", "UCH Notepad")
-iup.setAttribute(root, "USERSIZE", "600x300")
+iup.setAttribute(root, "RASTERSIZE", "800x600")
 iup.setAttribute(root, "MINSIZE", "200x270")
 iup.setAttribute(root, "SHRINK", "YES")
 
 discard iup.showXY(root, IUP_CENTER, IUP_CENTER)
+#iup.setAttribute(conf, "IMAGE", "C:\\nim-1.4.2\\scripts\\kk.bmp")
+
 discard iup.mainLoop()
 
 iup.close()
