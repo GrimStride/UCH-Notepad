@@ -1,5 +1,5 @@
 import iupp as iup
-import strformat, lzma, os, streams
+import strformat, lzma, os, strutils, encodings
 
 # - - - - - Images - - - - -
 proc loadf():PIhandle =
@@ -33,6 +33,10 @@ proc loadf():PIhandle =
 
 #var xd = iup.setHandle("CONFI", iup.imageRGBA(48, 48, cast[ptr cuchar](unsafeAddr(confpic))))
 
+# - - - - - File Handling - - - - -
+
+proc prettyxml(xml: string): string = xml.replace("></", ">\n</").replace("><", ">\n <").replace(" />", "/>").strip(leading=false)
+
 proc open_file(ih:PIhandle) =
   let mode = iup.getAttribute(ih, "TITLE")
   let filename = iup.fileDlg()
@@ -47,18 +51,21 @@ proc open_file(ih:PIhandle) =
   iup.popup(filename, IUP_CENTERPARENT, IUP_CENTERPARENT)
   if iup.getInt(filename, "STATUS") != -1:
     let filename1 = iup.getAttribute(filename, "VALUE")
-    #open_file(item_open, $filename);
-    echo(filename1)
-    #var a = open$(filename1))
-    var b = readFile($(filename1))
-    #echo(a.readAll())
-    #var c = "df"
-    var c = b.decompress
+    #var b = readFile($(filename1))
+    #echo(getCurrentEncoding($(filename1)))
     #a.close()
     let fnd = iup.getDialogChild(ih, "TXT")
-    iup.setfAttribute(fnd, "INSERT", c)
+    iup.setAttribute(fnd, "VALUE", prettyxml(readFile(convert($(filename1), "UTF-8")).decompress))
+    #echo(iup.getFloat(fnd, "DY"))
   iup.destroy(filename)
   #return iup.IUP_DEFAULT
+
+proc save_file(ih:PIhandle) =
+  let filename = iup.fileDlg()
+  iup.setAttribute(filename, "DIALOGTYPE", "SAVE")
+  iup.setAttributeHandle(filename, "PARENTDIALOG", iup.getDialog(ih))
+  iup.popup(filename, IUP_CENTERPARENT, IUP_CENTERPARENT)
+  iup.destroy(filename)
 
 proc getline(ih:PIhandle, lin:int, col:int): int =
   let cln = iup.getDialogChild(ih, "STATUSBAR")
@@ -67,6 +74,8 @@ proc getline(ih:PIhandle, lin:int, col:int): int =
   iup.setfAttribute(cln, "TITLE", fmt"Ln: {lin} Col: {col}")
   let st = iup.getDialogChild(ih, "BAR")
   iup.refreshChildren(st)
+  #let fnd = iup.getDialogChild(ih, "TXT")
+  #echo(iup.getFloat(fnd, "DY"))
   return iup.IUP_DEFAULT
 
 
@@ -84,14 +93,16 @@ var btn_open = iup.button("Open Level", nil)
 var btn_orul = iup.button("Open Ruleset", nil)
 var btn_nsav = iup.button("Save", nil)
 var btn_save = iup.button("Save As...", nil)
-#iup.setAttribute(btn_open, "TITLE", "Open Level")
+
 iup.setAttribute(btn_open, "PADDING", "0x1")
 iup.setAttribute(btn_orul, "PADDING", "0x1")
 iup.setAttribute(btn_nsav, "PADDING", "0x1")
 iup.setAttribute(btn_save, "PADDING", "0x1")
 
+
 iup.setCallback(btn_open, "ACTION", cast[ICallback](open_file))
 iup.setCallback(btn_orul, "ACTION", cast[ICallback](open_file))
+iup.setCallback(btn_save, "ACTION", cast[ICallback](save_file))
 
 var sepmn = iup.flatseparator(nil)
 iup.setAttribute(sepmn, "ORIENTATION", "VERTICAL")
@@ -106,8 +117,12 @@ iup.setAttribute(txt_edit, "BORDER", "NO")
 iup.setAttribute(txt_edit, "EXPAND", "YES")
 iup.setAttribute(txt_edit, "FORMATTING", "YES")
 iup.setAttribute(txt_edit, "CPADDING", "2x4")
+iup.setAttribute(txt_edit, "FONT", "Courier New, 10")
 iup.setCallback(txt_edit, "CARET_CB", cast[ICallback](getline))
 iup.setAttribute(txt_edit, "NAME", "TXT")
+#iup.setAttribute(txt_edit, "VISIBLELINES", "20")
+#iup.setFloat(txt_edit, "LINEY", iup.getFloat(txt_edit, "DY"))
+#iup.setFloat(txt_edit, "LINEY", 1.0)
 
 var sepfr = iup.flatseparator(nil)
 iup.setAttribute(sepfr, "ORIENTATION", "HORIZONTAL")
@@ -148,6 +163,7 @@ var conf = iup.button(nil, nil)
 iup.setAttributeHandle(conf, "IMAGE", loadf())
 #iup.setAttribute(conf, "IMAGE", "IUP_ToolsSettings")
 iup.setAttribute(conf, "FLAT", "YES")
+iup.setAttribute(conf, "TIP", "Settings")
 
 var statusbar = iup.hbox(info, cln, conf, nil)
 iup.setAttribute(statusbar, "NAME", "BAR")
