@@ -1,0 +1,11 @@
+#taken from travis-ci website
+os: osx
+osx_image: xcode7.3 # Python 3.7.4 running on macOS 10.14.4
+language: shell       # 'language: python' is an error on Travis CI macOS
+
+
+install: pip3 install --upgrade pip  # all three OSes agree about 'pip3'
+install: pip3 install cx_Freeze Pillow lxml beautifulsoup4
+
+
+script: cxfreeze -c uchnotepad.py --target-dir testmac --packages=tkinter,lxml,beautifulsoup4,PIL --excludes=asyncio,bz2,concurrent,curses,distutils,lib2to3,msilib,multiprocessing,numpy,pkg_resources,pydoc_data,setuptools,test,unittest,xmlrpc --include-files=icon.png,config.json
