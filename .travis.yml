@@ -2,7 +2,7 @@
 os: osx
 osx_image: xcode7.3 # Python 3.7.4 running on macOS 10.14.4
 language: shell       # 'language: python' is an error on Travis CI macOS
-
+#
 
 install: pip3 install --upgrade pip  # all three OSes agree about 'pip3'
 install: pip3 install cx_Freeze Pillow lxml beautifulsoup4
