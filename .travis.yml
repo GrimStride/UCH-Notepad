@@ -15,4 +15,4 @@ install:
 #install: pip3 install cx_Freeze Pillow lxml beautifulsoup4
 
 
-script: python3 -m cxfreeze -c uchnotepad.py --target-dir testmac --packages=tkinter,lxml,beautifulsoup4,PIL --excludes=asyncio,bz2,concurrent,curses,distutils,lib2to3,msilib,multiprocessing,numpy,pkg_resources,pydoc_data,setuptools,test,unittest,xmlrpc --include-files=icon.png,config.json
+script: cxfreeze -c uchnotepad.py --target-dir testmac --packages=tkinter,lxml,beautifulsoup4,PIL --excludes=asyncio,bz2,concurrent,curses,distutils,lib2to3,msilib,multiprocessing,numpy,pkg_resources,pydoc_data,setuptools,test,unittest,xmlrpc --include-files=icon.png,config.json
