@@ -15,4 +15,16 @@ install:
 #install: pip3 install cx_Freeze Pillow lxml beautifulsoup4
 
 
-script: cxfreeze -c uchnotepad-linux64.py --target-dir testmac --packages=tkinter,lxml,bs4,PIL --excludes=asyncio,bz2,concurrent,curses,distutils,lib2to3,msilib,multiprocessing,numpy,pkg_resources,pydoc_data,setuptools,test,unittest,xmlrpc --include-files=icon.png,config.json
+script:
+  - cxfreeze -c uchnotepad-linux64.py --target-dir testmac --packages=tkinter,lxml,bs4,PIL --excludes=asyncio,bz2,concurrent,curses,distutils,lib2to3,msilib,multiprocessing,numpy,pkg_resources,pydoc_data,setuptools,test,unittest,xmlrpc --include-files=icon.png,config.json
+  - zip -r testmac.zip testmac/
+
+deploy:
+  provider: releases
+  on:
+    branch: main
+  api_key:
+    secure: "Sm8S8Hbn3y5J+eVRGhRXRwNymDlpw3zqPuCXMrcd6YNCQhXTd415lZRYD+q2SpHzK2HCXboWtAtMYBZZclRs6jk8XPpeXqQ2HXyQumWWQ4Jky7nf+Xn0bDmR2qDKpHSYrpENlT7s2+kaTSqnYUAHimczmFHpiQYshqxgRmFOHZot6o09uakg4O2QE+D8hDpWK2/r1smA2qtv9BO/7ykdSOCiHhBocORIzgAbnmEXE9K2J87Z9RK79iUCkLa+rpETBhP4f7Cr5b6I6rMA/XiJehnoEmJzOpKUmvjgVZvO2kgtm8dXro6AJAFrS8YPKO+BRpwkBDjgoMx2b/6/kW5hHFC6uxJwdPx/Ibdw8eGDq7Z4wj1xeWGT8UQwiY2iInnPnntnoMFDoO0BbatnnrSqqiHJB3/mRjOW3HR8IGXt1lMyrr+Gd7HIvGylRZCphRJc8+Ji5gCM7wByZUyFOQ4X4wYlIk0rRxUMyajHPK/A+9t0IBtXVR1Tu+W3pXGhpIgXoNuUCmmYpDak9+V1fI6Q7UOwIgppLOBU0/RvE3Ckc8bRP1zU5HmgjMDRdoFMwnrGzoNJAGxGPwBcQ+FKhdnIKyxe7ZKya5NubJmKOUDwEpV1Tau1XyYuvaJPm3Fg6YSk7V4A/D7s7P2Y1+lN6xV6WhI03YvjISzJZOSKmLM010I="
+  file: "testmac.zip"
+  skip_cleanup: true
+  draft: true
