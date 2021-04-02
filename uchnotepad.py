@@ -475,17 +475,13 @@ def nsave():
         extension = os.path.splitext(filepath)[1]
         if extension == ".ruleset" or extension == ".snapshot" or extension == ".lzma":
             with lzma.open(filepath, "w", format=lzma.FORMAT_ALONE) as output_file:
-                text = txt_edit.get(1.0, tk.END)
-                text1= text.replace("  ", " ").replace("\n ", "").replace("\n", "")
-                output_file.write(bytes(text1, "utf-8"))
+                output_file.write(bytes(" ".join(txt_edit.get(1.0, tk.END).split()).replace("> ", ">"), "utf-8"))
         else:
             with open(filepath, "w") as output_file:
-                text = txt_edit.get(1.0, tk.END)
-                text1= text.replace("  ", " ").replace("\n ", "").replace("\n", "")
-                output_file.write(text1)
+                output_file.write(" ".join(txt_edit.get(1.0, tk.END).split()).replace("> ", ">"))
         bhash= txt_edit.get(1.0, tk.END)
         global chash
-        chash = hashlib.md5(bhash.encode('utf-8')).hexdigest()
+        chash = hashlib.md5(txt_edit.get(1.0, tk.END).encode('utf-8')).hexdigest()
         root.title(f"{filepath} - UCH Notepad 1.3 Beta 1")
     else: save_file()
 
@@ -512,18 +508,13 @@ def save_file():
     extension = os.path.splitext(filepaths)[1]
     if extension in known:
         with lzma.open(filepaths, "w", format=lzma.FORMAT_ALONE) as output_file:
-            text = txt_edit.get(1.0, tk.END)
-            text1= text.replace("  ", " ").replace("\n ", "")
-            output_file.write(bytes(text1, "utf-8"))
+            output_file.write(bytes(" ".join(txt_edit.get(1.0, tk.END).split()).replace("> ", ">"), "utf-8"))
     else:
         with open(filepaths, "w") as output_file:
-            text = txt_edit.get(1.0, tk.END)
-            text1= text.replace("  ", " ").replace("\n ", "")
-            output_file.write(text1)
+            output_file.write(" ".join(txt_edit.get(1.0, tk.END).split()).replace("> ", ">"))
     filepath = filepaths
-    bhash= txt_edit.get(1.0, tk.END)
     global chash
-    chash = hashlib.md5(bhash.encode('utf-8')).hexdigest()
+    chash = hashlib.md5(txt_edit.get(1.0, tk.END).encode('utf-8')).hexdigest()
     root.title(f"{filepath} - UCH Notepad 1.3 Beta 1")
 
 def TButton():
