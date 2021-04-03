@@ -382,9 +382,8 @@ def open_file(mode):
     global lastcol
     filepath = filepath1
     TButton()
-    bhash= txt_edit.get(1.0, tk.END)
     global chash
-    chash = hashlib.md5(bhash.encode('utf-8')).hexdigest()
+    chash = hashlib.md5(txt_edit.get(1.0, tk.END).encode('utf-8')).hexdigest()
     txt_edit.mark_set("insert", "1.0")
     lastcol = None
     root.title(f"{filepath} - UCH Notepad ")
@@ -652,31 +651,23 @@ def get_line1():
     else: pass
     if shldiscr == 0:
         txt_edit.see("insert")
-    else:
-        pass
-    cwork= txt_edit.get(1.0, tk.END)
-    gethash= hashlib.md5(cwork.encode('utf-8')).hexdigest()
+    else: pass
+    gethash= hashlib.md5(txt_edit.get(1.0, tk.END).encode('utf-8')).hexdigest()
     if gethash != chash:
-        if chash != "68b329da9893e34099c7d8ad5cb9c940":
-            root.title(f"*{filepath} - UCH Notepad 1.3 Beta 1")
-            unsaved= True
-        else:
-            root.title(f"*UCH Notepad 1.3 Beta 1")
-            unsaved= True
+        if unsaved == False:
+            root.title("*" + root.title())
+            unsaved = True
+        else: pass
     else:
-        if chash != "68b329da9893e34099c7d8ad5cb9c940":
-            root.title(f"{filepath} - UCH Notepad 1.3 Beta 1")
-            unsaved= False
-        else:
-            root.title(f"UCH Notepad 1.3 Beta 1")
-            unsaved= False
+        root.title(root.title().replace("*", ""))
+        unsaved = False
     if data["theme"] == "dark":
         selc= "#4d5d60"
         curc= "#394447"
     else:
         selc= "#c0c0c0"
         curc= "#e8e8ff"
-    if lastcol != txt_edit.index("insert").split(".")[0]:
+    if lastcol != txt_edit.index("insert").split(".")[0] or coll == 2:
         try: txt_edit.tag_delete("curr1", "1.0", "end")
         except NameError: pass
         txt_edit.tag_add("curr1", "insert linestart", "insert lineend+1c")
