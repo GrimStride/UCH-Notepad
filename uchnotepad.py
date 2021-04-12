@@ -21,7 +21,6 @@ fnd = 0
 rpl = 0
 lastcol= None
 lastpatt= ""
-whlm = 0
 
 pyfont.add_file("lib/SearchIcons.ttf")
 def loadJson():
@@ -767,6 +766,9 @@ def findtool(event):
 def searchtxt(event):
     global lastpatt, csem
     pattern = ent.get()
+    if whlm.get() == 1: pattern = "\\y{0}\\y".format(pattern)
+    if regm.get() == 1 or whlm.get() == 1: isreg = 1
+    else: isreg = 0
     try: txt_edit.tag_remove("sel", 1.0, "end")
     except NameError: pass
     try: txt_edit.tag_remove("searchsel", 1.0, "end")
@@ -782,7 +784,7 @@ def searchtxt(event):
     current= txt_edit.index("insert")
     while True:
         try:
-            index = txt_edit.search(pattern, "searchEnd","Limit", count=count, regexp=regm.get(), nocase=csem.get())
+            index = txt_edit.search(pattern, "searchEnd","Limit", count=count, regexp=isreg, nocase=csem.get())
         except tk.TclError: return
         if index == "": break
         if count.get() == 0: break
@@ -914,6 +916,7 @@ base= tk.Frame(root)
 txt_edit = tk.Text(base, padx=4, undo=True, autoseparators=True, font= data["fnt"], wrap="none", xscrollcommand= xascroll.set, yscrollcommand=scroll.set)
 
 csem = tk.IntVar()
+whlm = tk.IntVar()
 regm = tk.IntVar()
 csem.set(1)
 
