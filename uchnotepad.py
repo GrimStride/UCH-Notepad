@@ -1,3 +1,5 @@
+from tkinterdnd2 import *
+import tkinterextrafont
 import tkinter.filedialog
 import tkinter as tk
 #from tkinter.filedialog import askopenfilename, asksaveasfilename
@@ -7,7 +9,7 @@ from pathlib import Path
 from PIL import ImageTk, Image, ImageGrab
 from io import BytesIO
 from urllib import request, error
-from pyglet import font as pyfont
+#from pyglet import font as pyfont
 
 shldiscr= 1
 check = 0
@@ -22,7 +24,7 @@ rpl = 0
 lastcol= None
 lastpatt= ""
 
-pyfont.add_file("lib/SearchIcons.ttf")
+#pyfont.add_file("lib/SearchIcons.ttf")
 def loadJson():
     f = open(os.path.join(sys.path[0], 'config.json'), "r")
     data= json.loads(f.read())
@@ -216,7 +218,7 @@ class config():
         self.gen["bg"]= "gray94"
         self.theme["bg"]= "gray94"
         self.desct["text"]=" About UCH Notepad "
-        self.desc["text"]="   Version 1.3 Beta 1\n   Made by Grim Stride using Python 3.9.0 and cx-Freeze\n   This is a heavily modified version of Real Python's Tkinter\n   tutorial\n   Text editor functionality based on Notepad++\n   Icons taken from The GNOME Project and material.io"
+        self.desc["text"]="   Version 1.3 Beta 2\n   Made by Grim Stride using Python 3.9.0 and cx-Freeze\n   This is a heavily modified version of Real Python's Tkinter\n   tutorial\n   Text editor functionality based on Notepad++\n   Icons taken from The GNOME Project and material.io"
         self.upt.grid(row=1, column=1, sticky="nw", padx=8, pady=8)
         self.result.grid(row=1, column=2, sticky="nw", pady=11)
     def update(self):
@@ -342,17 +344,19 @@ class config():
         self.uxf["text"]= font.translate(str.maketrans({'{': '', '}': ''}))
 
 def open_file(mode):
-    if mode != "2":
+    nondnd = ["0", "1", "2"]
+    if mode in nondnd:
         if mode == "1":
             stype= "rules"
             ftype= (("UCH Compressed Ruleset", "*.ruleset"), ("All Files", "*.*"))
-        else:
+        elif mode == "0":
             stype= "snapshots"
             ftype= (("UCH Compressed Level", "*.v.snapshot *.c.snapshot"), ("UCH Compressed Party Level", "*.v.snapshot"), ("UCH Compressed Challenge Level", "*.c.snapshot"), ("UCH Uncompressed Party Level", "*.v"), ("UCH Uncompressed Challenge Level", "*.c"), ("All Files", "*.*"))
+        else: filepath1= os.path.abspath(sys.argv[1]).replace("\\", "/")
         filepath1 = tk.filedialog.askopenfilename(
             initialdir=str(Path.home()) + "/AppData/LocalLow/Clever Endeavour Games/Ultimate Chicken Horse/" + stype, filetypes= ftype)
     else:
-        filepath1= os.path.abspath(sys.argv[1]).replace("\\", "/")
+        filepath1= mode
     if not filepath1:
         return
     txt_edit.delete("1.0", tk.END)
@@ -385,7 +389,7 @@ def open_file(mode):
     chash = hashlib.md5(txt_edit.get(1.0, tk.END).encode('utf-8')).hexdigest()
     txt_edit.mark_set("insert", "1.0")
     lastcol = None
-    root.title(f"{filepath} - UCH Notepad ")
+    root.title(f"{filepath} - UCH Notepad 1.3 Beta 2")
 
 def syntax(pattern, tag, color, start, end,regexp=False):
     if data["stxtype"] == "Current line":
@@ -480,7 +484,7 @@ def nsave():
         bhash= txt_edit.get(1.0, tk.END)
         global chash
         chash = hashlib.md5(txt_edit.get(1.0, tk.END).encode('utf-8')).hexdigest()
-        root.title(f"{filepath} - UCH Notepad 1.3 Beta 1")
+        root.title(f"{filepath} - UCH Notepad 1.3 Beta 2")
     else: save_file()
 
 def save_file():
@@ -513,7 +517,7 @@ def save_file():
     filepath = filepaths
     global chash
     chash = hashlib.md5(txt_edit.get(1.0, tk.END).encode('utf-8')).hexdigest()
-    root.title(f"{filepath} - UCH Notepad 1.3 Beta 1")
+    root.title(f"{filepath} - UCH Notepad 1.3 Beta 2")
 
 def TButton():
     destroyTN()
@@ -766,7 +770,7 @@ def findtool(event):
 def searchtxt(event):
     global lastpatt, csem
     pattern = ent.get()
-    if whlm.get() == 1: pattern = "\\y{0}\\y".format(pattern)
+    if whlm.get() == 1: pattern = f"\\y{pattern}\\y"
     if regm.get() == 1 or whlm.get() == 1: isreg = 1
     else: isreg = 0
     try: txt_edit.tag_remove("sel", 1.0, "end")
@@ -892,11 +896,16 @@ def winquit():
     saveJson()
     root.destroy()
 
+def opendnd(event):
+    print(event.data)
+    open_file(event.data.strip("{}"))
+
+
 data = loadJson()
 updateJson()
 
-root = tk.Tk()
-root.title("UCH Notepad 1.3 Beta 1")
+root = TkinterDnD.Tk()
+root.title("UCH Notepad 1.3 Beta 2")
 root.geometry(data["wm"])
 root.minsize(200,270)
 root.state(data["state"])
@@ -904,6 +913,11 @@ root.iconbitmap('icon.ico')
 root.rowconfigure(0, weight=1)
 root.columnconfigure(1, weight=1)
 root.protocol("WM_DELETE_WINDOW", winquit)
+
+#root.tk.call('package', 'require', 'extrafont')
+#root.tk.call('extrafont::load', 'lib/SearchIcons.ttf')
+tkinterextrafont.enable(root)
+tkinterextrafont.load(root, 'lib/SearchIcons.ttf')
 
 s = ttk.Style()
 s.theme_use("vista")
@@ -914,6 +928,8 @@ xascroll = ttk.Scrollbar(root, orient="horizontal")
 base= tk.Frame(root)
 
 txt_edit = tk.Text(base, padx=4, undo=True, autoseparators=True, font= data["fnt"], wrap="none", xscrollcommand= xascroll.set, yscrollcommand=scroll.set)
+txt_edit.drop_target_register(DND_FILES)
+txt_edit.dnd_bind('<<Drop>>', opendnd)
 
 csem = tk.IntVar()
 whlm = tk.IntVar()
