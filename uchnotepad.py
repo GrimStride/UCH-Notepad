@@ -1,15 +1,14 @@
 from tkinterdnd2 import *
-import tkinterextrafont
-import tkinter.filedialog
+import extrafontk
+#import tkinter.filedialog
 import tkinter as tk
 #from tkinter.filedialog import askopenfilename, asksaveasfilename
-from tkinter import ttk, font, messagebox
+from tkinter import ttk, font, messagebox, filedialog
 import lzma, xml.dom.minidom, pathlib, PIL, os, win32clipboard, hashlib, json, sys, urllib, webbrowser
 from pathlib import Path
 from PIL import ImageTk, Image, ImageGrab
 from io import BytesIO
 from urllib import request, error
-#from pyglet import font as pyfont
 
 shldiscr= 1
 check = 0
@@ -24,7 +23,6 @@ rpl = 0
 lastcol= None
 lastpatt= ""
 
-#pyfont.add_file("lib/SearchIcons.ttf")
 def loadJson():
     f = open(os.path.join(sys.path[0], 'config.json'), "r")
     data= json.loads(f.read())
@@ -914,14 +912,23 @@ root.rowconfigure(0, weight=1)
 root.columnconfigure(1, weight=1)
 root.protocol("WM_DELETE_WINDOW", winquit)
 
-#root.tk.call('package', 'require', 'extrafont')
-#root.tk.call('extrafont::load', 'lib/SearchIcons.ttf')
-tkinterextrafont.enable(root)
-tkinterextrafont.load(root, 'lib/SearchIcons.ttf')
+extrafontk.enable(root)
+extrafontk.load(root, 'lib/SearchIcons.ttf')
 
 s = ttk.Style()
 s.theme_use("vista")
 s.configure("TButton", font= data["ufnt"])
+
+fr_buttons = tk.Frame(root)
+btn_open = ttk.Button(fr_buttons, text="Open Level", command= lambda:[open_file("0")])
+btn_orul = ttk.Button(fr_buttons, text="Open Ruleset", command= lambda:[open_file("1")])
+btn_nsav = ttk.Button(fr_buttons, text="Save", command=nsave)
+btn_save = ttk.Button(fr_buttons, text="Save As...", command=save_file)
+fr_buttons.grid(row=0, column=0, sticky="ns")
+btn_open.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+btn_orul.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
+btn_nsav.grid(row=3, column=0, sticky="ew", padx=5, pady=5)
+btn_save.grid(row=4, column=0, sticky="ew", padx=5, pady=5)
 
 scroll = ttk.Scrollbar(root, orient="vertical")
 xascroll = ttk.Scrollbar(root, orient="horizontal")
@@ -960,42 +967,31 @@ replent.bind("<ButtonRelease-1>", rpltip)
 scroll.config(command=y_scroll)
 xascroll.config(command=x_scroll)
 
-fr_buttons = tk.Frame(root)
-btn_open = ttk.Button(fr_buttons, text="Open Level", command= lambda:[open_file("0")])
-btn_orul = ttk.Button(fr_buttons, text="Open Ruleset", command= lambda:[open_file("1")])
-btn_nsav = ttk.Button(fr_buttons, text="Save", command=nsave)
-btn_save = ttk.Button(fr_buttons, text="Save As...", command=save_file)
-btn_open.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
-btn_orul.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
-btn_nsav.grid(row=3, column=0, sticky="ew", padx=5, pady=5)
-btn_save.grid(row=4, column=0, sticky="ew", padx=5, pady=5)
-fr_buttons.grid(row=0, column=0, sticky="ns")
 
 base.grid(row=0, column=1, sticky="nsew")
 base.rowconfigure(0, weight=1)
 base.columnconfigure(0, weight=1)
-txt_edit.grid(row=0, column=0, sticky="nsew", columnspan=2)
 
-scroll.grid(column=2, row=0, sticky="nse", ipadx=1)
+txt_edit.grid(row=0, column=0, sticky="nsew", columnspan=2)
+scroll.grid(column=2, row=0, sticky="nse")
 xascroll.grid(column=1, row=1, sticky="we")
 
-statusbar = tk.Label(root, text=" By Grim Stride", anchor=tk.W, bd=0, relief="solid")
+
+sep = ttk.Separator(root, orient="horizontal")
 sepfr = tk.Frame(root)
-sep = ttk.Separator(sepfr, orient="horizontal")
-sepfr.grid(row=5, column=0, sticky="ew", columnspan=30)
-statusbar.grid(row=6, column=0, sticky="sew", columnspan=2, pady=4)
+sepfr.columnconfigure(0, weight=2)
+sepfr.rowconfigure(0, weight=1)
+statusbar = tk.Label(sepfr, text=" By Grim Stride", anchor=tk.W, bd=0, relief="solid")
+txpos = tk.Label(sepfr, width= 15, anchor="center", bd=0, relief="solid")
+confshw= tk.PhotoImage(data="R0lGODlhEAASANUAAP////7+/v39/fj4+PT09PHx8ZKSkomJiX9/f319fXt7e3BwcG5ubmJiYmFhYWBgYF9fX1JSUlFRUUVFRUNDQyYmJiIiIhoaGhcXFxQUFBEREQ0NDQoKCgkJCQgICAAAAP///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAACAALAAAAAAQABIAAAZxQJAQBCgOj8OiAOKhFIpQIwDxqVqvVUTRYLlYM5aw2AAgFhOVxiAKRbaRcPg7yQYQJBhGQHrQ+P8cVhsaB0V9f36BVYOFZmwEERgLe2VxQnNuRpaOChUPa3VEXF5VYGJhZFNYqx9aZgIOHRNPoUeYSEEAOw==")
+btn_conf = tk.Button(sepfr, image= confshw, relief="flat", command=config, bd=0)
 
-conb = tk.Frame(root)
-conf = "R0lGODlhEAASANUAAP////7+/v39/fj4+PT09PHx8ZKSkomJiX9/f319fXt7e3BwcG5ubmJiYmFhYWBgYF9fX1JSUlFRUUVFRUNDQyYmJiIiIhoaGhcXFxQUFBEREQ0NDQoKCgkJCQgICAAAAP///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAACAALAAAAAAQABIAAAZxQJAQBCgOj8OiAOKhFIpQIwDxqVqvVUTRYLlYM5aw2AAgFhOVxiAKRbaRcPg7yQYQJBhGQHrQ+P8cVhsaB0V9f36BVYOFZmwEERgLe2VxQnNuRpaOChUPa3VEXF5VYGJhZFNYqx9aZgIOHRNPoUeYSEEAOw=="
-confshw = tk.PhotoImage(data=conf)
-btn_conf = tk.Button(conb, image= confshw, relief="flat", command=config, bd=0)
-btn_conf.grid(row=6, column=2, sticky="ew")
-conb.grid(row=6, column=2, sticky="e")
+sep.grid(row=2, column=0, sticky="ew", columnspan=3)
+sepfr.grid(row=3, column=0, sticky="ew", columnspan=3)
+statusbar.grid(row=0, column=0, sticky="sew", columnspan=2, pady=4)
+txpos.grid(row=0, column=1, sticky="e", pady=4, padx=1)
+btn_conf.grid(row=0, column=2, sticky="ew")
 
-root.update()
-sep.grid(row=5, column=0, sticky="ew", columnspan=1, ipadx= root.winfo_reqwidth())
-txpos = tk.Label(root, width= 15, anchor="center", bd=0, relief="solid")
-txpos.grid(row=6, column=1, sticky="e")
 
 scroll.bind("<ButtonRelease-1>", scrllstop)
 xascroll.bind("<ButtonRelease-1>", scrllstop)
